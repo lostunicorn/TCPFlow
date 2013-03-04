@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TCPFlow.Model
 {
-    class Sender
+    public class Sender
     {
         public event Action<DataPacket> PacketSent;
         private void SendPacket(DataPacket packet)

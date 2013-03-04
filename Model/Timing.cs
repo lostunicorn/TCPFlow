@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TCPFlow.Model
 {
-    class Timing
+    public class Timing
     {
         public static uint Time { get; set; }
 

@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 
 namespace TCPFlow.Model
 {
-    class Network
+    public class Network
     {
         public uint Delay { get; set; }
 
         public Network(uint delay)
         {
             Delay = delay;
+            m_packetsToDrop = new SortedSet<uint>();
+            m_acksToDrop = new SortedSet<uint>();
         }
 
         private Queue<DataPacket> m_packetsUnderway = new Queue<DataPacket>();
@@ -50,7 +52,7 @@ namespace TCPFlow.Model
 
         public void Send(DataPacket packet)
         {
-            if (m_numbersToDrop.Contains(packet.Number))
+            if (m_packetsToDrop.Contains(packet.Number))
                 DropPacket(packet);
             else
                 m_packetsUnderway.Enqueue(packet);
@@ -81,7 +83,7 @@ namespace TCPFlow.Model
         
         public void Send(Ack ack)
         {
-            if (m_numbersToDrop.Contains(ack.Number))
+            if (m_acksToDrop.Contains(ack.Number))
                 DropAck(ack);
             else
                 m_acksUnderway.Enqueue(ack);

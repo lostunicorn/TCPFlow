@@ -6,9 +6,14 @@ using System.Threading.Tasks;
 
 namespace TCPFlow.Model
 {
-    class Receiver
+    public class Receiver
     {
         private List<int> m_sequenceNumbersToHold;
+
+        public Receiver()
+        {
+            m_sequenceNumbersToHold = new List<int>();
+        }
 
         public void AddSequenceNumberToHold(int number)
         {

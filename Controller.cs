@@ -8,7 +8,7 @@ using TCPFlow.Model;
 
 namespace TCPFlow
 {
-    class Controller
+    public class Controller
     {
         public Log log;
         public Sender sender;
