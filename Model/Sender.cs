@@ -18,5 +18,9 @@ namespace TCPFlow.Model
         public void ReceiveAck(Ack ack)
         {
         }
+
+        public void Tick()
+        {
+        }
     }
 }

@@ -8,7 +8,7 @@ namespace TCPFlow.Model
 {
     class Network
     {
-        public uint Delay { get; private set; }
+        public uint Delay { get; set; }
 
         public Network(uint delay)
         {
@@ -18,16 +18,27 @@ namespace TCPFlow.Model
         private Queue<DataPacket> m_packetsUnderway = new Queue<DataPacket>();
         private Queue<Ack> m_acksUnderway = new Queue<Ack>();
 
-        private List<uint> m_numbersToDrop;
+        private SortedSet<uint> m_packetsToDrop;
+        private SortedSet<uint> m_acksToDrop;
 
         public void AddDroppedPacket(uint number)
         {
-            m_numbersToDrop.Add(number);
+            m_packetsToDrop.Add(number);
         }
 
         public void RemoveDroppedPacket(uint number)
         {
-            m_numbersToDrop.Remove(number);
+            m_packetsToDrop.Remove(number);
+        }
+
+        public void AddDroppedAck(uint number)
+        {
+            m_acksToDrop.Add(number);
+        }
+
+        public void RemoveDroppedAck(uint number)
+        {
+            m_acksToDrop.Remove(number);
         }
 
         public event Action<DataPacket> PacketArrived;

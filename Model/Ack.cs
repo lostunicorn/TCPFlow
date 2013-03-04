@@ -10,13 +10,9 @@ namespace TCPFlow.Model
     {
         public uint NextID { get; set; }
 
-        public uint Number { get; private set; }
-        private static uint m_nextNumber = 0;
-
         public Ack(uint time, uint nextID) : base(time)
         {
             NextID = nextID;
-            Number = m_nextNumber++;
         }
     }
 }

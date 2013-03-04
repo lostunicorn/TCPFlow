@@ -12,9 +12,13 @@ namespace TCPFlow
 {
     public partial class FlowForm : Form
     {
-        public FlowForm()
+        private Controller m_controller;
+
+        public FlowForm(Controller controller)
         {
             InitializeComponent();
+
+            m_controller = controller;
         }
     }
 }

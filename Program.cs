@@ -14,9 +14,11 @@ namespace TCPFlow
         [STAThread]
         static void Main()
         {
+            Controller controller = new Controller(20);
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FlowForm());
+            Application.Run(new FlowForm(controller));
         }
     }
 }
