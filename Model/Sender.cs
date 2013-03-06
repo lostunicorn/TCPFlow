@@ -8,6 +8,13 @@ namespace TCPFlow.Model
 {
     public class Sender
     {
+        private Controller m_controller;
+
+        public Sender(Controller controller)
+        {
+            m_controller = controller;
+        }
+
         public event Action<DataPacket> PacketSent;
         private void SendPacket(DataPacket packet)
         {

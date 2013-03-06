@@ -10,35 +10,39 @@ namespace TCPFlow.Model
     {
         public uint Delay { get; set; }
 
-        public Network(uint delay)
-        {
-            Delay = delay;
-            m_packetsToDrop = new SortedSet<uint>();
-            m_acksToDrop = new SortedSet<uint>();
-        }
-
         private Queue<DataPacket> m_packetsUnderway = new Queue<DataPacket>();
         private Queue<Ack> m_acksUnderway = new Queue<Ack>();
 
         private SortedSet<uint> m_packetsToDrop;
         private SortedSet<uint> m_acksToDrop;
 
-        public void AddDroppedPacket(uint number)
+        private Controller m_controller;
+
+        public Network(Controller controller, uint delay)
+        {
+            m_controller = controller;
+
+            Delay = delay;
+            m_packetsToDrop = new SortedSet<uint>();
+            m_acksToDrop = new SortedSet<uint>();
+        }
+
+        public void AddLostPacket(uint number)
         {
             m_packetsToDrop.Add(number);
         }
 
-        public void RemoveDroppedPacket(uint number)
+        public void RemoveLostPacket(uint number)
         {
             m_packetsToDrop.Remove(number);
         }
 
-        public void AddDroppedAck(uint number)
+        public void AddLostAck(uint number)
         {
             m_acksToDrop.Add(number);
         }
 
-        public void RemoveDroppedAck(uint number)
+        public void RemoveLostAck(uint number)
         {
             m_acksToDrop.Remove(number);
         }
@@ -58,20 +62,20 @@ namespace TCPFlow.Model
                 m_packetsUnderway.Enqueue(packet);
         }
 
-        public event Action<DataPacket> PacketDropped;
+        public event Action<DataPacket> PacketLost;
         private void DropPacket(DataPacket packet)
         {
-            packet.Dropped = true;
-            if (PacketDropped != null)
-                PacketDropped(packet);
+            packet.Lost = true;
+            if (PacketLost != null)
+                PacketLost(packet);
         }
 
-        public event Action<Ack> AckDropped;
+        public event Action<Ack> AckLost;
         private void DropAck(Ack ack)
         {
-            ack.Dropped = true;
-            if (AckDropped != null)
-                AckDropped(ack);
+            ack.Lost = true;
+            if (AckLost != null)
+                AckLost(ack);
         }
 
         public event Action<Ack> AckArrived;
@@ -98,11 +102,11 @@ namespace TCPFlow.Model
         public void Tick()
         {
             if (m_packetsUnderway.Count > 0 &&
-                m_packetsUnderway.Peek().Time + Delay == Timing.Time)
+                m_packetsUnderway.Peek().Time + Delay == m_controller.Time)
                 PacketArrives(m_packetsUnderway.Dequeue());
 
             if (m_acksUnderway.Count > 0 &&
-                m_packetsUnderway.Peek().Time + Delay == Timing.Time)
+                m_acksUnderway.Peek().Time + Delay == m_controller.Time)
                 AckArrives(m_acksUnderway.Dequeue());
         }
     }

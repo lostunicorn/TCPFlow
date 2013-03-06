@@ -8,21 +8,34 @@ namespace TCPFlow.Model
 {
     public class Receiver
     {
-        private List<int> m_sequenceNumbersToHold;
+        private SortedList<uint, uint> m_sequenceNumbersToHold;
 
-        public Receiver()
+        private Controller m_controller;
+
+        public Receiver(Controller controller)
         {
-            m_sequenceNumbersToHold = new List<int>();
+            m_controller = controller;
+
+            m_sequenceNumbersToHold = new SortedList<uint, uint>();
         }
 
-        public void AddSequenceNumberToHold(int number)
+        public void AddSequenceNumberToHold(uint number)
         {
-            m_sequenceNumbersToHold.Add(number);
+            if (m_sequenceNumbersToHold.ContainsKey(number))
+                ++m_sequenceNumbersToHold[number];
+            else
+                m_sequenceNumbersToHold.Add(number, 1);
         }
 
-        public void RemoveSequenceNumberToHold(int number)
+        public void RemoveSequenceNumberToHold(uint number)
         {
-            m_sequenceNumbersToHold.Remove(number);
+            if (m_sequenceNumbersToHold.ContainsKey(number))
+            {
+                if (m_sequenceNumbersToHold[number] > 1)
+                    --m_sequenceNumbersToHold[number];
+                else
+                    m_sequenceNumbersToHold.Remove(number);
+            }
         }
 
         public void OnPacketReceived(DataPacket packet)
@@ -45,7 +58,7 @@ namespace TCPFlow.Model
 
         public void Tick()
         {
-
+            //TODO: add business logic
         }
     }
 }

@@ -12,6 +12,8 @@ namespace TCPFlow.Model
 
         public bool Dropped { get; set; }
 
+        public bool Lost { get; set; }
+
         public Packet(uint time)
         {
             Time = time;

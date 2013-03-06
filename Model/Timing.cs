@@ -8,17 +8,5 @@ namespace TCPFlow.Model
 {
     public class Timing
     {
-        public static uint Time { get; set; }
-
-        public static void Reset() {
-            Time = 0;
-        }
-
-        event Action Tick;
-        public void DoTick()
-        {
-            if (Tick != null)
-                Tick();
-        }
     }
 }

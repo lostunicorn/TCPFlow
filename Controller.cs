@@ -15,12 +15,19 @@ namespace TCPFlow
         public Receiver receiver;
         public Network network;
 
+        public uint Time { get; private set; }
+
+        public void Reset()
+        {
+            Time = 0;
+        }
+
         public Controller(uint delay)
         {
-            log = new Log();
-            sender = new Sender();
-            receiver = new Receiver();
-            network = new Network(delay);
+            log = new Log(this);
+            sender = new Sender(this);
+            receiver = new Receiver(this);
+            network = new Network(this, delay);
 
             sender.PacketSent += log.OnPacketSent;
             sender.PacketSent += network.Send;
@@ -30,16 +37,20 @@ namespace TCPFlow
             receiver.PacketDelivered += log.OnPacketDelivered;
 
             network.PacketArrived += receiver.OnPacketReceived;
-            network.PacketDropped += log.OnPacketDropped;
+            network.PacketLost += log.OnPacketLost;
             network.AckArrived += sender.ReceiveAck;
-            network.AckDropped += log.OnAckDropped;
+            network.AckLost += log.OnAckLost;
         }
 
         public void Tick()
         {
+            //receiver first: this delivers any packet that was
+            //already present and makes room for an arriving packet
             receiver.Tick();
             sender.Tick();
             network.Tick();
+
+            ++Time;
         }
     }
 }
