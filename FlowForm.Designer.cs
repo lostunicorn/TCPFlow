@@ -36,22 +36,23 @@
             this.rdRunManual = new System.Windows.Forms.RadioButton();
             this.rdRunAutomatic = new System.Windows.Forms.RadioButton();
             this.chkSkipHandshake = new System.Windows.Forms.CheckBox();
+            this.pnlFlow = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.pbFlow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDelay)).BeginInit();
             this.grpRunSettings.SuspendLayout();
+            this.pnlFlow.SuspendLayout();
             this.SuspendLayout();
             // 
             // pbFlow
             // 
-            this.pbFlow.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.pbFlow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbFlow.Location = new System.Drawing.Point(12, 12);
+            this.pbFlow.Location = new System.Drawing.Point(3, 3);
             this.pbFlow.Name = "pbFlow";
-            this.pbFlow.Size = new System.Drawing.Size(597, 449);
+            this.pbFlow.Size = new System.Drawing.Size(541, 348);
+            this.pbFlow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pbFlow.TabIndex = 0;
             this.pbFlow.TabStop = false;
-            this.pbFlow.SizeChanged += new System.EventHandler(this.pbFlow_SizeChanged);
             // 
             // numDelay
             // 
@@ -140,22 +141,37 @@
             this.chkSkipHandshake.Text = "Skip Handshake";
             this.chkSkipHandshake.UseVisualStyleBackColor = true;
             // 
+            // pnlFlow
+            // 
+            this.pnlFlow.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlFlow.AutoScroll = true;
+            this.pnlFlow.Controls.Add(this.pbFlow);
+            this.pnlFlow.Location = new System.Drawing.Point(13, 13);
+            this.pnlFlow.Name = "pnlFlow";
+            this.pnlFlow.Size = new System.Drawing.Size(606, 448);
+            this.pnlFlow.TabIndex = 5;
+            this.pnlFlow.SizeChanged += new System.EventHandler(this.pnlFlow_SizeChanged);
+            // 
             // FlowForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(814, 473);
+            this.Controls.Add(this.pnlFlow);
             this.Controls.Add(this.chkSkipHandshake);
             this.Controls.Add(this.grpRunSettings);
             this.Controls.Add(this.lblDelay);
             this.Controls.Add(this.numDelay);
-            this.Controls.Add(this.pbFlow);
             this.Name = "FlowForm";
             this.Text = "TCP Flow Visualizer";
             ((System.ComponentModel.ISupportInitialize)(this.pbFlow)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDelay)).EndInit();
             this.grpRunSettings.ResumeLayout(false);
             this.grpRunSettings.PerformLayout();
+            this.pnlFlow.ResumeLayout(false);
+            this.pnlFlow.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -171,6 +187,7 @@
         private System.Windows.Forms.RadioButton rdRunManual;
         private System.Windows.Forms.RadioButton rdRunAutomatic;
         private System.Windows.Forms.CheckBox chkSkipHandshake;
+        private System.Windows.Forms.Panel pnlFlow;
     }
 }
 
