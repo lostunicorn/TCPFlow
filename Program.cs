@@ -22,6 +22,9 @@ namespace TCPFlow
         {
             Controller controller = new Controller(20);
 
+            controller.network.AddLostPacket(1);
+            controller.network.AddLostAck(1);
+
             Model.DataPacket packet = new Model.DataPacket(0, 0);
             controller.log.OnPacketSent(packet);
             controller.network.Send(packet);
@@ -41,8 +44,6 @@ namespace TCPFlow
             ack = new Model.Ack(60, 1);
             controller.log.OnAckSent(ack);
             controller.network.Send(ack);
-            controller.network.AddLostPacket(1);
-            controller.network.AddLostAck(1);
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

@@ -16,53 +16,115 @@ namespace TCPFlow
 
         private const uint PIXELS_PER_TICK = 5;
         private const int BORDER = 6;
+        private readonly float HEADER_HEIGHT;
 
         public FlowForm(Controller controller)
         {
             InitializeComponent();
 
+            HEADER_HEIGHT = CalculateHeaderHeight();
+
             m_controller = controller;
 
-            m_controller.log.Changed += log_Changed;
+            m_controller.log.Changed += DrawFlow;
 
-            log_Changed();
+            DrawFlow();
         }
 
-        void log_Changed()
+        private float CalculateHeaderHeight()
         {
-            int headerHeight = 4*BORDER+12;
-
-            Bitmap bitmap = new Bitmap(pbFlow.Width, Convert.ToInt32(m_controller.Time * PIXELS_PER_TICK + headerHeight));
+            Bitmap bitmap = new Bitmap(100, 100);
             Graphics g = Graphics.FromImage(bitmap);
+
+            Font font = new Font(FontFamily.GenericSerif, 12);
+            return 4*BORDER + g.MeasureString("TX", font).Height;
+        }
+
+        void DrawFlow()
+        {
+            uint endTime = m_controller.Time + 2 * m_controller.network.Delay;
+
+            Bitmap bitmap = new Bitmap(pbFlow.Width, Convert.ToInt32(endTime * PIXELS_PER_TICK + HEADER_HEIGHT));
+            Graphics g = Graphics.FromImage(bitmap);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
             g.FillRectangle(Brushes.White, 0, 0, bitmap.Width, bitmap.Height);
 
-            Pen thinPen = new Pen(Brushes.Black);
+            Pen blackPen = new Pen(Brushes.Black, 3),
+                redPen = new Pen(Brushes.Red, 3);
             Font font = new Font(FontFamily.GenericSerif, 12);
 
+            //Render the header
             SizeF txSize = g.MeasureString("TX", font),
                 rxSize = g.MeasureString("RX", font);
 
             float txLine = 2 * BORDER + txSize.Width / 2,
                 rxLine = bitmap.Width - (2 * BORDER + rxSize.Width / 2);
 
-            g.DrawRectangle(thinPen, BORDER, BORDER, txSize.Width + 2 * BORDER, txSize.Height + 2 * BORDER);
+            g.DrawRectangle(blackPen, BORDER, BORDER, txSize.Width + 2 * BORDER, txSize.Height + 2 * BORDER);
             g.DrawString("TX", font, Brushes.Black, 2*BORDER, 2 * BORDER);
-            g.DrawLine(thinPen, txLine, 3 * BORDER + txSize.Height, txLine, bitmap.Height);
+            g.DrawLine(blackPen, txLine, 3 * BORDER + txSize.Height, txLine, bitmap.Height);
 
-            g.DrawRectangle(thinPen, bitmap.Width - (3 * BORDER + rxSize.Width), BORDER, rxSize.Width + 2 * BORDER, rxSize.Height + 2 * BORDER);
+            g.DrawRectangle(blackPen, bitmap.Width - (3 * BORDER + rxSize.Width), BORDER, rxSize.Width + 2 * BORDER, rxSize.Height + 2 * BORDER);
             g.DrawString("RX", font, Brushes.Black, bitmap.Width - (2 * BORDER + rxSize.Width), 2 * BORDER);
-            g.DrawLine(thinPen, rxLine, 3 * BORDER + rxSize.Height, rxLine, bitmap.Height);
+            g.DrawLine(blackPen, rxLine, 3 * BORDER + rxSize.Height, rxLine, bitmap.Height);
 
-            g.TranslateTransform(0, headerHeight);
+            //translate the graphics object so all future coördinates can be calculated in terms of simulated
+            //time without taking the header into account
+            g.TranslateTransform(0, HEADER_HEIGHT);
 
+            //render packets, acks and such
             foreach (KeyValuePair<uint, Model.DataPacket> pair in m_controller.log.packets)
             {
-                g.DrawLine(thinPen, txLine, pair.Key*PIXELS_PER_TICK, rxLine, (pair.Key + m_controller.network.Delay) * PIXELS_PER_TICK);
+                PointF from, to;
+                from = new PointF(txLine, pair.Key*PIXELS_PER_TICK);
+                to = new PointF();
+
+                Model.DataPacket packet = pair.Value;
+
+                if (packet.Lost)
+                {
+                    to.X = txLine + (rxLine - txLine)/3;
+                    to.Y = from.Y + (m_controller.network.Delay * PIXELS_PER_TICK) / 3;
+                }
+                else {
+                    to.X = rxLine;
+                    to.Y = from.Y + m_controller.network.Delay * PIXELS_PER_TICK;
+                }
+                g.DrawLine(blackPen, from, to);
+
+                if (packet.Lost)
+                {
+                    g.DrawLine(redPen, new PointF(to.X - 10, to.Y - 10), new PointF(to.X + 10, to.Y + 10));
+                    g.DrawLine(redPen, new PointF(to.X - 10, to.Y + 10), new PointF(to.X + 10, to.Y - 10));
+                }
             }
 
             foreach (KeyValuePair<uint, Model.Ack> pair in m_controller.log.acks)
             {
-                g.DrawLine(thinPen, rxLine, pair.Key * PIXELS_PER_TICK, txLine, (pair.Key + m_controller.network.Delay) * PIXELS_PER_TICK);
+                PointF from, to;
+                from = new PointF(rxLine, pair.Key * PIXELS_PER_TICK);
+                to = new PointF();
+
+                Model.Ack ack = pair.Value;
+
+                if (ack.Lost)
+                {
+                    to.X = txLine + (rxLine - txLine) * 2 / 3;
+                    to.Y = from.Y + (m_controller.network.Delay * PIXELS_PER_TICK) / 3;
+                }
+                else
+                {
+                    to.X = txLine;
+                    to.Y = from.Y + m_controller.network.Delay * PIXELS_PER_TICK;
+                }
+                g.DrawLine(blackPen, from, to);
+
+                if (ack.Lost)
+                {
+                    g.DrawLine(redPen, new PointF(to.X - 10, to.Y - 10), new PointF(to.X + 10, to.Y + 10));
+                    g.DrawLine(redPen, new PointF(to.X - 10, to.Y + 10), new PointF(to.X + 10, to.Y - 10));
+                }
             }
 
             foreach (KeyValuePair<uint, Model.DataPacket> pair in m_controller.log.delivered)
@@ -81,6 +143,11 @@ namespace TCPFlow
         private void btnTick_Click(object sender, EventArgs e)
         {
             m_controller.Tick();
+        }
+
+        private void pbFlow_SizeChanged(object sender, EventArgs e)
+        {
+            DrawFlow();
         }
     }
 }

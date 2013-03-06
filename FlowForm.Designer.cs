@@ -32,9 +32,9 @@
             this.numDelay = new System.Windows.Forms.NumericUpDown();
             this.lblDelay = new System.Windows.Forms.Label();
             this.grpRunSettings = new System.Windows.Forms.GroupBox();
-            this.rdRunAutomatic = new System.Windows.Forms.RadioButton();
-            this.rdRunManual = new System.Windows.Forms.RadioButton();
             this.btnTick = new System.Windows.Forms.Button();
+            this.rdRunManual = new System.Windows.Forms.RadioButton();
+            this.rdRunAutomatic = new System.Windows.Forms.RadioButton();
             this.chkSkipHandshake = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbFlow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDelay)).BeginInit();
@@ -51,6 +51,7 @@
             this.pbFlow.Size = new System.Drawing.Size(597, 449);
             this.pbFlow.TabIndex = 0;
             this.pbFlow.TabStop = false;
+            this.pbFlow.SizeChanged += new System.EventHandler(this.pbFlow_SizeChanged);
             // 
             // numDelay
             // 
@@ -95,16 +96,15 @@
             this.grpRunSettings.TabStop = false;
             this.grpRunSettings.Text = "Run:";
             // 
-            // rdRunAutomatic
+            // btnTick
             // 
-            this.rdRunAutomatic.AutoSize = true;
-            this.rdRunAutomatic.Location = new System.Drawing.Point(7, 22);
-            this.rdRunAutomatic.Name = "rdRunAutomatic";
-            this.rdRunAutomatic.Size = new System.Drawing.Size(91, 21);
-            this.rdRunAutomatic.TabIndex = 0;
-            this.rdRunAutomatic.TabStop = true;
-            this.rdRunAutomatic.Text = "Automatic";
-            this.rdRunAutomatic.UseVisualStyleBackColor = true;
+            this.btnTick.Location = new System.Drawing.Point(41, 77);
+            this.btnTick.Name = "btnTick";
+            this.btnTick.Size = new System.Drawing.Size(75, 23);
+            this.btnTick.TabIndex = 2;
+            this.btnTick.Text = "Tick";
+            this.btnTick.UseVisualStyleBackColor = true;
+            this.btnTick.Click += new System.EventHandler(this.btnTick_Click);
             // 
             // rdRunManual
             // 
@@ -118,15 +118,16 @@
             this.rdRunManual.Text = "Manual";
             this.rdRunManual.UseVisualStyleBackColor = true;
             // 
-            // btnTick
+            // rdRunAutomatic
             // 
-            this.btnTick.Location = new System.Drawing.Point(41, 77);
-            this.btnTick.Name = "btnTick";
-            this.btnTick.Size = new System.Drawing.Size(75, 23);
-            this.btnTick.TabIndex = 2;
-            this.btnTick.Text = "Tick";
-            this.btnTick.UseVisualStyleBackColor = true;
-            this.btnTick.Click += new System.EventHandler(this.btnTick_Click);
+            this.rdRunAutomatic.AutoSize = true;
+            this.rdRunAutomatic.Location = new System.Drawing.Point(7, 22);
+            this.rdRunAutomatic.Name = "rdRunAutomatic";
+            this.rdRunAutomatic.Size = new System.Drawing.Size(91, 21);
+            this.rdRunAutomatic.TabIndex = 0;
+            this.rdRunAutomatic.TabStop = true;
+            this.rdRunAutomatic.Text = "Automatic";
+            this.rdRunAutomatic.UseVisualStyleBackColor = true;
             // 
             // chkSkipHandshake
             // 
