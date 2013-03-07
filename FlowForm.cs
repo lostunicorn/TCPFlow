@@ -153,9 +153,9 @@ namespace TCPFlow
                 DrawRotatedString(g, smallFont, Brushes.Black, "Ack: " + ack.NextID, from.X, from.Y, rxAngle, true);
             }
 
-            foreach (KeyValuePair<uint, Model.DataPacket> pair in m_controller.log.delivered)
+            foreach (KeyValuePair<uint, uint> pair in m_controller.log.delivered)
             {
-                Model.DataPacket packet = pair.Value;
+                uint ID = pair.Value;
 
                 PointF from = new PointF(rxLine, pair.Key * PIXELS_PER_TICK),
                     to = new PointF(from.X + DELIVERY_BORDER, from.Y - DELIVERY_BORDER);
@@ -164,7 +164,7 @@ namespace TCPFlow
                 g.DrawLine(bluePen, to, new PointF(to.X - 2, to.Y + 10));
 
                 from.X += 15;
-                DrawRotatedString(g, smallFont, Brushes.Blue, packet.ID.ToString(), from.X, from.Y, 0, false);
+                DrawRotatedString(g, smallFont, Brushes.Blue, ID.ToString(), from.X, from.Y, 0, false);
             }
 
             g.Dispose();

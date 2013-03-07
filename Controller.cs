@@ -22,11 +22,11 @@ namespace TCPFlow
             Time = 0;
         }
 
-        public Controller(uint delay)
+        public Controller(uint delay, uint rxBufferSize, uint ackTimeout)
         {
             log = new Log(this);
             sender = new Sender(this);
-            receiver = new Receiver(this);
+            receiver = new Receiver(this, rxBufferSize, ackTimeout);
             network = new Network(this, delay);
 
             sender.PacketSent += log.OnPacketSent;
@@ -44,11 +44,9 @@ namespace TCPFlow
 
         public void Tick()
         {
-            //receiver first: this delivers any packet that was
-            //already present and makes room for an arriving packet
+            network.Tick();
             receiver.Tick();
             sender.Tick();
-            network.Tick();
 
             ++Time;
         }
