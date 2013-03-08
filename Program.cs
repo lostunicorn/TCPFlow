@@ -20,10 +20,11 @@ namespace TCPFlow
         [STAThread]
         static void Main()
         {
+            /*
             Model.DataPacket packet;
             Model.Ack ack;
-
-            Controller controller = new Controller(20, 4, 50);
+            */
+            Controller controller = new Controller(5, 4, 50);
 
             controller.network.AddLostPacket(1);
             controller.network.AddLostAck(1);
@@ -34,7 +35,7 @@ namespace TCPFlow
             controller.network.Send(packet);
              */
 
-            DoTicks(controller, 20);
+            //DoTicks(controller, 20);
             /*
             controller.log.OnPacketDelivered(packet.ID);
             ack = new Model.Ack(20, 1, 4);
@@ -42,14 +43,14 @@ namespace TCPFlow
             controller.network.Send(ack);
              */
 
-            DoTicks(controller, 20);
+            //DoTicks(controller, 20);
             /*
             packet = new Model.DataPacket(40, 1);
             controller.log.OnPacketSent(packet);
             controller.network.Send(packet);
             */
 
-            DoTicks(controller, 20);
+            //DoTicks(controller, 20);
             /*
             ack = new Model.Ack(60, 1, 4);
             controller.log.OnAckSent(ack);
