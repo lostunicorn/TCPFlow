@@ -25,7 +25,7 @@ namespace TCPFlow
         public Controller(uint delay, uint rxBufferSize, uint ackTimeout)
         {
             log = new Log(this);
-            sender = new Sender(this);
+            sender = new Sender(this, ackTimeout);
             receiver = new Receiver(this, rxBufferSize, ackTimeout);
             network = new Network(this, delay);
 
@@ -38,7 +38,7 @@ namespace TCPFlow
 
             network.PacketArrived += receiver.OnPacketReceived;
             network.PacketLost += log.OnPacketLost;
-            network.AckArrived += sender.ReceiveAck;
+            network.AckArrived += sender.OnAckReceived;
             network.AckLost += log.OnAckLost;
         }
 

@@ -82,6 +82,7 @@ namespace TCPFlow.Model
         {
             m_sequenceNumbersHeld.Clear();
             m_buffer.Clear();
+            m_ackSendTime = uint.MaxValue;
         }
 
         public bool HoldPacket(uint id)

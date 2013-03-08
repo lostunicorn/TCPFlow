@@ -28,9 +28,11 @@ namespace TCPFlow
             controller.network.AddLostPacket(1);
             controller.network.AddLostAck(1);
 
+            /*
             packet = new Model.DataPacket(0, 0);
             controller.log.OnPacketSent(packet);
             controller.network.Send(packet);
+             */
 
             DoTicks(controller, 20);
             /*
@@ -41,9 +43,11 @@ namespace TCPFlow
              */
 
             DoTicks(controller, 20);
+            /*
             packet = new Model.DataPacket(40, 1);
             controller.log.OnPacketSent(packet);
             controller.network.Send(packet);
+            */
 
             DoTicks(controller, 20);
             /*

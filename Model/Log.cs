@@ -82,7 +82,7 @@ namespace TCPFlow.Model
 
         public void OnPacketSent(DataPacket packet)
         {
-            packets.Add(m_controller.Time, packet);
+            packets[m_controller.Time] = packet;
 
             OnChanged();
 
@@ -96,7 +96,7 @@ namespace TCPFlow.Model
 
         public void OnAckSent(Ack ack)
         {
-            acks.Add(m_controller.Time, ack);
+            acks[m_controller.Time] = ack;
 
             OnChanged();
 
@@ -110,7 +110,7 @@ namespace TCPFlow.Model
 
         public void OnPacketDelivered(uint ID)
         {
-            delivered.Add(m_controller.Time, ID);
+            delivered[m_controller.Time] = ID;
 
             OnChanged();
 

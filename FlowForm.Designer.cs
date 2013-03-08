@@ -134,6 +134,8 @@
             // 
             this.chkSkipHandshake.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkSkipHandshake.AutoSize = true;
+            this.chkSkipHandshake.Checked = true;
+            this.chkSkipHandshake.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkSkipHandshake.Location = new System.Drawing.Point(628, 67);
             this.chkSkipHandshake.Name = "chkSkipHandshake";
             this.chkSkipHandshake.Size = new System.Drawing.Size(133, 21);

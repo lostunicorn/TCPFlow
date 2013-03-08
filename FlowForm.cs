@@ -14,7 +14,7 @@ namespace TCPFlow
     {
         private Controller m_controller;
 
-        private const uint PIXELS_PER_TICK = 2;
+        private const uint PIXELS_PER_TICK = 10;
         private const int BORDER = 6;
         private const int DELIVERY_BORDER = 15;
         private readonly float HEADER_HEIGHT;
