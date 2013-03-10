@@ -63,7 +63,10 @@ namespace TCPFlow
         {
             uint endTime = m_controller.Time + 2 * m_controller.network.Delay;
 
-            Bitmap bitmap = new Bitmap(pnlFlow.Width, Convert.ToInt32(endTime * PIXELS_PER_TICK + HEADER_HEIGHT));
+            int width = pnlFlow.Width;
+            if (pnlFlow.VerticalScroll.Visible)
+                width -= SystemInformation.VerticalScrollBarWidth;
+            Bitmap bitmap = new Bitmap(width, Convert.ToInt32(endTime * PIXELS_PER_TICK + HEADER_HEIGHT));
             Graphics g = Graphics.FromImage(bitmap);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 

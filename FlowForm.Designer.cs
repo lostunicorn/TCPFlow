@@ -37,27 +37,30 @@
             this.rdRunAutomatic = new System.Windows.Forms.RadioButton();
             this.chkSkipHandshake = new System.Windows.Forms.CheckBox();
             this.pnlFlow = new System.Windows.Forms.Panel();
+            this.grpNetworkSettings = new System.Windows.Forms.GroupBox();
+            this.grpSenderSettings = new System.Windows.Forms.GroupBox();
+            this.grpReceiverSettings = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbFlow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDelay)).BeginInit();
             this.grpRunSettings.SuspendLayout();
             this.pnlFlow.SuspendLayout();
+            this.grpNetworkSettings.SuspendLayout();
             this.SuspendLayout();
             // 
             // pbFlow
             // 
             this.pbFlow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbFlow.Location = new System.Drawing.Point(3, 3);
+            this.pbFlow.Location = new System.Drawing.Point(0, 0);
             this.pbFlow.Name = "pbFlow";
-            this.pbFlow.Size = new System.Drawing.Size(541, 348);
+            this.pbFlow.Size = new System.Drawing.Size(322, 348);
             this.pbFlow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pbFlow.TabIndex = 0;
             this.pbFlow.TabStop = false;
             // 
             // numDelay
             // 
-            this.numDelay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numDelay.Location = new System.Drawing.Point(734, 12);
+            this.numDelay.Location = new System.Drawing.Point(71, 21);
             this.numDelay.Maximum = new decimal(new int[] {
             300,
             0,
@@ -76,13 +79,12 @@
             // 
             // lblDelay
             // 
-            this.lblDelay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblDelay.AutoSize = true;
-            this.lblDelay.Location = new System.Drawing.Point(625, 14);
+            this.lblDelay.Location = new System.Drawing.Point(17, 23);
             this.lblDelay.Name = "lblDelay";
-            this.lblDelay.Size = new System.Drawing.Size(103, 17);
+            this.lblDelay.Size = new System.Drawing.Size(48, 17);
             this.lblDelay.TabIndex = 2;
-            this.lblDelay.Text = "Network Delay:";
+            this.lblDelay.Text = "Delay:";
             // 
             // grpRunSettings
             // 
@@ -90,16 +92,16 @@
             this.grpRunSettings.Controls.Add(this.btnTick);
             this.grpRunSettings.Controls.Add(this.rdRunManual);
             this.grpRunSettings.Controls.Add(this.rdRunAutomatic);
-            this.grpRunSettings.Location = new System.Drawing.Point(628, 126);
+            this.grpRunSettings.Location = new System.Drawing.Point(787, 12);
             this.grpRunSettings.Name = "grpRunSettings";
-            this.grpRunSettings.Size = new System.Drawing.Size(174, 115);
+            this.grpRunSettings.Size = new System.Drawing.Size(276, 58);
             this.grpRunSettings.TabIndex = 3;
             this.grpRunSettings.TabStop = false;
-            this.grpRunSettings.Text = "Run:";
+            this.grpRunSettings.Text = "Run";
             // 
             // btnTick
             // 
-            this.btnTick.Location = new System.Drawing.Point(41, 77);
+            this.btnTick.Location = new System.Drawing.Point(185, 19);
             this.btnTick.Name = "btnTick";
             this.btnTick.Size = new System.Drawing.Size(75, 23);
             this.btnTick.TabIndex = 2;
@@ -111,7 +113,7 @@
             // 
             this.rdRunManual.AutoSize = true;
             this.rdRunManual.Checked = true;
-            this.rdRunManual.Location = new System.Drawing.Point(7, 50);
+            this.rdRunManual.Location = new System.Drawing.Point(104, 21);
             this.rdRunManual.Name = "rdRunManual";
             this.rdRunManual.Size = new System.Drawing.Size(75, 21);
             this.rdRunManual.TabIndex = 1;
@@ -132,11 +134,10 @@
             // 
             // chkSkipHandshake
             // 
-            this.chkSkipHandshake.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkSkipHandshake.AutoSize = true;
             this.chkSkipHandshake.Checked = true;
             this.chkSkipHandshake.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSkipHandshake.Location = new System.Drawing.Point(628, 67);
+            this.chkSkipHandshake.Location = new System.Drawing.Point(188, 22);
             this.chkSkipHandshake.Name = "chkSkipHandshake";
             this.chkSkipHandshake.Size = new System.Drawing.Size(133, 21);
             this.chkSkipHandshake.TabIndex = 4;
@@ -150,22 +151,56 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlFlow.AutoScroll = true;
             this.pnlFlow.Controls.Add(this.pbFlow);
-            this.pnlFlow.Location = new System.Drawing.Point(13, 13);
+            this.pnlFlow.Location = new System.Drawing.Point(231, 82);
             this.pnlFlow.Name = "pnlFlow";
-            this.pnlFlow.Size = new System.Drawing.Size(606, 448);
+            this.pnlFlow.Size = new System.Drawing.Size(614, 422);
             this.pnlFlow.TabIndex = 5;
             this.pnlFlow.SizeChanged += new System.EventHandler(this.pnlFlow_SizeChanged);
+            // 
+            // grpNetworkSettings
+            // 
+            this.grpNetworkSettings.Controls.Add(this.lblDelay);
+            this.grpNetworkSettings.Controls.Add(this.chkSkipHandshake);
+            this.grpNetworkSettings.Controls.Add(this.numDelay);
+            this.grpNetworkSettings.Location = new System.Drawing.Point(13, 13);
+            this.grpNetworkSettings.Name = "grpNetworkSettings";
+            this.grpNetworkSettings.Size = new System.Drawing.Size(328, 57);
+            this.grpNetworkSettings.TabIndex = 6;
+            this.grpNetworkSettings.TabStop = false;
+            this.grpNetworkSettings.Text = "Network";
+            // 
+            // grpSenderSettings
+            // 
+            this.grpSenderSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.grpSenderSettings.Location = new System.Drawing.Point(13, 82);
+            this.grpSenderSettings.Name = "grpSenderSettings";
+            this.grpSenderSettings.Size = new System.Drawing.Size(212, 422);
+            this.grpSenderSettings.TabIndex = 7;
+            this.grpSenderSettings.TabStop = false;
+            this.grpSenderSettings.Text = "Sender";
+            // 
+            // grpReceiverSettings
+            // 
+            this.grpReceiverSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpReceiverSettings.Location = new System.Drawing.Point(851, 82);
+            this.grpReceiverSettings.Name = "grpReceiverSettings";
+            this.grpReceiverSettings.Size = new System.Drawing.Size(212, 422);
+            this.grpReceiverSettings.TabIndex = 8;
+            this.grpReceiverSettings.TabStop = false;
+            this.grpReceiverSettings.Text = "Receiver";
             // 
             // FlowForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(814, 473);
-            this.Controls.Add(this.pnlFlow);
-            this.Controls.Add(this.chkSkipHandshake);
+            this.ClientSize = new System.Drawing.Size(1075, 516);
+            this.Controls.Add(this.grpReceiverSettings);
+            this.Controls.Add(this.grpSenderSettings);
+            this.Controls.Add(this.grpNetworkSettings);
             this.Controls.Add(this.grpRunSettings);
-            this.Controls.Add(this.lblDelay);
-            this.Controls.Add(this.numDelay);
+            this.Controls.Add(this.pnlFlow);
             this.Name = "FlowForm";
             this.Text = "TCP Flow Visualizer";
             ((System.ComponentModel.ISupportInitialize)(this.pbFlow)).EndInit();
@@ -174,8 +209,9 @@
             this.grpRunSettings.PerformLayout();
             this.pnlFlow.ResumeLayout(false);
             this.pnlFlow.PerformLayout();
+            this.grpNetworkSettings.ResumeLayout(false);
+            this.grpNetworkSettings.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -190,6 +226,9 @@
         private System.Windows.Forms.RadioButton rdRunAutomatic;
         private System.Windows.Forms.CheckBox chkSkipHandshake;
         private System.Windows.Forms.Panel pnlFlow;
+        private System.Windows.Forms.GroupBox grpNetworkSettings;
+        private System.Windows.Forms.GroupBox grpSenderSettings;
+        private System.Windows.Forms.GroupBox grpReceiverSettings;
     }
 }
 
