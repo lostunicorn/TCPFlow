@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,27 +20,72 @@ namespace TCPFlow
         private const uint PIXELS_PER_TICK = 20;
         private const int BORDER = 6;
         private const int DELIVERY_BORDER = 15;
-        private readonly float HEADER_HEIGHT;
+
+        private float m_headerHeight;
+
+        Pen m_blackPen = new Pen(Brushes.Black, 3),
+            m_redPen = new Pen(Brushes.Red, 3),
+            m_bluePen = new Pen(Brushes.Blue, 3);
+
+        Font m_bigFont = new Font(FontFamily.GenericSerif, 12),
+            m_smallFont = new Font(FontFamily.GenericSerif, 10, FontStyle.Bold);
+
+        SizeF m_txSize,
+            m_rxSize;
+
+        float m_txLine,
+            m_rxLine;
+
+        float m_txAngle,
+            m_rxAngle;
+
+        LinearGradientBrush m_txBrush,
+            m_rxBrush;
+
+        Pen m_txPen,
+            m_rxPen;
+
+        int m_flowWidth;
 
         public FlowForm(Controller controller)
         {
             InitializeComponent();
 
-            HEADER_HEIGHT = CalculateHeaderHeight();
+            pnlFlow.VerticalScroll.Visible = true;
 
             m_controller = controller;
             m_controller.Ticked += DrawFlow;
 
+            InitStaticGraphics();
+            InitDynamicGraphics();
+
             DrawFlow();
         }
 
-        private float CalculateHeaderHeight()
+        private void InitStaticGraphics()
         {
             Bitmap bitmap = new Bitmap(100, 100);
             Graphics g = Graphics.FromImage(bitmap);
 
-            Font font = new Font(FontFamily.GenericSerif, 12);
-            return 4*BORDER + g.MeasureString("TX", font).Height;
+            m_headerHeight = 4 * BORDER + g.MeasureString("TX", m_bigFont).Height;
+
+            m_txSize = g.MeasureString("TX", m_bigFont);
+            m_rxSize = g.MeasureString("RX", m_bigFont);
+        }
+
+        private void InitDynamicGraphics()
+        {
+            m_flowWidth = pnlFlow.Width - SystemInformation.VerticalScrollBarWidth;
+
+            m_txLine = 2 * BORDER + m_txSize.Width / 2;
+            m_txAngle = (float)(180 / Math.PI * Math.Atan2(m_controller.network.Delay * PIXELS_PER_TICK, m_rxLine - m_txLine));
+            m_txBrush = new LinearGradientBrush(new PointF(m_txLine, 0), new PointF(m_rxLine, 0), Color.Black, Color.White);
+            m_txPen = new Pen(m_txBrush, 3);
+
+            m_rxLine = m_flowWidth - (2 * BORDER + DELIVERY_BORDER + m_rxSize.Width / 2);
+            m_rxAngle = -m_txAngle;
+            m_rxBrush = new LinearGradientBrush(new PointF(m_txLine, 0), new PointF(m_rxLine, 0), Color.White, Color.Black);
+            m_rxPen = new Pen(m_rxBrush, 3);
         }
 
         void DrawRotatedString(Graphics g, Font font, Brush brush, string s, float x, float y, float angle, bool fromTheRight)
@@ -84,141 +130,123 @@ namespace TCPFlow
         {
             uint endTime = m_controller.Time + 2 * m_controller.network.Delay;
 
-            int width = pnlFlow.Width;
-            if (pnlFlow.VerticalScroll.Visible)
-                width -= SystemInformation.VerticalScrollBarWidth;
-            Bitmap bitmap = new Bitmap(width, Convert.ToInt32(endTime * PIXELS_PER_TICK + HEADER_HEIGHT));
+            Bitmap bitmap = new Bitmap(m_flowWidth, Convert.ToInt32(endTime * PIXELS_PER_TICK + m_headerHeight));
             Graphics g = Graphics.FromImage(bitmap);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
             g.FillRectangle(Brushes.White, 0, 0, bitmap.Width, bitmap.Height);
 
-            Pen blackPen = new Pen(Brushes.Black, 3),
-                redPen = new Pen(Brushes.Red, 3),
-                bluePen = new Pen(Brushes.Blue, 3);
-            Font bigFont = new Font(FontFamily.GenericSerif, 12),
-                smallFont = new Font(FontFamily.GenericSerif, 10, FontStyle.Bold);
-
             //Render the header
-            SizeF txSize = g.MeasureString("TX", bigFont),
-                rxSize = g.MeasureString("RX", bigFont);
+            g.DrawRectangle(m_blackPen, BORDER, BORDER, m_txSize.Width + 2 * BORDER, m_txSize.Height + 2 * BORDER);
+            g.DrawString("TX", m_bigFont, Brushes.Black, 2*BORDER, 2 * BORDER);
+            g.DrawLine(m_blackPen, m_txLine, 3 * BORDER + m_txSize.Height, m_txLine, bitmap.Height);
 
-            float txLine = 2 * BORDER + txSize.Width / 2,
-                rxLine = bitmap.Width - (2 * BORDER + DELIVERY_BORDER + rxSize.Width / 2),
-                txAngle = (float)(180 / Math.PI * Math.Atan2(m_controller.network.Delay * PIXELS_PER_TICK, rxLine - txLine)),
-                rxAngle = -txAngle;
-
-            System.Drawing.Drawing2D.LinearGradientBrush txBrush = new System.Drawing.Drawing2D.LinearGradientBrush(new PointF(txLine, 0), new PointF(rxLine, 0), Color.Black, Color.White);
-            Pen txPen = new Pen(txBrush, 3);
-            System.Drawing.Drawing2D.LinearGradientBrush rxBrush = new System.Drawing.Drawing2D.LinearGradientBrush(new PointF(txLine, 0), new PointF(rxLine, 0), Color.White, Color.Black);
-            Pen rxPen = new Pen(rxBrush, 3);
-
-            g.DrawRectangle(blackPen, BORDER, BORDER, txSize.Width + 2 * BORDER, txSize.Height + 2 * BORDER);
-            g.DrawString("TX", bigFont, Brushes.Black, 2*BORDER, 2 * BORDER);
-            g.DrawLine(blackPen, txLine, 3 * BORDER + txSize.Height, txLine, bitmap.Height);
-
-            g.DrawRectangle(blackPen, bitmap.Width - (3 * BORDER + DELIVERY_BORDER + rxSize.Width), BORDER, rxSize.Width + 2 * BORDER, rxSize.Height + 2 * BORDER);
-            g.DrawString("RX", bigFont, Brushes.Black, bitmap.Width - (2 * BORDER + DELIVERY_BORDER + rxSize.Width), 2 * BORDER);
-            g.DrawLine(blackPen, rxLine, 3 * BORDER + rxSize.Height, rxLine, bitmap.Height);
+            g.DrawRectangle(m_blackPen, bitmap.Width - (3 * BORDER + DELIVERY_BORDER + m_rxSize.Width), BORDER, m_rxSize.Width + 2 * BORDER, m_rxSize.Height + 2 * BORDER);
+            g.DrawString("RX", m_bigFont, Brushes.Black, bitmap.Width - (2 * BORDER + DELIVERY_BORDER + m_rxSize.Width), 2 * BORDER);
+            g.DrawLine(m_blackPen, m_rxLine, 3 * BORDER + m_rxSize.Height, m_rxLine, bitmap.Height);
 
             //translate the graphics object so all future coördinates can be calculated in terms of simulated
             //time without taking the header into account
-            g.TranslateTransform(0, HEADER_HEIGHT);
+            g.TranslateTransform(0, m_headerHeight);
 
-            //render packets, acks and such
-            foreach (KeyValuePair<uint, Model.DataPacket> pair in m_controller.log.packets)
+            for (uint time = 0; time < m_controller.Time; ++time)
             {
-                PointF from, to;
-                from = new PointF(txLine, pair.Key*PIXELS_PER_TICK);
-                to = new PointF();
-
-                Model.DataPacket packet = pair.Value;
-
-                if (packet.Lost &&
-                    m_controller.Time > packet.Time + m_controller.network.Delay / 3)
+                //render packets, acks and such
+                if (m_controller.log.packets.ContainsKey(time))
                 {
-                    to.X = txLine + (rxLine - txLine)/3;
-                    to.Y = from.Y + (m_controller.network.Delay * PIXELS_PER_TICK) / 3;
+                    Model.DataPacket packet = m_controller.log.packets[time];
 
-                    //g.DrawLine(blackPen, from, to);
-                    g.DrawLine(txPen, from, to);
-                    g.DrawLine(redPen, new PointF(to.X - 10, to.Y - 10), new PointF(to.X + 10, to.Y + 10));
-                    g.DrawLine(redPen, new PointF(to.X - 10, to.Y + 10), new PointF(to.X + 10, to.Y - 10));
+                    PointF from, to;
+                    from = new PointF(m_txLine, time * PIXELS_PER_TICK);
+                    to = new PointF();
+
+                    if (packet.Lost &&
+                        m_controller.Time > packet.Time + m_controller.network.Delay / 3)
+                    {
+                        to.X = m_txLine + (m_rxLine - m_txLine) / 3;
+                        to.Y = from.Y + (m_controller.network.Delay * PIXELS_PER_TICK) / 3;
+
+                        //g.DrawLine(blackPen, from, to);
+                        g.DrawLine(m_txPen, from, to);
+                        g.DrawLine(m_redPen, new PointF(to.X - 10, to.Y - 10), new PointF(to.X + 10, to.Y + 10));
+                        g.DrawLine(m_redPen, new PointF(to.X - 10, to.Y + 10), new PointF(to.X + 10, to.Y - 10));
+                    }
+                    else
+                    {
+                        float r = 1;
+
+                        if (m_controller.Time < packet.Time + m_controller.network.Delay)
+                            r = Convert.ToSingle((m_controller.Time - packet.Time) * 1.0 / m_controller.network.Delay);
+
+                        to.Y = from.Y + m_controller.network.Delay * PIXELS_PER_TICK * r;
+                        to.X = m_txLine + (m_rxLine - m_txLine) * r;
+
+                        //g.DrawLine(blackPen, from, to);
+                        g.DrawLine(m_txPen, from, to);
+                    }
+
+                    string desc;
+                    if (packet.Flags == 0)
+                        desc = string.Format("Seq: {0}", packet.ID);
+                    else
+                        desc = string.Format("Seq: {0} Flags: {1}", packet.ID, GetFlagString(packet.Flags));
+                    DrawRotatedString(g, m_smallFont, Brushes.Black, desc, from.X, from.Y, m_txAngle, false);
                 }
-                else {
-                    float r = 1;
 
-                    if (m_controller.Time < packet.Time + m_controller.network.Delay)
-                        r = Convert.ToSingle((m_controller.Time - packet.Time) * 1.0 / m_controller.network.Delay);
-
-                    to.Y = from.Y + m_controller.network.Delay * PIXELS_PER_TICK * r;
-                    to.X = txLine + (rxLine - txLine) * r;
-
-                    //g.DrawLine(blackPen, from, to);
-                    g.DrawLine(txPen, from, to);
-                }
-
-                string desc;
-                if (packet.Flags == 0)
-                    desc = string.Format("Seq: {0}", packet.ID);
-                else
-                    desc = string.Format("Seq: {0} Flags: {1}", packet.ID, GetFlagString(packet.Flags));
-                DrawRotatedString(g, smallFont, Brushes.Black, desc, from.X, from.Y, txAngle, false);
-            }
-
-            foreach (KeyValuePair<uint, Model.Ack> pair in m_controller.log.acks)
-            {
-                PointF from, to;
-                from = new PointF(rxLine, pair.Key * PIXELS_PER_TICK);
-                to = new PointF();
-
-                Model.Ack ack = pair.Value;
-
-                if (ack.Lost &&
-                    m_controller.Time > ack.Time + m_controller.network.Delay / 3)
+                if (m_controller.log.acks.ContainsKey(time))
                 {
-                    to.X = rxLine - (rxLine - txLine) / 3;
-                    to.Y = from.Y + (m_controller.network.Delay * PIXELS_PER_TICK) / 3;
+                    Model.Ack ack = m_controller.log.acks[time];
 
-                    //g.DrawLine(blackPen, from, to);
-                    g.DrawLine(rxPen, from, to);
-                    g.DrawLine(redPen, new PointF(to.X - 10, to.Y - 10), new PointF(to.X + 10, to.Y + 10));
-                    g.DrawLine(redPen, new PointF(to.X - 10, to.Y + 10), new PointF(to.X + 10, to.Y - 10));
+                    PointF from, to;
+                    from = new PointF(m_rxLine, time * PIXELS_PER_TICK);
+                    to = new PointF();
+
+                    if (ack.Lost &&
+                        m_controller.Time > ack.Time + m_controller.network.Delay / 3)
+                    {
+                        to.X = m_rxLine - (m_rxLine - m_txLine) / 3;
+                        to.Y = from.Y + (m_controller.network.Delay * PIXELS_PER_TICK) / 3;
+
+                        //g.DrawLine(blackPen, from, to);
+                        g.DrawLine(m_rxPen, from, to);
+                        g.DrawLine(m_redPen, new PointF(to.X - 10, to.Y - 10), new PointF(to.X + 10, to.Y + 10));
+                        g.DrawLine(m_redPen, new PointF(to.X - 10, to.Y + 10), new PointF(to.X + 10, to.Y - 10));
+                    }
+                    else
+                    {
+                        float r = 1;
+
+                        if (m_controller.Time < ack.Time + m_controller.network.Delay)
+                            r = Convert.ToSingle((m_controller.Time - ack.Time) * 1.0 / m_controller.network.Delay);
+
+                        to.X = m_rxLine - (m_rxLine - m_txLine) * r;
+                        to.Y = from.Y + m_controller.network.Delay * PIXELS_PER_TICK * r;
+
+                        //g.DrawLine(blackPen, from, to);
+                        g.DrawLine(m_rxPen, from, to);
+                    }
+
+                    string desc;
+                    if (ack.Flags == 0)
+                        desc = string.Format("Ack: {0} Window: {1}", ack.NextID, ack.Window);
+                    else
+                        desc = string.Format("Ack: {0} Window: {1} Flags: {2}", ack.NextID, ack.Window, GetFlagString(ack.Flags));
+                    DrawRotatedString(g, m_smallFont, Brushes.Black, desc, from.X, from.Y, m_rxAngle, true);
                 }
-                else
+
+                if (m_controller.log.delivered.ContainsKey(time))
                 {
-                    float r = 1;
+                    uint ID = m_controller.log.delivered[time];
 
-                    if (m_controller.Time < ack.Time + m_controller.network.Delay)
-                        r = Convert.ToSingle((m_controller.Time - ack.Time) * 1.0 / m_controller.network.Delay);
+                    PointF from = new PointF(m_rxLine, time * PIXELS_PER_TICK),
+                        to = new PointF(from.X + DELIVERY_BORDER, from.Y - DELIVERY_BORDER);
+                    g.DrawLine(m_bluePen, from, to);
+                    g.DrawLine(m_bluePen, to, new PointF(to.X - 10, to.Y + 2));
+                    g.DrawLine(m_bluePen, to, new PointF(to.X - 2, to.Y + 10));
 
-                    to.X = rxLine - (rxLine - txLine) * r;
-                    to.Y = from.Y + m_controller.network.Delay * PIXELS_PER_TICK * r;
-
-                    //g.DrawLine(blackPen, from, to);
-                    g.DrawLine(rxPen, from, to);
+                    from.X += 15;
+                    DrawRotatedString(g, m_smallFont, Brushes.Blue, ID.ToString(), from.X, from.Y, 0, false);
                 }
-
-                string desc;
-                if (ack.Flags == 0)
-                    desc = string.Format("Ack: {0} Window: {1}", ack.NextID, ack.Window);
-                else
-                    desc = string.Format("Ack: {0} Window: {1} Flags: {2}", ack.NextID, ack.Window, GetFlagString(ack.Flags));
-                DrawRotatedString(g, smallFont, Brushes.Black, desc, from.X, from.Y, rxAngle, true);
-            }
-
-            foreach (KeyValuePair<uint, uint> pair in m_controller.log.delivered)
-            {
-                uint ID = pair.Value;
-
-                PointF from = new PointF(rxLine, pair.Key * PIXELS_PER_TICK),
-                    to = new PointF(from.X + DELIVERY_BORDER, from.Y - DELIVERY_BORDER);
-                g.DrawLine(bluePen, from, to);
-                g.DrawLine(bluePen, to, new PointF(to.X - 10, to.Y + 2));
-                g.DrawLine(bluePen, to, new PointF(to.X - 2, to.Y + 10));
-
-                from.X += 15;
-                DrawRotatedString(g, smallFont, Brushes.Blue, ID.ToString(), from.X, from.Y, 0, false);
             }
 
             g.Dispose();
@@ -237,6 +265,7 @@ namespace TCPFlow
 
         private void pnlFlow_SizeChanged(object sender, EventArgs e)
         {
+            InitDynamicGraphics();
             DrawFlow();
         }
 
@@ -279,6 +308,11 @@ namespace TCPFlow
         private void chkSkipHandshake_CheckedChanged(object sender, EventArgs e)
         {
             m_controller.sender.SkipHandshake = chkSkipHandshake.Checked;
+        }
+
+        private void FlowForm_Shown(object sender, EventArgs e)
+        {
+            InitDynamicGraphics();
         }
     }
 }

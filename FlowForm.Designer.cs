@@ -243,6 +243,7 @@
             this.Controls.Add(this.pnlFlow);
             this.Name = "FlowForm";
             this.Text = "TCP Flow Visualizer";
+            this.Shown += new System.EventHandler(this.FlowForm_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.pbFlow)).EndInit();
             this.ctxStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numDelay)).EndInit();
