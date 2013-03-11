@@ -13,7 +13,7 @@ namespace TCPFlow.Model
         public uint Number { get; private set; }
         private static uint m_nextNumber = 0;
 
-        public DataPacket(uint time, uint id) : base(time)
+        public DataPacket(uint time, uint id, uint flags = 0) : base(time, flags)
         {
             ID = id;
             Number = m_nextNumber++;

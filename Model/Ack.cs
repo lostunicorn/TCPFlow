@@ -15,7 +15,7 @@ namespace TCPFlow.Model
         public uint Number { get; private set; }
         private static uint m_nextNumber = 0;
 
-        public Ack(uint time, uint nextID, uint window) : base(time)
+        public Ack(uint time, uint nextID, uint window, uint flags = 0) : base(time, flags)
         {
             NextID = nextID;
             Window = window;

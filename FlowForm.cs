@@ -14,6 +14,8 @@ namespace TCPFlow
     {
         private Controller m_controller;
 
+        private Point m_clickLocation;
+
         private const uint PIXELS_PER_TICK = 20;
         private const int BORDER = 6;
         private const int DELIVERY_BORDER = 15;
@@ -26,8 +28,7 @@ namespace TCPFlow
             HEADER_HEIGHT = CalculateHeaderHeight();
 
             m_controller = controller;
-
-            m_controller.log.Changed += DrawFlow;
+            m_controller.Ticked += DrawFlow;
 
             DrawFlow();
         }
@@ -59,6 +60,26 @@ namespace TCPFlow
             g.Restore(state);
         }
 
+        static string GetFlagString(uint flags)
+        {
+            Type flagType = typeof(Model.Packet.FLAGS);
+
+            StringBuilder builder = new StringBuilder();
+            bool first = true;
+            Array vals = Enum.GetValues(flagType);
+            foreach (int val in vals)
+            {
+                if ((flags & val) == val)
+                {
+                    if (!first)
+                        builder.Append("|");
+                    builder.Append(Enum.GetName(flagType, val));
+                }
+            }
+
+            return builder.ToString();
+        }
+
         void DrawFlow()
         {
             uint endTime = m_controller.Time + 2 * m_controller.network.Delay;
@@ -87,6 +108,11 @@ namespace TCPFlow
                 txAngle = (float)(180 / Math.PI * Math.Atan2(m_controller.network.Delay * PIXELS_PER_TICK, rxLine - txLine)),
                 rxAngle = -txAngle;
 
+            System.Drawing.Drawing2D.LinearGradientBrush txBrush = new System.Drawing.Drawing2D.LinearGradientBrush(new PointF(txLine, 0), new PointF(rxLine, 0), Color.Black, Color.White);
+            Pen txPen = new Pen(txBrush, 3);
+            System.Drawing.Drawing2D.LinearGradientBrush rxBrush = new System.Drawing.Drawing2D.LinearGradientBrush(new PointF(txLine, 0), new PointF(rxLine, 0), Color.White, Color.Black);
+            Pen rxPen = new Pen(rxBrush, 3);
+
             g.DrawRectangle(blackPen, BORDER, BORDER, txSize.Width + 2 * BORDER, txSize.Height + 2 * BORDER);
             g.DrawString("TX", bigFont, Brushes.Black, 2*BORDER, 2 * BORDER);
             g.DrawLine(blackPen, txLine, 3 * BORDER + txSize.Height, txLine, bitmap.Height);
@@ -108,24 +134,36 @@ namespace TCPFlow
 
                 Model.DataPacket packet = pair.Value;
 
-                if (packet.Lost)
+                if (packet.Lost &&
+                    m_controller.Time > packet.Time + m_controller.network.Delay / 3)
                 {
                     to.X = txLine + (rxLine - txLine)/3;
                     to.Y = from.Y + (m_controller.network.Delay * PIXELS_PER_TICK) / 3;
-                }
-                else {
-                    to.X = rxLine;
-                    to.Y = from.Y + m_controller.network.Delay * PIXELS_PER_TICK;
-                }
-                g.DrawLine(blackPen, from, to);
 
-                if (packet.Lost)
-                {
+                    //g.DrawLine(blackPen, from, to);
+                    g.DrawLine(txPen, from, to);
                     g.DrawLine(redPen, new PointF(to.X - 10, to.Y - 10), new PointF(to.X + 10, to.Y + 10));
                     g.DrawLine(redPen, new PointF(to.X - 10, to.Y + 10), new PointF(to.X + 10, to.Y - 10));
                 }
+                else {
+                    float r = 1;
 
-                DrawRotatedString(g, smallFont, Brushes.Black, "Seq: " + packet.ID, from.X, from.Y, txAngle, false);
+                    if (m_controller.Time < packet.Time + m_controller.network.Delay)
+                        r = Convert.ToSingle((m_controller.Time - packet.Time) * 1.0 / m_controller.network.Delay);
+
+                    to.Y = from.Y + m_controller.network.Delay * PIXELS_PER_TICK * r;
+                    to.X = txLine + (rxLine - txLine) * r;
+
+                    //g.DrawLine(blackPen, from, to);
+                    g.DrawLine(txPen, from, to);
+                }
+
+                string desc;
+                if (packet.Flags == 0)
+                    desc = string.Format("Seq: {0}", packet.ID);
+                else
+                    desc = string.Format("Seq: {0} Flags: {1}", packet.ID, GetFlagString(packet.Flags));
+                DrawRotatedString(g, smallFont, Brushes.Black, desc, from.X, from.Y, txAngle, false);
             }
 
             foreach (KeyValuePair<uint, Model.Ack> pair in m_controller.log.acks)
@@ -136,24 +174,37 @@ namespace TCPFlow
 
                 Model.Ack ack = pair.Value;
 
-                if (ack.Lost)
+                if (ack.Lost &&
+                    m_controller.Time > ack.Time + m_controller.network.Delay / 3)
                 {
-                    to.X = txLine + (rxLine - txLine) * 2 / 3;
+                    to.X = rxLine - (rxLine - txLine) / 3;
                     to.Y = from.Y + (m_controller.network.Delay * PIXELS_PER_TICK) / 3;
-                }
-                else
-                {
-                    to.X = txLine;
-                    to.Y = from.Y + m_controller.network.Delay * PIXELS_PER_TICK;
-                }
-                g.DrawLine(blackPen, from, to);
 
-                if (ack.Lost)
-                {
+                    //g.DrawLine(blackPen, from, to);
+                    g.DrawLine(rxPen, from, to);
                     g.DrawLine(redPen, new PointF(to.X - 10, to.Y - 10), new PointF(to.X + 10, to.Y + 10));
                     g.DrawLine(redPen, new PointF(to.X - 10, to.Y + 10), new PointF(to.X + 10, to.Y - 10));
                 }
-                DrawRotatedString(g, smallFont, Brushes.Black, String.Format("Ack: {0} Window: {1}", ack.NextID, ack.Window), from.X, from.Y, rxAngle, true);
+                else
+                {
+                    float r = 1;
+
+                    if (m_controller.Time < ack.Time + m_controller.network.Delay)
+                        r = Convert.ToSingle((m_controller.Time - ack.Time) * 1.0 / m_controller.network.Delay);
+
+                    to.X = rxLine - (rxLine - txLine) * r;
+                    to.Y = from.Y + m_controller.network.Delay * PIXELS_PER_TICK * r;
+
+                    //g.DrawLine(blackPen, from, to);
+                    g.DrawLine(rxPen, from, to);
+                }
+
+                string desc;
+                if (ack.Flags == 0)
+                    desc = string.Format("Ack: {0} Window: {1}", ack.NextID, ack.Window);
+                else
+                    desc = string.Format("Ack: {0} Window: {1} Flags: {2}", ack.NextID, ack.Window, GetFlagString(ack.Flags));
+                DrawRotatedString(g, smallFont, Brushes.Black, desc, from.X, from.Y, rxAngle, true);
             }
 
             foreach (KeyValuePair<uint, uint> pair in m_controller.log.delivered)
@@ -187,6 +238,47 @@ namespace TCPFlow
         private void pnlFlow_SizeChanged(object sender, EventArgs e)
         {
             DrawFlow();
+        }
+
+        private void ctxStrip_Opened(object sender, EventArgs e)
+        {
+            System.Diagnostics.Debug.Print("ctxStrip_Opened");
+        }
+
+        private void pbFlow_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                //System.Diagnostics.Debug.Print("pbFlow_MouseDown");
+                m_clickLocation = e.Location;
+            }
+        }
+
+        private void pbFlow_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                //System.Diagnostics.Debug.Print("pbFlow_MouseMove");
+                m_clickLocation = e.Location;
+            }
+        }
+
+        private void pbFlow_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                //System.Diagnostics.Debug.Print("pbFlow_MouseUp");
+            }
+        }
+
+        private void ctxStrip_Opening(object sender, CancelEventArgs e)
+        {
+            //modify menu based on m_clickLocation
+        }
+
+        private void chkSkipHandshake_CheckedChanged(object sender, EventArgs e)
+        {
+            m_controller.sender.SkipHandshake = chkSkipHandshake.Checked;
         }
     }
 }

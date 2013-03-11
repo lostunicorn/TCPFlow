@@ -28,7 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.pbFlow = new System.Windows.Forms.PictureBox();
+            this.ctxStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mnuDropDataPacket = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuDropAck = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuHoldPacket = new System.Windows.Forms.ToolStripMenuItem();
             this.numDelay = new System.Windows.Forms.NumericUpDown();
             this.lblDelay = new System.Windows.Forms.Label();
             this.grpRunSettings = new System.Windows.Forms.GroupBox();
@@ -41,6 +46,7 @@
             this.grpSenderSettings = new System.Windows.Forms.GroupBox();
             this.grpReceiverSettings = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbFlow)).BeginInit();
+            this.ctxStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDelay)).BeginInit();
             this.grpRunSettings.SuspendLayout();
             this.pnlFlow.SuspendLayout();
@@ -51,12 +57,45 @@
             // 
             this.pbFlow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbFlow.ContextMenuStrip = this.ctxStrip;
             this.pbFlow.Location = new System.Drawing.Point(0, 0);
             this.pbFlow.Name = "pbFlow";
             this.pbFlow.Size = new System.Drawing.Size(322, 348);
             this.pbFlow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pbFlow.TabIndex = 0;
             this.pbFlow.TabStop = false;
+            this.pbFlow.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pbFlow_MouseDown);
+            this.pbFlow.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pbFlow_MouseMove);
+            this.pbFlow.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pbFlow_MouseUp);
+            // 
+            // ctxStrip
+            // 
+            this.ctxStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuDropDataPacket,
+            this.mnuDropAck,
+            this.mnuHoldPacket});
+            this.ctxStrip.Name = "ctxStrip";
+            this.ctxStrip.ShowImageMargin = false;
+            this.ctxStrip.Size = new System.Drawing.Size(171, 76);
+            this.ctxStrip.Opening += new System.ComponentModel.CancelEventHandler(this.ctxStrip_Opening);
+            // 
+            // mnuDropDataPacket
+            // 
+            this.mnuDropDataPacket.Name = "mnuDropDataPacket";
+            this.mnuDropDataPacket.Size = new System.Drawing.Size(170, 24);
+            this.mnuDropDataPacket.Text = "Drop Data Packet";
+            // 
+            // mnuDropAck
+            // 
+            this.mnuDropAck.Name = "mnuDropAck";
+            this.mnuDropAck.Size = new System.Drawing.Size(170, 24);
+            this.mnuDropAck.Text = "Drop Ack";
+            // 
+            // mnuHoldPacket
+            // 
+            this.mnuHoldPacket.Name = "mnuHoldPacket";
+            this.mnuHoldPacket.Size = new System.Drawing.Size(170, 24);
+            this.mnuHoldPacket.Text = "Hold Packet";
             // 
             // numDelay
             // 
@@ -143,6 +182,7 @@
             this.chkSkipHandshake.TabIndex = 4;
             this.chkSkipHandshake.Text = "Skip Handshake";
             this.chkSkipHandshake.UseVisualStyleBackColor = true;
+            this.chkSkipHandshake.CheckedChanged += new System.EventHandler(this.chkSkipHandshake_CheckedChanged);
             // 
             // pnlFlow
             // 
@@ -204,6 +244,7 @@
             this.Name = "FlowForm";
             this.Text = "TCP Flow Visualizer";
             ((System.ComponentModel.ISupportInitialize)(this.pbFlow)).EndInit();
+            this.ctxStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numDelay)).EndInit();
             this.grpRunSettings.ResumeLayout(false);
             this.grpRunSettings.PerformLayout();
@@ -229,6 +270,10 @@
         private System.Windows.Forms.GroupBox grpNetworkSettings;
         private System.Windows.Forms.GroupBox grpSenderSettings;
         private System.Windows.Forms.GroupBox grpReceiverSettings;
+        private System.Windows.Forms.ContextMenuStrip ctxStrip;
+        private System.Windows.Forms.ToolStripMenuItem mnuDropDataPacket;
+        private System.Windows.Forms.ToolStripMenuItem mnuDropAck;
+        private System.Windows.Forms.ToolStripMenuItem mnuHoldPacket;
     }
 }
 

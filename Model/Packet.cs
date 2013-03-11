@@ -14,9 +14,17 @@ namespace TCPFlow.Model
 
         public bool Lost { get; set; }
 
-        public Packet(uint time)
+        public enum FLAGS
+        {
+            SYN = 1
+        };
+
+        public uint Flags { get; set; }
+
+        public Packet(uint time, uint flags = 0)
         {
             Time = time;
+            Flags = flags;
         }
     }
 }

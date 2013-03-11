@@ -19,7 +19,11 @@ namespace TCPFlow.Model
 
         public uint AckTimeout { get; set; }
 
-        public Sender(Controller controller, uint ackTimeout)
+        public bool SkipHandshake { get; set; }
+
+        public const int START_ID = 1;
+
+        public Sender(Controller controller, bool skipHandshake, uint ackTimeout)
         {
             m_controller = controller;
 
@@ -27,9 +31,10 @@ namespace TCPFlow.Model
 
             m_previousAcks = new List<Ack>();
 
-            m_nextID = 0;
+            m_nextID = START_ID;
 
             AckTimeout = ackTimeout;
+            SkipHandshake = skipHandshake;
         }
 
         public event Action<DataPacket> PacketSent;
@@ -77,6 +82,8 @@ namespace TCPFlow.Model
 
             if (!packetSent)
             {
+                //resend old packet?
+
                 //TODO: replace this foreach loop with linq
                 foreach (KeyValuePair<uint, uint> pair in m_outstanding)
                 {
@@ -101,7 +108,12 @@ namespace TCPFlow.Model
                 if ((m_previousAcks.Count == 0 && m_outstanding.Count == 0) ||
                     (m_previousAcks.Count > 0 && m_previousAcks[m_previousAcks.Count - 1].Window > m_outstanding.Count))
                 {
-                    SendPacket(new DataPacket(m_controller.Time, m_nextID++));
+                    uint flags = 0;
+                    //handle the handshake
+                    if (!SkipHandshake && m_nextID == START_ID)
+                        flags = (uint)Packet.FLAGS.SYN;
+                    
+                    SendPacket(new DataPacket(m_controller.Time, m_nextID++, flags));
                     packetSent = true;
                 }
             }

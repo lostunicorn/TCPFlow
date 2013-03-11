@@ -25,7 +25,7 @@ namespace TCPFlow
         public Controller(uint delay, uint rxBufferSize, uint ackTimeout)
         {
             log = new Log(this);
-            sender = new Sender(this, ackTimeout);
+            sender = new Sender(this, true, ackTimeout);
             receiver = new Receiver(this, rxBufferSize, ackTimeout);
             network = new Network(this, delay);
 
@@ -42,11 +42,20 @@ namespace TCPFlow
             network.AckLost += log.OnAckLost;
         }
 
+        public event Action Ticked;
+        protected void OnTick()
+        {
+            if (Ticked != null)
+                Ticked();
+        }
+
         public void Tick()
         {
             network.Tick();
             receiver.Tick();
             sender.Tick();
+
+            OnTick();
 
             ++Time;
         }

@@ -24,6 +24,8 @@ namespace TCPFlow.Model
 
         public uint AckTimeout { get; set; }
 
+        public const int START_ID = 1;
+
         public Receiver(Controller controller, uint bufferSize, uint ackTimeout)
         {
             m_sequenceNumbersToHold = new SortedList<uint, uint>();
@@ -33,7 +35,7 @@ namespace TCPFlow.Model
 
             m_controller = controller;
 
-            m_nextID = 0;
+            m_nextID = START_ID;
             m_ackSendTime = uint.MaxValue;
 
             BufferSize = bufferSize;
@@ -109,6 +111,14 @@ namespace TCPFlow.Model
 
         public void Tick()
         {
+            if (m_receivedPacket != null && (m_receivedPacket.Flags & (uint)Packet.FLAGS.SYN) == (uint)Packet.FLAGS.SYN)
+            {
+                SendAck(new Ack(m_controller.Time, m_receivedPacket.ID + 1, BufferSize, (uint)Packet.FLAGS.SYN));
+                ++m_nextID;
+                m_receivedPacket = null;
+                return;
+            }
+
             if (m_receivedPacket != null)
             {
                 m_buffer.Add(m_receivedPacket.ID);
@@ -119,8 +129,7 @@ namespace TCPFlow.Model
                 if (!HoldPacket(m_nextID))
                 {
                     DeliverPacket(m_nextID);
-                    m_buffer.Remove(m_nextID);
-                    ++m_nextID;
+                    m_buffer.Remove(m_nextID++);
                 }
             }
             else if (m_buffer.Count >= BufferSize)//make sure there's room for the next ID
