@@ -14,7 +14,7 @@ namespace TCPFlow
     {
         private Controller m_controller;
 
-        private const uint PIXELS_PER_TICK = 10;
+        private const uint PIXELS_PER_TICK = 20;
         private const int BORDER = 6;
         private const int DELIVERY_BORDER = 15;
         private readonly float HEADER_HEIGHT;
@@ -153,7 +153,7 @@ namespace TCPFlow
                     g.DrawLine(redPen, new PointF(to.X - 10, to.Y - 10), new PointF(to.X + 10, to.Y + 10));
                     g.DrawLine(redPen, new PointF(to.X - 10, to.Y + 10), new PointF(to.X + 10, to.Y - 10));
                 }
-                DrawRotatedString(g, smallFont, Brushes.Black, "Ack: " + ack.NextID, from.X, from.Y, rxAngle, true);
+                DrawRotatedString(g, smallFont, Brushes.Black, String.Format("Ack: {0} Window: {1}", ack.NextID, ack.Window), from.X, from.Y, rxAngle, true);
             }
 
             foreach (KeyValuePair<uint, uint> pair in m_controller.log.delivered)
