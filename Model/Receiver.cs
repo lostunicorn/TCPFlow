@@ -43,7 +43,7 @@ namespace TCPFlow.Model
 
         public uint AckTimeout { get; set; }
 
-        public const int START_ID = 1;
+        public const int START_ID = 0;
 
         public Receiver(Controller controller, uint bufferSize, uint ackTimeout)
         {

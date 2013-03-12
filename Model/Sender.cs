@@ -58,7 +58,7 @@ namespace TCPFlow.Model
         }
         public uint CongestionWindow { get; private set; }
 
-        public const int START_ID = 1;
+        public const int START_ID = 0;
 
         public Sender(Controller controller, bool skipHandshake, uint ackTimeout)
         {
