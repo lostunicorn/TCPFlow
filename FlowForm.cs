@@ -16,6 +16,7 @@ namespace TCPFlow
         private Controller m_controller;
 
         private Point m_clickLocation;
+        private uint m_selectedTime;
 
         private const uint PIXELS_PER_TICK = 20;
         private const int BORDER = 6;
@@ -302,6 +303,7 @@ namespace TCPFlow
 
         private void ctxStrip_Opening(object sender, CancelEventArgs e)
         {
+            System.Diagnostics.Debug.Print("ctxStrip_Opening");
             //modify menu based on m_clickLocation
         }
 
@@ -313,6 +315,16 @@ namespace TCPFlow
         private void FlowForm_Shown(object sender, EventArgs e)
         {
             InitDynamicGraphics();
+        }
+
+        private void pbFlow_MouseClick(object sender, MouseEventArgs e)
+        {
+            System.Diagnostics.Debug.Print("pbFlow_MouseClick");
+        }
+
+        private void pbFlow_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Debug.Print("pbFlow_Click");
         }
     }
 }

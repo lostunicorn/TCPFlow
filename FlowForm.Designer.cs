@@ -64,6 +64,8 @@
             this.pbFlow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pbFlow.TabIndex = 0;
             this.pbFlow.TabStop = false;
+            this.pbFlow.Click += new System.EventHandler(this.pbFlow_Click);
+            this.pbFlow.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pbFlow_MouseClick);
             this.pbFlow.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pbFlow_MouseDown);
             this.pbFlow.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pbFlow_MouseMove);
             this.pbFlow.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pbFlow_MouseUp);
@@ -75,26 +77,27 @@
             this.mnuDropAck,
             this.mnuHoldPacket});
             this.ctxStrip.Name = "ctxStrip";
+            this.ctxStrip.ShowCheckMargin = true;
             this.ctxStrip.ShowImageMargin = false;
-            this.ctxStrip.Size = new System.Drawing.Size(171, 76);
+            this.ctxStrip.Size = new System.Drawing.Size(196, 76);
             this.ctxStrip.Opening += new System.ComponentModel.CancelEventHandler(this.ctxStrip_Opening);
             // 
             // mnuDropDataPacket
             // 
             this.mnuDropDataPacket.Name = "mnuDropDataPacket";
-            this.mnuDropDataPacket.Size = new System.Drawing.Size(170, 24);
+            this.mnuDropDataPacket.Size = new System.Drawing.Size(195, 24);
             this.mnuDropDataPacket.Text = "Drop Data Packet";
             // 
             // mnuDropAck
             // 
             this.mnuDropAck.Name = "mnuDropAck";
-            this.mnuDropAck.Size = new System.Drawing.Size(170, 24);
+            this.mnuDropAck.Size = new System.Drawing.Size(195, 24);
             this.mnuDropAck.Text = "Drop Ack";
             // 
             // mnuHoldPacket
             // 
             this.mnuHoldPacket.Name = "mnuHoldPacket";
-            this.mnuHoldPacket.Size = new System.Drawing.Size(170, 24);
+            this.mnuHoldPacket.Size = new System.Drawing.Size(195, 24);
             this.mnuHoldPacket.Text = "Hold Packet";
             // 
             // numDelay

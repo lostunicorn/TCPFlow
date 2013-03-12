@@ -19,7 +19,12 @@ namespace TCPFlow
 
         public void Reset()
         {
-            Time = 0;
+            Time = uint.MaxValue;
+
+            sender.Reset();
+            receiver.Reset();
+            network.Reset();
+            log.Reset();
         }
 
         public Controller(uint delay, uint rxBufferSize, uint ackTimeout)
@@ -40,6 +45,8 @@ namespace TCPFlow
             network.PacketLost += log.OnPacketLost;
             network.AckArrived += sender.OnAckReceived;
             network.AckLost += log.OnAckLost;
+
+            Reset();
         }
 
         public event Action Ticked;
@@ -49,15 +56,21 @@ namespace TCPFlow
                 Ticked();
         }
 
+        public void TickUntil(uint time)
+        {
+            while (Time < time)
+                Tick();
+        }
+
         public void Tick()
         {
+            ++Time;
+
             network.Tick();
             receiver.Tick();
             sender.Tick();
 
             OnTick();
-
-            ++Time;
         }
     }
 }
