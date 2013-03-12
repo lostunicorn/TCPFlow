@@ -110,7 +110,7 @@
             0});
             this.numDelay.Name = "numDelay";
             this.numDelay.Size = new System.Drawing.Size(68, 22);
-            this.numDelay.TabIndex = 1;
+            this.numDelay.TabIndex = 0;
             this.numDelay.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numDelay.Value = new decimal(new int[] {
             5,
@@ -169,10 +169,11 @@
             this.rdRunAutomatic.Location = new System.Drawing.Point(7, 22);
             this.rdRunAutomatic.Name = "rdRunAutomatic";
             this.rdRunAutomatic.Size = new System.Drawing.Size(91, 21);
-            this.rdRunAutomatic.TabIndex = 0;
+            this.rdRunAutomatic.TabIndex = 1;
             this.rdRunAutomatic.TabStop = true;
             this.rdRunAutomatic.Text = "Automatic";
             this.rdRunAutomatic.UseVisualStyleBackColor = true;
+            this.rdRunAutomatic.CheckedChanged += new System.EventHandler(this.rdRunAutomatic_CheckedChanged);
             // 
             // chkSkipHandshake
             // 
