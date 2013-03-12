@@ -358,6 +358,7 @@ namespace TCPFlow
         private void chkSkipHandshake_CheckedChanged(object sender, EventArgs e)
         {
             m_controller.sender.SkipHandshake = chkSkipHandshake.Checked;
+            Replay();
         }
 
         private void FlowForm_Shown(object sender, EventArgs e)
@@ -412,7 +413,7 @@ namespace TCPFlow
 
         private void mnuDelayDelivery_Click(object sender, EventArgs e)
         {
-            if (mnuLoseDataPacket.Checked) //--> going to unchecked
+            if (mnuDelayDelivery.Checked) //--> going to unchecked
                 m_controller.receiver.RemoveSequenceNumberToHold(m_controller.log.delivered[m_contextTime].ID);
             else
                 m_controller.receiver.AddSequenceNumberToHold(m_controller.log.delivered[m_contextTime].ID);
