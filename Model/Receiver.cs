@@ -8,6 +8,25 @@ namespace TCPFlow.Model
 {
     public class Receiver
     {
+        public class State
+        {
+            public readonly uint Time;
+
+            public readonly uint[] Buffer;
+
+            public State(uint time, uint[] buffer)
+            {
+                Time = time;
+                Buffer = buffer;
+            }
+        }
+        public event Action<State> StateChanged;
+        protected void ChangeState()
+        {
+            if (StateChanged != null)
+                StateChanged(new State(m_controller.Time, m_buffer.ToArray()));
+        }
+
         private SortedList<uint, uint> m_sequenceNumbersToHold;
         private SortedList<uint, uint> m_sequenceNumbersHeld;
 
@@ -35,11 +54,10 @@ namespace TCPFlow.Model
 
             m_controller = controller;
 
-            m_nextID = START_ID;
-            m_ackSendTime = uint.MaxValue;
-
             BufferSize = bufferSize;
             AckTimeout = ackTimeout;
+
+            Reset();
         }
 
         public void AddSequenceNumberToHold(uint number)
@@ -73,11 +91,22 @@ namespace TCPFlow.Model
                 AckSent(ack);
         }
 
-        public event Action<uint> PacketDelivered;
-        private void DeliverPacket(uint ID)
+        public class PacketDeliveryArgs : EventArgs
+        {
+            public readonly uint ID;
+            public readonly bool Delivered;
+
+            public PacketDeliveryArgs(uint id, bool delivered)
+            {
+                ID = id;
+                Delivered = delivered;
+            }
+        }
+        public event Action<PacketDeliveryArgs> PacketDelivered;
+        private void DeliverPacket(uint ID, bool delivered)
         {
             if (PacketDelivered != null)
-                PacketDelivered(ID);
+                PacketDelivered(new PacketDeliveryArgs(ID, delivered));
         }
 
         public void Reset()
@@ -85,6 +114,8 @@ namespace TCPFlow.Model
             m_sequenceNumbersHeld.Clear();
             m_buffer.Clear();
             m_ackSendTime = uint.MaxValue;
+            m_receivedPacket = null;
+            m_nextID = START_ID;
         }
 
         public bool HoldPacket(uint id)
@@ -116,21 +147,30 @@ namespace TCPFlow.Model
                 SendAck(new Ack(m_controller.Time, m_receivedPacket.ID + 1, BufferSize, (uint)Packet.FLAGS.SYN));
                 ++m_nextID;
                 m_receivedPacket = null;
+
+                ChangeState();
+
                 return;
             }
+
+            bool stateChanged = false;
 
             if (m_receivedPacket != null)
             {
                 m_buffer.Add(m_receivedPacket.ID);
+
+                stateChanged = true;
             }
 
             if (m_buffer.Contains(m_nextID))
             {
                 if (!HoldPacket(m_nextID))
                 {
-                    DeliverPacket(m_nextID);
+                    DeliverPacket(m_nextID, true);
                     m_buffer.Remove(m_nextID++);
                 }
+                else
+                    DeliverPacket(m_nextID, false);
             }
             else if (m_buffer.Count >= BufferSize)//make sure there's room for the next ID
             {
@@ -160,6 +200,9 @@ namespace TCPFlow.Model
             }
 
             m_receivedPacket = null;
+
+            if (stateChanged)
+                ChangeState();
         }
     }
 }

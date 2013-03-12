@@ -17,8 +17,8 @@ namespace TCPFlow
 
         private Timer m_tickTimer;
 
-        private Point m_clickLocation;
-        private uint m_selectedTime;
+        private uint m_selectedTime = uint.MaxValue;
+        private uint m_contextTime;
 
         private const uint PIXELS_PER_TICK = 20;
         private const int BORDER = 6;
@@ -46,6 +46,8 @@ namespace TCPFlow
 
         LinearGradientBrush m_txBrush,
             m_rxBrush;
+
+        SolidBrush m_selectionBrush;
 
         Pen m_txPen,
             m_rxPen;
@@ -85,6 +87,8 @@ namespace TCPFlow
 
             m_txSize = g.MeasureString("TX", m_bigFont);
             m_rxSize = g.MeasureString("RX", m_bigFont);
+
+            m_selectionBrush = new SolidBrush(Color.FromArgb(128, Color.DarkGreen));
         }
 
         private void InitDynamicGraphics()
@@ -252,16 +256,25 @@ namespace TCPFlow
 
                     if (m_controller.log.delivered.ContainsKey(time))
                     {
-                        uint ID = m_controller.log.delivered[time];
+                        Model.Receiver.PacketDeliveryArgs args = m_controller.log.delivered[time];
 
                         PointF from = new PointF(m_rxLine, time * PIXELS_PER_TICK),
                             to = new PointF(from.X + DELIVERY_BORDER, from.Y - DELIVERY_BORDER);
                         g.DrawLine(m_bluePen, from, to);
-                        g.DrawLine(m_bluePen, to, new PointF(to.X - 10, to.Y + 2));
-                        g.DrawLine(m_bluePen, to, new PointF(to.X - 2, to.Y + 10));
+
+                        if (args.Delivered)
+                        {
+                            g.DrawLine(m_bluePen, to, new PointF(to.X - 10, to.Y + 2));
+                            g.DrawLine(m_bluePen, to, new PointF(to.X - 2, to.Y + 10));
+                        }
+                        else
+                        {
+                            g.DrawLine(m_redPen, new PointF(to.X - 10, to.Y - 10), new PointF(to.X + 10, to.Y + 10));
+                            g.DrawLine(m_redPen, new PointF(to.X - 10, to.Y + 10), new PointF(to.X + 10, to.Y - 10));
+                        }
 
                         from.X += 15;
-                        DrawRotatedString(g, m_smallFont, Brushes.Blue, ID.ToString(), from.X, from.Y, 0, false);
+                        DrawRotatedString(g, m_smallFont, Brushes.Blue, args.ID.ToString(), from.X, from.Y, 0, false);
                     }
                 }
             }
@@ -273,6 +286,7 @@ namespace TCPFlow
         private void numDelay_ValueChanged(object sender, EventArgs e)
         {
             m_controller.network.Delay = Convert.ToUInt32(numDelay.Value);
+            Replay();
         }
 
         private void btnTick_Click(object sender, EventArgs e)
@@ -286,41 +300,59 @@ namespace TCPFlow
             DrawFlow();
         }
 
-        private void ctxStrip_Opened(object sender, EventArgs e)
-        {
-            System.Diagnostics.Debug.Print("ctxStrip_Opened");
-        }
-
-        private void pbFlow_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == System.Windows.Forms.MouseButtons.Right)
-            {
-                //System.Diagnostics.Debug.Print("pbFlow_MouseDown");
-                m_clickLocation = e.Location;
-            }
-        }
-
         private void pbFlow_MouseMove(object sender, MouseEventArgs e)
         {
-            if (e.Button == System.Windows.Forms.MouseButtons.Right)
-            {
-                //System.Diagnostics.Debug.Print("pbFlow_MouseMove");
-                m_clickLocation = e.Location;
-            }
-        }
+            uint m_oldSelectedTime = m_selectedTime;
 
-        private void pbFlow_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (e.Button == System.Windows.Forms.MouseButtons.Right)
-            {
-                //System.Diagnostics.Debug.Print("pbFlow_MouseUp");
-            }
+            int time = Convert.ToInt32((e.Location.Y - m_headerHeight) / PIXELS_PER_TICK);
+            if (time < 0 || time > m_controller.Time)
+                m_selectedTime = uint.MaxValue;
+            else
+                m_selectedTime = (uint)time;
+
+            if (m_selectedTime != m_oldSelectedTime)
+                pbFlow.Invalidate(); //redraw if necessary
         }
 
         private void ctxStrip_Opening(object sender, CancelEventArgs e)
         {
             System.Diagnostics.Debug.Print("ctxStrip_Opening");
-            //modify menu based on m_clickLocation
+            //modify menu based on m_selectedTime
+
+            m_contextTime = m_selectedTime;
+
+            if (m_controller.log.packets.ContainsKey(m_contextTime))
+            {
+                mnuLoseDataPacket.Enabled = true;
+                mnuLoseDataPacket.Checked = m_controller.log.packets[m_contextTime].Lost;
+            }
+            else
+            {
+                mnuLoseDataPacket.Enabled = false;
+                mnuLoseDataPacket.Checked = false;
+            }
+
+            if (m_controller.log.acks.ContainsKey(m_contextTime))
+            {
+                mnuLoseAck.Enabled = true;
+                mnuLoseAck.Checked = m_controller.log.acks[m_contextTime].Lost;
+            }
+            else
+            {
+                mnuLoseAck.Enabled = false;
+                mnuLoseAck.Checked = false;
+            }
+
+            if (m_controller.log.delivered.ContainsKey(m_contextTime))
+            {
+                mnuDelayDelivery.Enabled = true;
+                mnuDelayDelivery.Checked = !m_controller.log.delivered[m_contextTime].Delivered;
+            }
+            else
+            {
+                mnuDelayDelivery.Enabled = false;
+                mnuDelayDelivery.Checked = false;
+            }
         }
 
         private void chkSkipHandshake_CheckedChanged(object sender, EventArgs e)
@@ -333,22 +365,67 @@ namespace TCPFlow
             InitDynamicGraphics();
         }
 
-        private void pbFlow_MouseClick(object sender, MouseEventArgs e)
-        {
-            System.Diagnostics.Debug.Print("pbFlow_MouseClick");
-        }
-
-        private void pbFlow_Click(object sender, EventArgs e)
-        {
-            System.Diagnostics.Debug.Print("pbFlow_Click");
-        }
-
         private void rdRunAutomatic_CheckedChanged(object sender, EventArgs e)
         {
+            btnTick.Enabled = rdRunManual.Checked;
+
             if (rdRunAutomatic.Checked)
                 m_tickTimer.Start();
             else
                 m_tickTimer.Stop();
+        }
+
+        private void pbFlow_MouseLeave(object sender, EventArgs e)
+        {
+            if (m_selectedTime != uint.MaxValue)
+            {
+                m_selectedTime = uint.MaxValue;
+                pbFlow.Invalidate();
+            }
+        }
+
+        private void pbFlow_Paint(object sender, PaintEventArgs e)
+        {
+            if (m_selectedTime != uint.MaxValue)
+                e.Graphics.FillRectangle(m_selectionBrush, 0, Convert.ToSingle(m_headerHeight + (m_selectedTime -0.5) * PIXELS_PER_TICK), pbFlow.Width, PIXELS_PER_TICK);
+        }
+
+        private void mnuLoseDataPacket_Click(object sender, EventArgs e)
+        {
+            if (mnuLoseDataPacket.Checked) //--> going to unchecked
+                m_controller.network.RemoveLostPacket(m_controller.log.packets[m_contextTime].Number);
+            else
+                m_controller.network.AddLostPacket(m_controller.log.packets[m_contextTime].Number);
+
+            Replay();
+        }
+
+        private void mnuLoseAck_Click(object sender, EventArgs e)
+        {
+            if (mnuLoseAck.Checked) //--> going to unchecked
+                m_controller.network.RemoveLostAck(m_controller.log.acks[m_contextTime].Number);
+            else
+                m_controller.network.AddLostAck(m_controller.log.acks[m_contextTime].Number);
+
+            Replay();
+        }
+
+        private void mnuDelayDelivery_Click(object sender, EventArgs e)
+        {
+            if (mnuLoseDataPacket.Checked) //--> going to unchecked
+                m_controller.receiver.RemoveSequenceNumberToHold(m_controller.log.delivered[m_contextTime].ID);
+            else
+                m_controller.receiver.AddSequenceNumberToHold(m_controller.log.delivered[m_contextTime].ID);
+
+            Replay();
+        }
+
+        private void Replay()
+        {
+            m_controller.Ticked -= DrawFlow; //make sure we don't redraw intermediate states
+            m_controller.Replay();
+            m_controller.Ticked += DrawFlow; //make sure we do redraw following states
+            DrawFlow();
         }
     }
 }

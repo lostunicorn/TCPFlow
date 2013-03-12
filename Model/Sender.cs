@@ -8,6 +8,34 @@ namespace TCPFlow.Model
 {
     public class Sender
     {
+        public class State
+        {
+            public readonly uint Time;
+
+            public readonly uint[] Outstanding;
+
+            public readonly uint CongestionWindow;
+
+            public readonly uint ReceiveWindow;
+
+            public State(uint time, uint[] outstanding, uint receiveWindow, uint congestionWindow)
+            {
+                Time = time;
+                Outstanding = outstanding;
+                ReceiveWindow = receiveWindow;
+                CongestionWindow = congestionWindow;
+            }
+        }
+
+        public event Action<State> StateChanged;
+        protected void ChangeState()
+        {
+            if (StateChanged != null)
+            {
+                StateChanged(new State(m_controller.Time, m_outstanding.Keys.ToArray(), ReceiveWindow, CongestionWindow));
+            }
+        }
+
         private Controller m_controller;
 
         private SortedList<uint, uint> m_outstanding;
@@ -21,6 +49,15 @@ namespace TCPFlow.Model
 
         public bool SkipHandshake { get; set; }
 
+        public uint ReceiveWindow
+        {
+            get
+            {
+                return m_previousAcks.Count == 0 ? 1 : m_previousAcks[m_previousAcks.Count - 1].Window;
+            }
+        }
+        public uint CongestionWindow { get; private set; }
+
         public const int START_ID = 1;
 
         public Sender(Controller controller, bool skipHandshake, uint ackTimeout)
@@ -31,10 +68,10 @@ namespace TCPFlow.Model
 
             m_previousAcks = new List<Ack>();
 
-            m_nextID = START_ID;
-
             AckTimeout = ackTimeout;
             SkipHandshake = skipHandshake;
+
+            Reset();
         }
 
         public event Action<DataPacket> PacketSent;
@@ -54,9 +91,12 @@ namespace TCPFlow.Model
         public void Tick()
         {
             bool packetSent = false;
+            bool stateChanged = false;
 
             if (m_receivedAck != null)
             {
+                stateChanged = true; //show state whenever we receive an ack (even when nothing actually changes)
+
                 m_previousAcks.Add(m_receivedAck);
                 if (m_previousAcks.Count > 3)
                     m_previousAcks.RemoveAt(0);
@@ -99,6 +139,8 @@ namespace TCPFlow.Model
                 {
                     SendPacket(new DataPacket(m_controller.Time, oldestID));
                     packetSent = true;
+
+                    stateChanged = true;
                 }
             }
 
@@ -115,15 +157,22 @@ namespace TCPFlow.Model
                     
                     SendPacket(new DataPacket(m_controller.Time, m_nextID++, flags));
                     packetSent = true;
+
+                    stateChanged = true;
                 }
             }
 
             m_receivedAck = null;
+
+            if (stateChanged)
+                ChangeState();
         }
 
         public void Reset()
         {
             m_receivedAck = null;
+            m_nextID = START_ID;
+            m_previousAcks.Clear();
             m_outstanding.Clear();
         }
     }

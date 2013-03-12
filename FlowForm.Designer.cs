@@ -31,9 +31,9 @@
             this.components = new System.ComponentModel.Container();
             this.pbFlow = new System.Windows.Forms.PictureBox();
             this.ctxStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.mnuDropDataPacket = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuDropAck = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuHoldPacket = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuLoseDataPacket = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuLoseAck = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuDelayDelivery = new System.Windows.Forms.ToolStripMenuItem();
             this.numDelay = new System.Windows.Forms.NumericUpDown();
             this.lblDelay = new System.Windows.Forms.Label();
             this.grpRunSettings = new System.Windows.Forms.GroupBox();
@@ -64,41 +64,42 @@
             this.pbFlow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pbFlow.TabIndex = 0;
             this.pbFlow.TabStop = false;
-            this.pbFlow.Click += new System.EventHandler(this.pbFlow_Click);
-            this.pbFlow.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pbFlow_MouseClick);
-            this.pbFlow.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pbFlow_MouseDown);
+            this.pbFlow.Paint += new System.Windows.Forms.PaintEventHandler(this.pbFlow_Paint);
+            this.pbFlow.MouseLeave += new System.EventHandler(this.pbFlow_MouseLeave);
             this.pbFlow.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pbFlow_MouseMove);
-            this.pbFlow.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pbFlow_MouseUp);
             // 
             // ctxStrip
             // 
             this.ctxStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuDropDataPacket,
-            this.mnuDropAck,
-            this.mnuHoldPacket});
+            this.mnuLoseDataPacket,
+            this.mnuLoseAck,
+            this.mnuDelayDelivery});
             this.ctxStrip.Name = "ctxStrip";
             this.ctxStrip.ShowCheckMargin = true;
             this.ctxStrip.ShowImageMargin = false;
-            this.ctxStrip.Size = new System.Drawing.Size(196, 76);
+            this.ctxStrip.Size = new System.Drawing.Size(222, 76);
             this.ctxStrip.Opening += new System.ComponentModel.CancelEventHandler(this.ctxStrip_Opening);
             // 
-            // mnuDropDataPacket
+            // mnuLoseDataPacket
             // 
-            this.mnuDropDataPacket.Name = "mnuDropDataPacket";
-            this.mnuDropDataPacket.Size = new System.Drawing.Size(195, 24);
-            this.mnuDropDataPacket.Text = "Drop Data Packet";
+            this.mnuLoseDataPacket.Name = "mnuLoseDataPacket";
+            this.mnuLoseDataPacket.Size = new System.Drawing.Size(221, 24);
+            this.mnuLoseDataPacket.Text = "Lose Data Packet";
+            this.mnuLoseDataPacket.Click += new System.EventHandler(this.mnuLoseDataPacket_Click);
             // 
-            // mnuDropAck
+            // mnuLoseAck
             // 
-            this.mnuDropAck.Name = "mnuDropAck";
-            this.mnuDropAck.Size = new System.Drawing.Size(195, 24);
-            this.mnuDropAck.Text = "Drop Ack";
+            this.mnuLoseAck.Name = "mnuLoseAck";
+            this.mnuLoseAck.Size = new System.Drawing.Size(221, 24);
+            this.mnuLoseAck.Text = "Lose Ack";
+            this.mnuLoseAck.Click += new System.EventHandler(this.mnuLoseAck_Click);
             // 
-            // mnuHoldPacket
+            // mnuDelayDelivery
             // 
-            this.mnuHoldPacket.Name = "mnuHoldPacket";
-            this.mnuHoldPacket.Size = new System.Drawing.Size(195, 24);
-            this.mnuHoldPacket.Text = "Hold Packet";
+            this.mnuDelayDelivery.Name = "mnuDelayDelivery";
+            this.mnuDelayDelivery.Size = new System.Drawing.Size(221, 24);
+            this.mnuDelayDelivery.Text = "Delay Packet Delivery";
+            this.mnuDelayDelivery.Click += new System.EventHandler(this.mnuDelayDelivery_Click);
             // 
             // numDelay
             // 
@@ -276,9 +277,9 @@
         private System.Windows.Forms.GroupBox grpSenderSettings;
         private System.Windows.Forms.GroupBox grpReceiverSettings;
         private System.Windows.Forms.ContextMenuStrip ctxStrip;
-        private System.Windows.Forms.ToolStripMenuItem mnuDropDataPacket;
-        private System.Windows.Forms.ToolStripMenuItem mnuDropAck;
-        private System.Windows.Forms.ToolStripMenuItem mnuHoldPacket;
+        private System.Windows.Forms.ToolStripMenuItem mnuLoseDataPacket;
+        private System.Windows.Forms.ToolStripMenuItem mnuLoseAck;
+        private System.Windows.Forms.ToolStripMenuItem mnuDelayDelivery;
     }
 }
 

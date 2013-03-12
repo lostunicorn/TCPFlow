@@ -13,7 +13,10 @@ namespace TCPFlow.Model
          */
         public Dictionary<uint, DataPacket> packets = new Dictionary<uint, DataPacket>();
         public Dictionary<uint, Ack> acks = new Dictionary<uint, Ack>();
-        public Dictionary<uint, uint> delivered = new Dictionary<uint, uint>();
+        public Dictionary<uint, Receiver.PacketDeliveryArgs> delivered = new Dictionary<uint, Receiver.PacketDeliveryArgs>();
+
+        public Dictionary<uint, Sender.State> senderStates = new Dictionary<uint, Sender.State>();
+        public Dictionary<uint, Receiver.State> receiverStates = new Dictionary<uint, Receiver.State>();
 
         private StringBuilder m_history;
         private Dictionary<int, uint> m_historyTiming; //map index in the m_history string to a time
@@ -78,6 +81,9 @@ namespace TCPFlow.Model
             packets.Clear();
             acks.Clear();
             delivered.Clear();
+
+            senderStates.Clear();
+            receiverStates.Clear();
         }
 
         public void OnPacketSent(DataPacket packet)
@@ -108,9 +114,9 @@ namespace TCPFlow.Model
             ClearHistory();
         }
 
-        public void OnPacketDelivered(uint ID)
+        public void OnPacketDelivered(Receiver.PacketDeliveryArgs args)
         {
-            delivered[m_controller.Time] = ID;
+            delivered[m_controller.Time] = args;
 
             OnChanged();
 

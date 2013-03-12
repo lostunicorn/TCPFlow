@@ -25,6 +25,8 @@ namespace TCPFlow
             receiver.Reset();
             network.Reset();
             log.Reset();
+            DataPacket.Reset();
+            Ack.Reset();
         }
 
         public Controller(uint delay, uint rxBufferSize, uint ackTimeout)
@@ -56,9 +58,16 @@ namespace TCPFlow
                 Ticked();
         }
 
+        public void Replay()
+        {
+            uint until = Time;
+            Reset();
+            TickUntil(until);
+        }
+
         public void TickUntil(uint time)
         {
-            while (Time < time)
+            while (Time < time || Time == uint.MaxValue)
                 Tick();
         }
 
