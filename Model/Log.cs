@@ -90,8 +90,6 @@ namespace TCPFlow.Model
         {
             packets[m_controller.Time] = packet;
 
-            OnChanged();
-
             AddToHistory("P");
         }
 
@@ -103,8 +101,6 @@ namespace TCPFlow.Model
         public void OnAckSent(Ack ack)
         {
             acks[m_controller.Time] = ack;
-
-            OnChanged();
 
             AddToHistory("A");
         }
@@ -118,16 +114,17 @@ namespace TCPFlow.Model
         {
             delivered[m_controller.Time] = args;
 
-            OnChanged();
-
             AddToHistory("D");
         }
 
-        public event Action Changed;
-        protected void OnChanged()
+        public void OnSenderStateChanged(Sender.State state)
         {
-            if (Changed != null)
-                Changed();
+            senderStates[m_controller.Time] = state;
+        }
+
+        public void OnReceiverStateChanged(Receiver.State state)
+        {
+            receiverStates[m_controller.Time] = state;
         }
     }
 }

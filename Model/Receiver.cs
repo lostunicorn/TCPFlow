@@ -41,11 +41,11 @@ namespace TCPFlow.Model
 
         public uint BufferSize { get; set; }
 
-        public uint AckTimeout { get; set; }
+        public uint Timeout { get; set; }
 
         public const int START_ID = 0;
 
-        public Receiver(Controller controller, uint bufferSize, uint ackTimeout)
+        public Receiver(Controller controller, uint bufferSize, uint timeout)
         {
             m_sequenceNumbersToHold = new SortedList<uint, uint>();
             m_sequenceNumbersHeld = new SortedList<uint, uint>();
@@ -55,7 +55,7 @@ namespace TCPFlow.Model
             m_controller = controller;
 
             BufferSize = bufferSize;
-            AckTimeout = ackTimeout;
+            Timeout = timeout;
 
             Reset();
         }
@@ -190,7 +190,7 @@ namespace TCPFlow.Model
             }
 
             //send ack?
-            if (m_receivedPacket != null || m_controller.Time >= m_ackSendTime + AckTimeout)
+            if (m_receivedPacket != null || m_controller.Time >= m_ackSendTime + Timeout)
             {
                 uint id = m_nextID;
                 while (m_buffer.Contains(id))

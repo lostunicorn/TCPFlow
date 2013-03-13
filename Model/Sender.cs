@@ -14,11 +14,11 @@ namespace TCPFlow.Model
 
             public readonly uint[] Outstanding;
 
-            public readonly uint CongestionWindow;
+            public readonly float CongestionWindow;
 
             public readonly uint ReceiveWindow;
 
-            public State(uint time, uint[] outstanding, uint receiveWindow, uint congestionWindow)
+            public State(uint time, uint[] outstanding, uint receiveWindow, float congestionWindow)
             {
                 Time = time;
                 Outstanding = outstanding;
@@ -45,7 +45,7 @@ namespace TCPFlow.Model
 
         private uint m_nextID;
 
-        public uint AckTimeout { get; set; }
+        public uint Timeout { get; set; }
 
         public bool SkipHandshake { get; set; }
 
@@ -56,11 +56,15 @@ namespace TCPFlow.Model
                 return m_previousAcks.Count == 0 ? 1 : m_previousAcks[m_previousAcks.Count - 1].Window;
             }
         }
-        public uint CongestionWindow { get; private set; }
 
-        public const int START_ID = 0;
+        public float CongestionWindow { get; private set; }
 
-        public Sender(Controller controller, bool skipHandshake, uint ackTimeout)
+        public float SlowStartThreshold { get; private set; }
+
+        public const uint START_ID = 0;
+        public const uint INITIAL_SLOW_START_THRESHOLD = 64;
+
+        public Sender(Controller controller, bool skipHandshake, uint timeout)
         {
             m_controller = controller;
 
@@ -68,7 +72,7 @@ namespace TCPFlow.Model
 
             m_previousAcks = new List<Ack>();
 
-            AckTimeout = ackTimeout;
+            Timeout = timeout;
             SkipHandshake = skipHandshake;
 
             Reset();
@@ -102,10 +106,24 @@ namespace TCPFlow.Model
                     m_previousAcks.RemoveAt(0);
 
                 //remove everything that was just acked from m_outstanding
+                bool progress = false;
                 uint[] ids = m_outstanding.Keys.ToArray();
                 foreach (uint id in ids)
+                {
                     if (id < m_receivedAck.NextID)
+                    {
+                        progress = true;
                         m_outstanding.Remove(id);
+                    }
+                }
+
+                if (progress)
+                {
+                    if (CongestionWindow < SlowStartThreshold)
+                        ++CongestionWindow;
+                    else
+                        CongestionWindow += 1 / CongestionWindow;
+                }
 
                 //handle fast retransmit
                 if (m_previousAcks.Count == 3 &&
@@ -114,13 +132,14 @@ namespace TCPFlow.Model
                 {
                     SendPacket(new DataPacket(m_controller.Time, m_receivedAck.NextID));
                     packetSent = true;
+                    CongestionWindow = SlowStartThreshold = CongestionWindow / 2;
                 }
             }
 
             uint oldestTime = uint.MaxValue,
                 oldestID = 0;
 
-            if (!packetSent)
+            if (!packetSent && m_outstanding.Count > 0)
             {
                 //resend old packet?
 
@@ -135,20 +154,26 @@ namespace TCPFlow.Model
                 }
 
                 //detect timeout
-                if (m_controller.Time >= oldestTime + AckTimeout)
+                if (m_controller.Time >= oldestTime + Timeout)
                 {
                     SendPacket(new DataPacket(m_controller.Time, oldestID));
                     packetSent = true;
 
                     stateChanged = true;
+
+                    SlowStartThreshold = CongestionWindow / 2;
+                    CongestionWindow = 1;
                 }
             }
 
             if (!packetSent)
             {
                 //send next packet?
-                if ((m_previousAcks.Count == 0 && m_outstanding.Count == 0) ||
-                    (m_previousAcks.Count > 0 && m_previousAcks[m_previousAcks.Count - 1].Window > m_outstanding.Count))
+
+                uint sendWindow = 1;
+                if (m_previousAcks.Count > 0)
+                    sendWindow = (uint)Math.Min(m_previousAcks[m_previousAcks.Count - 1].Window, CongestionWindow);
+                if (m_outstanding.Count < sendWindow)
                 {
                     uint flags = 0;
                     //handle the handshake
@@ -174,6 +199,8 @@ namespace TCPFlow.Model
             m_nextID = START_ID;
             m_previousAcks.Clear();
             m_outstanding.Clear();
+            CongestionWindow = 1;
+            SlowStartThreshold = INITIAL_SLOW_START_THRESHOLD;
         }
     }
 }

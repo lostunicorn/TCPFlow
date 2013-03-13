@@ -38,10 +38,12 @@ namespace TCPFlow
 
             sender.PacketSent += log.OnPacketSent;
             sender.PacketSent += network.Send;
+            sender.StateChanged += log.OnSenderStateChanged;
 
             receiver.AckSent += log.OnAckSent;
             receiver.AckSent += network.Send;
             receiver.PacketDelivered += log.OnPacketDelivered;
+            receiver.StateChanged += log.OnReceiverStateChanged;
 
             network.PacketArrived += receiver.OnPacketReceived;
             network.PacketLost += log.OnPacketLost;

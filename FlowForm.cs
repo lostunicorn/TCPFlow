@@ -30,13 +30,17 @@ namespace TCPFlow
 
         Pen m_blackPen = new Pen(Brushes.Black, 3),
             m_redPen = new Pen(Brushes.Red, 3),
-            m_bluePen = new Pen(Brushes.Blue, 3);
+            m_bluePen = new Pen(Brushes.Blue, 3),
+            m_txPen,
+            m_rxPen,
+            m_thinPen = new Pen(Brushes.Black, 1);
 
         Font m_bigFont = new Font(FontFamily.GenericSerif, 12),
             m_smallFont = new Font(FontFamily.GenericSerif, 10, FontStyle.Bold);
 
         SizeF m_txSize,
-            m_rxSize;
+            m_rxSize,
+            m_elementSize;
 
         float m_txLine,
             m_rxLine;
@@ -48,9 +52,6 @@ namespace TCPFlow
             m_rxBrush;
 
         SolidBrush m_selectionBrush;
-
-        Pen m_txPen,
-            m_rxPen;
 
         int m_flowWidth;
 
@@ -83,10 +84,12 @@ namespace TCPFlow
             Bitmap bitmap = new Bitmap(100, 100);
             Graphics g = Graphics.FromImage(bitmap);
 
-            m_headerHeight = 4 * BORDER + g.MeasureString("TX", m_bigFont).Height;
+            m_headerHeight = 6 * BORDER + g.MeasureString("TX", m_bigFont).Height;
 
             m_txSize = g.MeasureString("TX", m_bigFont);
             m_rxSize = g.MeasureString("RX", m_bigFont);
+
+            m_elementSize = g.MeasureString("00", m_smallFont);
 
             m_selectionBrush = new SolidBrush(Color.FromArgb(128, Color.DarkGreen));
         }
@@ -95,12 +98,15 @@ namespace TCPFlow
         {
             m_flowWidth = pnlFlow.Width - SystemInformation.VerticalScrollBarWidth;
 
-            m_txLine = 2 * BORDER + m_txSize.Width / 2;
+            float txBufferWidth = Convert.ToSingle(m_elementSize.Width * m_controller.receiver.BufferSize);
+            float rxBufferWidth = Convert.ToSingle(m_elementSize.Width * m_controller.receiver.BufferSize);
+
+            m_txLine = txBufferWidth + 2 * BORDER + m_txSize.Width / 2;
             m_txAngle = (float)(180 / Math.PI * Math.Atan2(m_controller.network.Delay * PIXELS_PER_TICK, m_rxLine - m_txLine));
             m_txBrush = new LinearGradientBrush(new PointF(m_txLine, 0), new PointF(m_rxLine, 0), Color.Black, Color.White);
             m_txPen = new Pen(m_txBrush, 3);
 
-            m_rxLine = m_flowWidth - (2 * BORDER + DELIVERY_BORDER + m_rxSize.Width / 2);
+            m_rxLine = m_flowWidth - (rxBufferWidth + 2 * BORDER + DELIVERY_BORDER + m_rxSize.Width / 2);
             m_rxAngle = -m_txAngle;
             m_rxBrush = new LinearGradientBrush(new PointF(m_txLine, 0), new PointF(m_rxLine, 0), Color.White, Color.Black);
             m_rxPen = new Pen(m_rxBrush, 3);
@@ -155,12 +161,12 @@ namespace TCPFlow
             g.FillRectangle(Brushes.White, 0, 0, bitmap.Width, bitmap.Height);
 
             //Render the header
-            g.DrawRectangle(m_blackPen, BORDER, BORDER, m_txSize.Width + 2 * BORDER, m_txSize.Height + 2 * BORDER);
-            g.DrawString("TX", m_bigFont, Brushes.Black, 2*BORDER, 2 * BORDER);
+            g.DrawRectangle(m_blackPen, m_txLine - (m_txSize.Width / 2 + BORDER), BORDER, m_txSize.Width + 2 * BORDER, m_txSize.Height + 2 * BORDER);
+            g.DrawString("TX", m_bigFont, Brushes.Black, m_txLine - m_txSize.Width / 2, 2 * BORDER);
             g.DrawLine(m_blackPen, m_txLine, 3 * BORDER + m_txSize.Height, m_txLine, bitmap.Height);
 
-            g.DrawRectangle(m_blackPen, bitmap.Width - (3 * BORDER + DELIVERY_BORDER + m_rxSize.Width), BORDER, m_rxSize.Width + 2 * BORDER, m_rxSize.Height + 2 * BORDER);
-            g.DrawString("RX", m_bigFont, Brushes.Black, bitmap.Width - (2 * BORDER + DELIVERY_BORDER + m_rxSize.Width), 2 * BORDER);
+            g.DrawRectangle(m_blackPen, m_rxLine - (m_rxSize.Width / 2 + BORDER), BORDER, m_rxSize.Width + 2 * BORDER, m_rxSize.Height + 2 * BORDER);
+            g.DrawString("RX", m_bigFont, Brushes.Black, m_rxLine - m_rxSize.Width / 2, 2 * BORDER);
             g.DrawLine(m_blackPen, m_rxLine, 3 * BORDER + m_rxSize.Height, m_rxLine, bitmap.Height);
 
             //translate the graphics object so all future coördinates can be calculated in terms of simulated
@@ -169,7 +175,7 @@ namespace TCPFlow
 
             if (m_controller.Time != uint.MaxValue)
             {
-                for (uint time = 0; time < m_controller.Time; ++time)
+                for (uint time = 0; time <= m_controller.Time; ++time)
                 {
                     //render packets, acks and such
                     if (m_controller.log.packets.ContainsKey(time))
@@ -275,6 +281,37 @@ namespace TCPFlow
 
                         from.X += 15;
                         DrawRotatedString(g, m_smallFont, Brushes.Blue, args.ID.ToString(), from.X, from.Y, 0, false);
+                    }
+
+                    if (m_controller.log.senderStates.ContainsKey(time))
+                    {
+                        Model.Sender.State state = m_controller.log.senderStates[time];
+
+                        int i = 0;
+                        while (i < state.Outstanding.Length)
+                        {
+                            Point p = new Point((int)(i * m_elementSize.Width), (int)(time * PIXELS_PER_TICK - m_elementSize.Height/2.0));
+                            Rectangle rect = new Rectangle(p, new Size((int)m_elementSize.Width, (int)m_elementSize.Height));
+                            g.FillRectangle(Brushes.Red, rect);
+                            g.DrawRectangle(m_thinPen, rect);
+                            g.DrawString(state.Outstanding[i].ToString(), m_smallFont, Brushes.White, p);
+                            ++i;
+                        }
+
+                        uint nextID = Model.Sender.START_ID;
+                        if (state.Outstanding.Length > 0)
+                            nextID = state.Outstanding[state.Outstanding.Length - 1] + 1;
+
+                        while (i < m_controller.receiver.BufferSize)
+                        {
+                            Point p = new Point((int)(i * m_elementSize.Width), (int)(time * PIXELS_PER_TICK - m_elementSize.Height / 2.0));
+                            Rectangle rect = new Rectangle(p, new Size((int)m_elementSize.Width, (int)m_elementSize.Height));
+                            g.FillRectangle(Brushes.White, rect);
+                            g.DrawRectangle(m_thinPen, rect);
+                            g.DrawString(nextID.ToString(), m_smallFont, Brushes.Black, p);
+                            ++nextID;
+                            ++i;
+                        }
                     }
                 }
             }

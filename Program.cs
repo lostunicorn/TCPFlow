@@ -24,7 +24,7 @@ namespace TCPFlow
             Model.DataPacket packet;
             Model.Ack ack;
             */
-            Controller controller = new Controller(5, 4, 50);
+            Controller controller = new Controller(5, 4, 15);
 
             controller.network.AddLostPacket(1);
             //controller.network.AddLostAck(1);
