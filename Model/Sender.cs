@@ -49,6 +49,8 @@ namespace TCPFlow.Model
 
         public bool SkipHandshake { get; set; }
 
+        public bool CongestionControlEnabled { get; set; }
+
         public uint ReceiveWindow
         {
             get
@@ -64,7 +66,7 @@ namespace TCPFlow.Model
         public const uint START_ID = 0;
         public const uint INITIAL_SLOW_START_THRESHOLD = 64;
 
-        public Sender(Controller controller, bool skipHandshake, uint timeout)
+        public Sender(Controller controller, bool skipHandshake, bool congestionControlEnabled, uint timeout)
         {
             m_controller = controller;
 
@@ -74,6 +76,7 @@ namespace TCPFlow.Model
 
             Timeout = timeout;
             SkipHandshake = skipHandshake;
+            CongestionControlEnabled = congestionControlEnabled;
 
             Reset();
         }
@@ -170,9 +173,9 @@ namespace TCPFlow.Model
             {
                 //send next packet?
 
-                uint sendWindow = 1;
-                if (m_previousAcks.Count > 0)
-                    sendWindow = (uint)Math.Min(m_previousAcks[m_previousAcks.Count - 1].Window, CongestionWindow);
+                uint sendWindow = ReceiveWindow;
+                if (CongestionControlEnabled)
+                    sendWindow = (uint)Math.Min(ReceiveWindow, CongestionWindow);
                 if (m_outstanding.Count < sendWindow)
                 {
                     uint flags = 0;

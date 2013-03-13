@@ -70,10 +70,37 @@ namespace TCPFlow
             numRXBufferSize.Value = m_controller.receiver.BufferSize;
             numRXBufferSize.ValueChanged += numRXBufferSize_ValueChanged;
 
+            numRXTimeout.Value = m_controller.receiver.Timeout;
+            numRXTimeout.ValueChanged += numRXTimeout_ValueChanged;
+
+            chkCongestionControl.Checked = m_controller.sender.CongestionControlEnabled;
+            chkCongestionControl.CheckedChanged += chkCongestionControl_CheckedChanged;
+
+            numTXTimeout.Value = m_controller.sender.Timeout;
+            numTXTimeout.ValueChanged += numTXTimeout_ValueChanged;
+
             InitStaticGraphics();
             InitDynamicGraphics();
 
             DrawFlow();
+        }
+
+        void chkCongestionControl_CheckedChanged(object sender, EventArgs e)
+        {
+            m_controller.sender.CongestionControlEnabled = chkCongestionControl.Checked;
+            Replay();
+        }
+
+        void numTXTimeout_ValueChanged(object sender, EventArgs e)
+        {
+            m_controller.sender.Timeout = (uint)numTXTimeout.Value;
+            Replay();
+        }
+
+        void numRXTimeout_ValueChanged(object sender, EventArgs e)
+        {
+            m_controller.receiver.Timeout = (uint)numRXTimeout.Value;
+            Replay();
         }
 
         void tickTimer_Tick(object sender, EventArgs e)

@@ -47,14 +47,22 @@
             this.grpReceiverSettings = new System.Windows.Forms.GroupBox();
             this.numRXBufferSize = new System.Windows.Forms.NumericUpDown();
             this.m_lblRXBufferSize = new System.Windows.Forms.Label();
+            this.chkCongestionControl = new System.Windows.Forms.CheckBox();
+            this.lblTXTimeout = new System.Windows.Forms.Label();
+            this.lblRXTimeout = new System.Windows.Forms.Label();
+            this.numRXTimeout = new System.Windows.Forms.NumericUpDown();
+            this.numTXTimeout = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.pbFlow)).BeginInit();
             this.ctxStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDelay)).BeginInit();
             this.grpRunSettings.SuspendLayout();
             this.pnlFlow.SuspendLayout();
             this.grpNetworkSettings.SuspendLayout();
+            this.grpSenderSettings.SuspendLayout();
             this.grpReceiverSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numRXBufferSize)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numRXTimeout)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numTXTimeout)).BeginInit();
             this.SuspendLayout();
             // 
             // pbFlow
@@ -222,6 +230,9 @@
             // 
             this.grpSenderSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.grpSenderSettings.Controls.Add(this.numTXTimeout);
+            this.grpSenderSettings.Controls.Add(this.lblTXTimeout);
+            this.grpSenderSettings.Controls.Add(this.chkCongestionControl);
             this.grpSenderSettings.Location = new System.Drawing.Point(13, 82);
             this.grpSenderSettings.Name = "grpSenderSettings";
             this.grpSenderSettings.Size = new System.Drawing.Size(212, 422);
@@ -233,6 +244,8 @@
             // 
             this.grpReceiverSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpReceiverSettings.Controls.Add(this.numRXTimeout);
+            this.grpReceiverSettings.Controls.Add(this.lblRXTimeout);
             this.grpReceiverSettings.Controls.Add(this.numRXBufferSize);
             this.grpReceiverSettings.Controls.Add(this.m_lblRXBufferSize);
             this.grpReceiverSettings.Location = new System.Drawing.Point(851, 82);
@@ -244,7 +257,7 @@
             // 
             // numRXBufferSize
             // 
-            this.numRXBufferSize.Location = new System.Drawing.Point(95, 22);
+            this.numRXBufferSize.Location = new System.Drawing.Point(105, 22);
             this.numRXBufferSize.Maximum = new decimal(new int[] {
             15,
             0,
@@ -274,6 +287,70 @@
             this.m_lblRXBufferSize.TabIndex = 0;
             this.m_lblRXBufferSize.Text = "Buffer Size:";
             // 
+            // chkCongestionControl
+            // 
+            this.chkCongestionControl.AutoSize = true;
+            this.chkCongestionControl.Location = new System.Drawing.Point(7, 22);
+            this.chkCongestionControl.Name = "chkCongestionControl";
+            this.chkCongestionControl.Size = new System.Drawing.Size(198, 21);
+            this.chkCongestionControl.TabIndex = 0;
+            this.chkCongestionControl.Text = "Enable Congestion Control";
+            this.chkCongestionControl.UseVisualStyleBackColor = true;
+            // 
+            // lblTXTimeout
+            // 
+            this.lblTXTimeout.AutoSize = true;
+            this.lblTXTimeout.Location = new System.Drawing.Point(6, 66);
+            this.lblTXTimeout.Name = "lblTXTimeout";
+            this.lblTXTimeout.Size = new System.Drawing.Size(63, 17);
+            this.lblTXTimeout.TabIndex = 1;
+            this.lblTXTimeout.Text = "Timeout:";
+            // 
+            // lblRXTimeout
+            // 
+            this.lblRXTimeout.AutoSize = true;
+            this.lblRXTimeout.Location = new System.Drawing.Point(7, 66);
+            this.lblRXTimeout.Name = "lblRXTimeout";
+            this.lblRXTimeout.Size = new System.Drawing.Size(63, 17);
+            this.lblRXTimeout.TabIndex = 2;
+            this.lblRXTimeout.Text = "Timeout:";
+            // 
+            // numRXTimeout
+            // 
+            this.numRXTimeout.Location = new System.Drawing.Point(105, 64);
+            this.numRXTimeout.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numRXTimeout.Name = "numRXTimeout";
+            this.numRXTimeout.Size = new System.Drawing.Size(101, 22);
+            this.numRXTimeout.TabIndex = 3;
+            this.numRXTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numRXTimeout.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // numTXTimeout
+            // 
+            this.numTXTimeout.Location = new System.Drawing.Point(105, 64);
+            this.numTXTimeout.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numTXTimeout.Name = "numTXTimeout";
+            this.numTXTimeout.Size = new System.Drawing.Size(101, 22);
+            this.numTXTimeout.TabIndex = 2;
+            this.numTXTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numTXTimeout.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
             // FlowForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -296,9 +373,13 @@
             this.pnlFlow.PerformLayout();
             this.grpNetworkSettings.ResumeLayout(false);
             this.grpNetworkSettings.PerformLayout();
+            this.grpSenderSettings.ResumeLayout(false);
+            this.grpSenderSettings.PerformLayout();
             this.grpReceiverSettings.ResumeLayout(false);
             this.grpReceiverSettings.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numRXBufferSize)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numRXTimeout)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numTXTimeout)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -323,6 +404,11 @@
         private System.Windows.Forms.ToolStripMenuItem mnuDelayDelivery;
         private System.Windows.Forms.NumericUpDown numRXBufferSize;
         private System.Windows.Forms.Label m_lblRXBufferSize;
+        private System.Windows.Forms.Label lblTXTimeout;
+        private System.Windows.Forms.CheckBox chkCongestionControl;
+        private System.Windows.Forms.NumericUpDown numRXTimeout;
+        private System.Windows.Forms.Label lblRXTimeout;
+        private System.Windows.Forms.NumericUpDown numTXTimeout;
     }
 }
 

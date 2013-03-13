@@ -29,11 +29,11 @@ namespace TCPFlow
             Ack.Reset();
         }
 
-        public Controller(uint delay, uint rxBufferSize, uint ackTimeout)
+        public Controller(uint delay, uint rxBufferSize, uint timeout)
         {
             log = new Log(this);
-            sender = new Sender(this, true, ackTimeout);
-            receiver = new Receiver(this, rxBufferSize, ackTimeout);
+            sender = new Sender(this, true, true, timeout);
+            receiver = new Receiver(this, rxBufferSize, timeout);
             network = new Network(this, delay);
 
             sender.PacketSent += log.OnPacketSent;
@@ -69,6 +69,9 @@ namespace TCPFlow
 
         public void TickUntil(uint time)
         {
+            if (time == uint.MaxValue)
+                return;
+
             while (Time < time || Time == uint.MaxValue)
                 Tick();
         }
