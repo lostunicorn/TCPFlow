@@ -264,14 +264,14 @@ namespace TCPFlow
                     {
                         Model.Receiver.PacketDeliveryArgs args = m_controller.log.delivered[time];
 
-                        PointF from = new PointF(m_rxLine, time * PIXELS_PER_TICK),
-                            to = new PointF(from.X + DELIVERY_BORDER, from.Y - DELIVERY_BORDER);
+                        PointF to = new PointF(bitmap.Width - m_elementSize.Width, time * PIXELS_PER_TICK),
+                            from = new PointF(to.X - DELIVERY_BORDER, to.Y);
                         g.DrawLine(m_bluePen, from, to);
 
                         if (args.Delivered)
                         {
-                            g.DrawLine(m_bluePen, to, new PointF(to.X - 10, to.Y + 2));
-                            g.DrawLine(m_bluePen, to, new PointF(to.X - 2, to.Y + 10));
+                            g.DrawLine(m_bluePen, to, new PointF(to.X - 7, to.Y - 5));
+                            g.DrawLine(m_bluePen, to, new PointF(to.X - 7, to.Y + 5));
                         }
                         else
                         {
@@ -279,8 +279,7 @@ namespace TCPFlow
                             g.DrawLine(m_redPen, new PointF(to.X - 10, to.Y + 10), new PointF(to.X + 10, to.Y - 10));
                         }
 
-                        from.X += 15;
-                        DrawRotatedString(g, m_smallFont, Brushes.Blue, args.ID.ToString(), from.X, from.Y, 0, false);
+                        DrawRotatedString(g, m_smallFont, Brushes.Blue, args.ID.ToString(), to.X, to.Y + m_elementSize.Height/2, 0, false);
                     }
 
                     if (m_controller.log.senderStates.ContainsKey(time))
@@ -310,6 +309,31 @@ namespace TCPFlow
                             g.DrawRectangle(m_thinPen, rect);
                             g.DrawString(nextID.ToString(), m_smallFont, Brushes.Black, p);
                             ++nextID;
+                            ++i;
+                        }
+                    }
+
+                    if (m_controller.log.receiverStates.ContainsKey(time))
+                    {
+                        Model.Receiver.State state = m_controller.log.receiverStates[time];
+
+                        int i = 0;
+                        while (i < state.Buffer.Length)
+                        {
+                            Point p = new Point((int)(m_rxLine + BORDER + i * m_elementSize.Width), (int)(time * PIXELS_PER_TICK - m_elementSize.Height / 2.0));
+                            Rectangle rect = new Rectangle(p, new Size((int)m_elementSize.Width, (int)m_elementSize.Height));
+                            g.FillRectangle(Brushes.Red, rect);
+                            g.DrawRectangle(m_thinPen, rect);
+                            g.DrawString(state.Buffer[i].ToString(), m_smallFont, Brushes.White, p);
+                            ++i;
+                        }
+
+                        while (i < m_controller.receiver.BufferSize)
+                        {
+                            Point p = new Point((int)(m_rxLine + BORDER + i * m_elementSize.Width), (int)(time * PIXELS_PER_TICK - m_elementSize.Height / 2.0));
+                            Rectangle rect = new Rectangle(p, new Size((int)m_elementSize.Width, (int)m_elementSize.Height));
+                            g.FillRectangle(Brushes.White, rect);
+                            g.DrawRectangle(m_thinPen, rect);
                             ++i;
                         }
                     }
@@ -464,6 +488,12 @@ namespace TCPFlow
             m_controller.Replay();
             m_controller.Ticked += DrawFlow; //make sure we do redraw following states
             DrawFlow();
+        }
+
+        private void numRXBufferSize_ValueChanged(object sender, EventArgs e)
+        {
+            m_controller.receiver.BufferSize = Convert.ToUInt32(numRXBufferSize.Value);
+            Replay();
         }
     }
 }

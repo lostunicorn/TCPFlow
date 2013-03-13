@@ -45,12 +45,16 @@
             this.grpNetworkSettings = new System.Windows.Forms.GroupBox();
             this.grpSenderSettings = new System.Windows.Forms.GroupBox();
             this.grpReceiverSettings = new System.Windows.Forms.GroupBox();
+            this.m_lblRXBufferSize = new System.Windows.Forms.Label();
+            this.numRXBufferSize = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.pbFlow)).BeginInit();
             this.ctxStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDelay)).BeginInit();
             this.grpRunSettings.SuspendLayout();
             this.pnlFlow.SuspendLayout();
             this.grpNetworkSettings.SuspendLayout();
+            this.grpReceiverSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numRXBufferSize)).BeginInit();
             this.SuspendLayout();
             // 
             // pbFlow
@@ -229,12 +233,47 @@
             // 
             this.grpReceiverSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpReceiverSettings.Controls.Add(this.numRXBufferSize);
+            this.grpReceiverSettings.Controls.Add(this.m_lblRXBufferSize);
             this.grpReceiverSettings.Location = new System.Drawing.Point(851, 82);
             this.grpReceiverSettings.Name = "grpReceiverSettings";
             this.grpReceiverSettings.Size = new System.Drawing.Size(212, 422);
             this.grpReceiverSettings.TabIndex = 8;
             this.grpReceiverSettings.TabStop = false;
             this.grpReceiverSettings.Text = "Receiver";
+            // 
+            // m_lblRXBufferSize
+            // 
+            this.m_lblRXBufferSize.AutoSize = true;
+            this.m_lblRXBufferSize.Location = new System.Drawing.Point(7, 22);
+            this.m_lblRXBufferSize.Name = "m_lblRXBufferSize";
+            this.m_lblRXBufferSize.Size = new System.Drawing.Size(81, 17);
+            this.m_lblRXBufferSize.TabIndex = 0;
+            this.m_lblRXBufferSize.Text = "Buffer Size:";
+            // 
+            // numRXBufferSize
+            // 
+            this.numRXBufferSize.Location = new System.Drawing.Point(95, 22);
+            this.numRXBufferSize.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.numRXBufferSize.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numRXBufferSize.Name = "numRXBufferSize";
+            this.numRXBufferSize.Size = new System.Drawing.Size(101, 22);
+            this.numRXBufferSize.TabIndex = 1;
+            this.numRXBufferSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numRXBufferSize.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numRXBufferSize.ValueChanged += new System.EventHandler(this.numRXBufferSize_ValueChanged);
             // 
             // FlowForm
             // 
@@ -258,6 +297,9 @@
             this.pnlFlow.PerformLayout();
             this.grpNetworkSettings.ResumeLayout(false);
             this.grpNetworkSettings.PerformLayout();
+            this.grpReceiverSettings.ResumeLayout(false);
+            this.grpReceiverSettings.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numRXBufferSize)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -280,6 +322,8 @@
         private System.Windows.Forms.ToolStripMenuItem mnuLoseDataPacket;
         private System.Windows.Forms.ToolStripMenuItem mnuLoseAck;
         private System.Windows.Forms.ToolStripMenuItem mnuDelayDelivery;
+        private System.Windows.Forms.NumericUpDown numRXBufferSize;
+        private System.Windows.Forms.Label m_lblRXBufferSize;
     }
 }
 
