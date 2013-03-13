@@ -160,7 +160,8 @@ namespace TCPFlow.Model
 
             if (m_receivedPacket != null)
             {
-                m_buffer.Add(m_receivedPacket.ID);
+                if (m_receivedPacket.ID >= m_nextID) //avoid re-adding something to the buffer that was already delivered
+                    m_buffer.Add(m_receivedPacket.ID);
 
                 stateChanged = true;
             }

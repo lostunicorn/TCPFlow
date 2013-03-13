@@ -346,44 +346,37 @@ namespace TCPFlow
                     {
                         Model.Receiver.State state = m_controller.log.receiverStates[time];
 
-                        int i = 0;
-
+                        int i = 0, bufIndex = 0;
                         uint nextID = state.NextID;
-
-                        if (state.Buffer.Length > 0)
-                        {
-                            while (nextID != state.Buffer[0])
-                            {
-                                Point p = new Point((int)(m_rxLine + BORDER + i * m_elementSize.Width), (int)(time * PIXELS_PER_TICK - m_elementSize.Height / 2.0));
-                                Rectangle rect = new Rectangle(p, new Size((int)m_elementSize.Width, (int)m_elementSize.Height));
-                                g.FillRectangle(Brushes.Red, rect);
-                                g.DrawRectangle(m_thinPen, rect);
-                                g.DrawString(nextID.ToString(), m_smallFont, Brushes.White, p);
-
-                                ++nextID;
-                                ++i;
-                            }
-                        }
-
-                        int j = 0;
-                        while (j < state.Buffer.Length)
-                        {
-                            Point p = new Point((int)(m_rxLine + BORDER + i * m_elementSize.Width), (int)(time * PIXELS_PER_TICK - m_elementSize.Height / 2.0));
-                            Rectangle rect = new Rectangle(p, new Size((int)m_elementSize.Width, (int)m_elementSize.Height));
-                            g.FillRectangle(Brushes.Green, rect);
-                            g.DrawRectangle(m_thinPen, rect);
-                            g.DrawString(state.Buffer[j].ToString(), m_smallFont, Brushes.White, p);
-
-                            ++j;
-                            ++i;
-                        }
 
                         while (i < m_controller.receiver.BufferSize)
                         {
                             Point p = new Point((int)(m_rxLine + BORDER + i * m_elementSize.Width), (int)(time * PIXELS_PER_TICK - m_elementSize.Height / 2.0));
                             Rectangle rect = new Rectangle(p, new Size((int)m_elementSize.Width, (int)m_elementSize.Height));
-                            g.FillRectangle(Brushes.White, rect);
+                            Brush brush;
+                            string str = nextID.ToString();
+
+                            if (state.Buffer.Length == 0 || //buffer is empty
+                                nextID > state.Buffer[state.Buffer.Length - 1]) //nextID is larger than the largest element in buffer
+                            {
+                                brush = Brushes.White;
+                                str = "";
+                            }
+                            else if (state.Buffer.Length > bufIndex && state.Buffer[bufIndex] == nextID) //is nextID in buffer?
+                            {
+                                brush = Brushes.Green;
+                                ++bufIndex;
+                            }
+                            else
+                            {
+                                brush = Brushes.Red;
+                            }
+
+                            g.FillRectangle(brush, rect);
                             g.DrawRectangle(m_thinPen, rect);
+                            g.DrawString(nextID.ToString(), m_smallFont, Brushes.White, p);
+
+                            ++nextID;
                             ++i;
                         }
                     }
