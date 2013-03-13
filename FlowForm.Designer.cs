@@ -45,8 +45,8 @@
             this.grpNetworkSettings = new System.Windows.Forms.GroupBox();
             this.grpSenderSettings = new System.Windows.Forms.GroupBox();
             this.grpReceiverSettings = new System.Windows.Forms.GroupBox();
-            this.m_lblRXBufferSize = new System.Windows.Forms.Label();
             this.numRXBufferSize = new System.Windows.Forms.NumericUpDown();
+            this.m_lblRXBufferSize = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbFlow)).BeginInit();
             this.ctxStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDelay)).BeginInit();
@@ -242,15 +242,6 @@
             this.grpReceiverSettings.TabStop = false;
             this.grpReceiverSettings.Text = "Receiver";
             // 
-            // m_lblRXBufferSize
-            // 
-            this.m_lblRXBufferSize.AutoSize = true;
-            this.m_lblRXBufferSize.Location = new System.Drawing.Point(7, 22);
-            this.m_lblRXBufferSize.Name = "m_lblRXBufferSize";
-            this.m_lblRXBufferSize.Size = new System.Drawing.Size(81, 17);
-            this.m_lblRXBufferSize.TabIndex = 0;
-            this.m_lblRXBufferSize.Text = "Buffer Size:";
-            // 
             // numRXBufferSize
             // 
             this.numRXBufferSize.Location = new System.Drawing.Point(95, 22);
@@ -273,7 +264,15 @@
             0,
             0,
             0});
-            this.numRXBufferSize.ValueChanged += new System.EventHandler(this.numRXBufferSize_ValueChanged);
+            // 
+            // m_lblRXBufferSize
+            // 
+            this.m_lblRXBufferSize.AutoSize = true;
+            this.m_lblRXBufferSize.Location = new System.Drawing.Point(7, 22);
+            this.m_lblRXBufferSize.Name = "m_lblRXBufferSize";
+            this.m_lblRXBufferSize.Size = new System.Drawing.Size(81, 17);
+            this.m_lblRXBufferSize.TabIndex = 0;
+            this.m_lblRXBufferSize.Text = "Buffer Size:";
             // 
             // FlowForm
             // 

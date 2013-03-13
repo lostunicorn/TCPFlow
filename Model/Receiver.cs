@@ -14,9 +14,12 @@ namespace TCPFlow.Model
 
             public readonly uint[] Buffer;
 
-            public State(uint time, uint[] buffer)
+            public readonly uint NextID;
+
+            public State(uint time, uint nextID, uint[] buffer)
             {
                 Time = time;
+                NextID = nextID;
                 Buffer = buffer;
             }
         }
@@ -24,7 +27,7 @@ namespace TCPFlow.Model
         protected void ChangeState()
         {
             if (StateChanged != null)
-                StateChanged(new State(m_controller.Time, m_buffer.ToArray()));
+                StateChanged(new State(m_controller.Time, m_nextID, m_buffer.ToArray()));
         }
 
         private SortedList<uint, uint> m_sequenceNumbersToHold;

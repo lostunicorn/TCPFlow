@@ -59,14 +59,16 @@ namespace TCPFlow
         {
             InitializeComponent();
 
-            pnlFlow.VerticalScroll.Visible = true;
-
             m_controller = controller;
             m_controller.Ticked += DrawFlow;
 
             m_tickTimer = new Timer();
             m_tickTimer.Interval = TICK_INTERVAL;
             m_tickTimer.Tick += tickTimer_Tick;
+
+            pnlFlow.VerticalScroll.Visible = true;
+            numRXBufferSize.Value = m_controller.receiver.BufferSize;
+            numRXBufferSize.ValueChanged += numRXBufferSize_ValueChanged;
 
             InitStaticGraphics();
             InitDynamicGraphics();
@@ -318,13 +320,34 @@ namespace TCPFlow
                         Model.Receiver.State state = m_controller.log.receiverStates[time];
 
                         int i = 0;
-                        while (i < state.Buffer.Length)
+
+                        uint nextID = state.NextID;
+
+                        if (state.Buffer.Length > 0)
+                        {
+                            while (nextID != state.Buffer[0])
+                            {
+                                Point p = new Point((int)(m_rxLine + BORDER + i * m_elementSize.Width), (int)(time * PIXELS_PER_TICK - m_elementSize.Height / 2.0));
+                                Rectangle rect = new Rectangle(p, new Size((int)m_elementSize.Width, (int)m_elementSize.Height));
+                                g.FillRectangle(Brushes.Red, rect);
+                                g.DrawRectangle(m_thinPen, rect);
+                                g.DrawString(nextID.ToString(), m_smallFont, Brushes.White, p);
+
+                                ++nextID;
+                                ++i;
+                            }
+                        }
+
+                        int j = 0;
+                        while (j < state.Buffer.Length)
                         {
                             Point p = new Point((int)(m_rxLine + BORDER + i * m_elementSize.Width), (int)(time * PIXELS_PER_TICK - m_elementSize.Height / 2.0));
                             Rectangle rect = new Rectangle(p, new Size((int)m_elementSize.Width, (int)m_elementSize.Height));
-                            g.FillRectangle(Brushes.Red, rect);
+                            g.FillRectangle(Brushes.Green, rect);
                             g.DrawRectangle(m_thinPen, rect);
-                            g.DrawString(state.Buffer[i].ToString(), m_smallFont, Brushes.White, p);
+                            g.DrawString(state.Buffer[j].ToString(), m_smallFont, Brushes.White, p);
+
+                            ++j;
                             ++i;
                         }
 
@@ -347,6 +370,7 @@ namespace TCPFlow
         private void numDelay_ValueChanged(object sender, EventArgs e)
         {
             m_controller.network.Delay = Convert.ToUInt32(numDelay.Value);
+
             Replay();
         }
 
@@ -493,6 +517,7 @@ namespace TCPFlow
         private void numRXBufferSize_ValueChanged(object sender, EventArgs e)
         {
             m_controller.receiver.BufferSize = Convert.ToUInt32(numRXBufferSize.Value);
+            InitDynamicGraphics();
             Replay();
         }
     }
