@@ -51,6 +51,12 @@
     <Compile Include="FlowForm.Designer.cs">
       <DependentUpon>FlowForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="DelayDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DelayDialog.Designer.cs">
+      <DependentUpon>DelayDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Model\Ack.cs" />
     <Compile Include="Model\DataPacket.cs" />
     <Compile Include="Model\Log.cs" />
@@ -63,6 +69,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FlowForm.resx">
       <DependentUpon>FlowForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DelayDialog.resx">
+      <DependentUpon>DelayDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

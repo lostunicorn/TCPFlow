@@ -45,13 +45,12 @@ namespace TCPFlow
         float m_txLine,
             m_rxLine;
 
-        float m_txAngle,
-            m_rxAngle;
-
         LinearGradientBrush m_txBrush,
             m_rxBrush;
 
         SolidBrush m_selectionBrush;
+
+        DelayDialog m_delayDialog = new DelayDialog();
 
         int m_flowWidth;
 
@@ -131,12 +130,10 @@ namespace TCPFlow
             float rxBufferWidth = Convert.ToSingle(m_elementSize.Width * m_controller.receiver.BufferSize);
 
             m_txLine = txBufferWidth + 2 * BORDER + m_txSize.Width / 2;
-            m_txAngle = (float)(180 / Math.PI * Math.Atan2(m_controller.network.Delay * PIXELS_PER_TICK, m_rxLine - m_txLine));
             m_txBrush = new LinearGradientBrush(new PointF(m_txLine, 0), new PointF(m_rxLine, 0), Color.Black, Color.White);
             m_txPen = new Pen(m_txBrush, 3);
 
             m_rxLine = m_flowWidth - (rxBufferWidth + 2 * BORDER + DELIVERY_BORDER + m_rxSize.Width / 2);
-            m_rxAngle = -m_txAngle;
             m_rxBrush = new LinearGradientBrush(new PointF(m_txLine, 0), new PointF(m_rxLine, 0), Color.White, Color.Black);
             m_rxPen = new Pen(m_rxBrush, 3);
         }
@@ -206,20 +203,22 @@ namespace TCPFlow
             {
                 for (uint time = 0; time <= m_controller.Time; ++time)
                 {
-                    //render packets, acks and such
+                    //render packet
                     if (m_controller.log.packets.ContainsKey(time))
                     {
                         Model.DataPacket packet = m_controller.log.packets[time];
+                        uint delay = m_controller.network.GetPacketDelay(packet.Number);
+                        float txAngle = (float)(180 / Math.PI * Math.Atan2(delay * PIXELS_PER_TICK, m_rxLine - m_txLine));
 
                         PointF from, to;
                         from = new PointF(m_txLine, time * PIXELS_PER_TICK);
                         to = new PointF();
 
                         if (packet.Lost &&
-                            m_controller.Time > packet.Time + m_controller.network.Delay / 3)
+                            m_controller.Time > packet.Time + delay / 3)
                         {
                             to.X = m_txLine + (m_rxLine - m_txLine) / 3;
-                            to.Y = from.Y + (m_controller.network.Delay * PIXELS_PER_TICK) / 3;
+                            to.Y = from.Y + (delay * PIXELS_PER_TICK) / 3;
 
                             //g.DrawLine(blackPen, from, to);
                             g.DrawLine(m_txPen, from, to);
@@ -230,10 +229,10 @@ namespace TCPFlow
                         {
                             float r = 1;
 
-                            if (m_controller.Time < packet.Time + m_controller.network.Delay)
-                                r = Convert.ToSingle((m_controller.Time - packet.Time) * 1.0 / m_controller.network.Delay);
+                            if (m_controller.Time < packet.Time + delay)
+                                r = Convert.ToSingle((m_controller.Time - packet.Time) * 1.0 / delay);
 
-                            to.Y = from.Y + m_controller.network.Delay * PIXELS_PER_TICK * r;
+                            to.Y = from.Y + delay * PIXELS_PER_TICK * r;
                             to.X = m_txLine + (m_rxLine - m_txLine) * r;
 
                             //g.DrawLine(blackPen, from, to);
@@ -245,22 +244,25 @@ namespace TCPFlow
                             desc = string.Format("Seq: {0}", packet.ID);
                         else
                             desc = string.Format("Seq: {0} Flags: {1}", packet.ID, GetFlagString(packet.Flags));
-                        DrawRotatedString(g, m_smallFont, Brushes.Black, desc, from.X, from.Y, m_txAngle, false);
+                        DrawRotatedString(g, m_smallFont, Brushes.Black, desc, from.X, from.Y, txAngle, false);
                     }
 
+                    //render ack
                     if (m_controller.log.acks.ContainsKey(time))
                     {
                         Model.Ack ack = m_controller.log.acks[time];
+                        uint delay = m_controller.network.GetAckDelay(ack.Number);
+                        float rxAngle = -(float)(180 / Math.PI * Math.Atan2(delay * PIXELS_PER_TICK, m_rxLine - m_txLine));
 
                         PointF from, to;
                         from = new PointF(m_rxLine, time * PIXELS_PER_TICK);
                         to = new PointF();
 
                         if (ack.Lost &&
-                            m_controller.Time > ack.Time + m_controller.network.Delay / 3)
+                            m_controller.Time > ack.Time + delay / 3)
                         {
                             to.X = m_rxLine - (m_rxLine - m_txLine) / 3;
-                            to.Y = from.Y + (m_controller.network.Delay * PIXELS_PER_TICK) / 3;
+                            to.Y = from.Y + (delay * PIXELS_PER_TICK) / 3;
 
                             //g.DrawLine(blackPen, from, to);
                             g.DrawLine(m_rxPen, from, to);
@@ -271,11 +273,11 @@ namespace TCPFlow
                         {
                             float r = 1;
 
-                            if (m_controller.Time < ack.Time + m_controller.network.Delay)
-                                r = Convert.ToSingle((m_controller.Time - ack.Time) * 1.0 / m_controller.network.Delay);
+                            if (m_controller.Time < ack.Time + delay)
+                                r = Convert.ToSingle((m_controller.Time - ack.Time) * 1.0 / delay);
 
                             to.X = m_rxLine - (m_rxLine - m_txLine) * r;
-                            to.Y = from.Y + m_controller.network.Delay * PIXELS_PER_TICK * r;
+                            to.Y = from.Y + delay * PIXELS_PER_TICK * r;
 
                             //g.DrawLine(blackPen, from, to);
                             g.DrawLine(m_rxPen, from, to);
@@ -286,9 +288,10 @@ namespace TCPFlow
                             desc = string.Format("Ack: {0} Window: {1}", ack.NextID, ack.Window);
                         else
                             desc = string.Format("Ack: {0} Window: {1} Flags: {2}", ack.NextID, ack.Window, GetFlagString(ack.Flags));
-                        DrawRotatedString(g, m_smallFont, Brushes.Black, desc, from.X, from.Y, m_rxAngle, true);
+                        DrawRotatedString(g, m_smallFont, Brushes.Black, desc, from.X, from.Y, rxAngle, true);
                     }
 
+                    //render delivery
                     if (m_controller.log.delivered.ContainsKey(time))
                     {
                         Model.Receiver.PacketDeliveryArgs args = m_controller.log.delivered[time];
@@ -311,6 +314,7 @@ namespace TCPFlow
                         DrawRotatedString(g, m_smallFont, Brushes.Blue, args.ID.ToString(), to.X, to.Y + m_elementSize.Height/2, 0, false);
                     }
 
+                    //render sender state
                     if (m_controller.log.senderStates.ContainsKey(time))
                     {
                         Model.Sender.State state = m_controller.log.senderStates[time];
@@ -342,6 +346,7 @@ namespace TCPFlow
                         }
                     }
 
+                    //render receiver state
                     if (m_controller.log.receiverStates.ContainsKey(time))
                     {
                         Model.Receiver.State state = m_controller.log.receiverStates[time];
@@ -428,23 +433,23 @@ namespace TCPFlow
 
             if (m_controller.log.packets.ContainsKey(m_contextTime))
             {
-                mnuLoseDataPacket.Enabled = true;
+                mnuLoseDataPacket.Enabled = mnuPacketDelay.Enabled = true;
                 mnuLoseDataPacket.Checked = m_controller.log.packets[m_contextTime].Lost;
             }
             else
             {
-                mnuLoseDataPacket.Enabled = false;
+                mnuLoseDataPacket.Enabled = mnuPacketDelay.Enabled = false;
                 mnuLoseDataPacket.Checked = false;
             }
 
             if (m_controller.log.acks.ContainsKey(m_contextTime))
             {
-                mnuLoseAck.Enabled = true;
+                mnuLoseAck.Enabled = mnuAckDelay.Enabled = true;
                 mnuLoseAck.Checked = m_controller.log.acks[m_contextTime].Lost;
             }
             else
             {
-                mnuLoseAck.Enabled = false;
+                mnuLoseAck.Enabled = mnuAckDelay.Enabled = false;
                 mnuLoseAck.Checked = false;
             }
 
@@ -539,6 +544,32 @@ namespace TCPFlow
             m_controller.receiver.BufferSize = Convert.ToUInt32(numRXBufferSize.Value);
             InitDynamicGraphics();
             Replay();
+        }
+
+        private void mnuPacketDelay_Click(object sender, EventArgs e)
+        {
+            Model.DataPacket packet = m_controller.log.packets[m_contextTime];
+            uint oldDelay = m_controller.network.GetPacketDelay(packet.Number);
+            m_delayDialog.Delay = oldDelay;
+            if (m_delayDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK &&
+                m_delayDialog.Delay != oldDelay)
+            {
+                m_controller.network.SetCustomPacketDelay(packet.Number, m_delayDialog.Delay);
+                Replay();
+            }
+        }
+
+        private void mnuAckDelay_Click(object sender, EventArgs e)
+        {
+            Model.Ack ack = m_controller.log.acks[m_contextTime];
+            uint oldDelay = m_controller.network.GetAckDelay(ack.Number);
+            m_delayDialog.Delay = oldDelay;
+            if (m_delayDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK &&
+                m_delayDialog.Delay != oldDelay)
+            {
+                m_controller.network.SetCustomAckDelay(ack.Number, m_delayDialog.Delay);
+                Replay();
+            }
         }
     }
 }

@@ -32,6 +32,7 @@
             this.pbFlow = new System.Windows.Forms.PictureBox();
             this.ctxStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mnuLoseDataPacket = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuLoseAck = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuDelayDelivery = new System.Windows.Forms.ToolStripMenuItem();
             this.numDelay = new System.Windows.Forms.NumericUpDown();
@@ -44,14 +45,16 @@
             this.pnlFlow = new System.Windows.Forms.Panel();
             this.grpNetworkSettings = new System.Windows.Forms.GroupBox();
             this.grpSenderSettings = new System.Windows.Forms.GroupBox();
+            this.numTXTimeout = new System.Windows.Forms.NumericUpDown();
+            this.lblTXTimeout = new System.Windows.Forms.Label();
+            this.chkCongestionControl = new System.Windows.Forms.CheckBox();
             this.grpReceiverSettings = new System.Windows.Forms.GroupBox();
+            this.numRXTimeout = new System.Windows.Forms.NumericUpDown();
+            this.lblRXTimeout = new System.Windows.Forms.Label();
             this.numRXBufferSize = new System.Windows.Forms.NumericUpDown();
             this.m_lblRXBufferSize = new System.Windows.Forms.Label();
-            this.chkCongestionControl = new System.Windows.Forms.CheckBox();
-            this.lblTXTimeout = new System.Windows.Forms.Label();
-            this.lblRXTimeout = new System.Windows.Forms.Label();
-            this.numRXTimeout = new System.Windows.Forms.NumericUpDown();
-            this.numTXTimeout = new System.Windows.Forms.NumericUpDown();
+            this.mnuPacketDelay = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuAckDelay = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pbFlow)).BeginInit();
             this.ctxStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDelay)).BeginInit();
@@ -59,10 +62,10 @@
             this.pnlFlow.SuspendLayout();
             this.grpNetworkSettings.SuspendLayout();
             this.grpSenderSettings.SuspendLayout();
-            this.grpReceiverSettings.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numRXBufferSize)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numRXTimeout)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTXTimeout)).BeginInit();
+            this.grpReceiverSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numRXTimeout)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numRXBufferSize)).BeginInit();
             this.SuspendLayout();
             // 
             // pbFlow
@@ -84,12 +87,15 @@
             // 
             this.ctxStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuLoseDataPacket,
+            this.mnuPacketDelay,
+            this.toolStripSeparator1,
             this.mnuLoseAck,
+            this.mnuAckDelay,
             this.mnuDelayDelivery});
             this.ctxStrip.Name = "ctxStrip";
             this.ctxStrip.ShowCheckMargin = true;
             this.ctxStrip.ShowImageMargin = false;
-            this.ctxStrip.Size = new System.Drawing.Size(222, 76);
+            this.ctxStrip.Size = new System.Drawing.Size(222, 152);
             this.ctxStrip.Opening += new System.ComponentModel.CancelEventHandler(this.ctxStrip_Opening);
             // 
             // mnuLoseDataPacket
@@ -98,6 +104,11 @@
             this.mnuLoseDataPacket.Size = new System.Drawing.Size(221, 24);
             this.mnuLoseDataPacket.Text = "Lose Data Packet";
             this.mnuLoseDataPacket.Click += new System.EventHandler(this.mnuLoseDataPacket_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(218, 6);
             // 
             // mnuLoseAck
             // 
@@ -240,6 +251,43 @@
             this.grpSenderSettings.TabStop = false;
             this.grpSenderSettings.Text = "Sender";
             // 
+            // numTXTimeout
+            // 
+            this.numTXTimeout.Location = new System.Drawing.Point(105, 64);
+            this.numTXTimeout.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numTXTimeout.Name = "numTXTimeout";
+            this.numTXTimeout.Size = new System.Drawing.Size(101, 22);
+            this.numTXTimeout.TabIndex = 2;
+            this.numTXTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numTXTimeout.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // lblTXTimeout
+            // 
+            this.lblTXTimeout.AutoSize = true;
+            this.lblTXTimeout.Location = new System.Drawing.Point(6, 66);
+            this.lblTXTimeout.Name = "lblTXTimeout";
+            this.lblTXTimeout.Size = new System.Drawing.Size(63, 17);
+            this.lblTXTimeout.TabIndex = 1;
+            this.lblTXTimeout.Text = "Timeout:";
+            // 
+            // chkCongestionControl
+            // 
+            this.chkCongestionControl.AutoSize = true;
+            this.chkCongestionControl.Location = new System.Drawing.Point(7, 22);
+            this.chkCongestionControl.Name = "chkCongestionControl";
+            this.chkCongestionControl.Size = new System.Drawing.Size(198, 21);
+            this.chkCongestionControl.TabIndex = 0;
+            this.chkCongestionControl.Text = "Enable Congestion Control";
+            this.chkCongestionControl.UseVisualStyleBackColor = true;
+            // 
             // grpReceiverSettings
             // 
             this.grpReceiverSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -254,6 +302,33 @@
             this.grpReceiverSettings.TabIndex = 8;
             this.grpReceiverSettings.TabStop = false;
             this.grpReceiverSettings.Text = "Receiver";
+            // 
+            // numRXTimeout
+            // 
+            this.numRXTimeout.Location = new System.Drawing.Point(105, 64);
+            this.numRXTimeout.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numRXTimeout.Name = "numRXTimeout";
+            this.numRXTimeout.Size = new System.Drawing.Size(101, 22);
+            this.numRXTimeout.TabIndex = 3;
+            this.numRXTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numRXTimeout.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // lblRXTimeout
+            // 
+            this.lblRXTimeout.AutoSize = true;
+            this.lblRXTimeout.Location = new System.Drawing.Point(7, 66);
+            this.lblRXTimeout.Name = "lblRXTimeout";
+            this.lblRXTimeout.Size = new System.Drawing.Size(63, 17);
+            this.lblRXTimeout.TabIndex = 2;
+            this.lblRXTimeout.Text = "Timeout:";
             // 
             // numRXBufferSize
             // 
@@ -287,69 +362,19 @@
             this.m_lblRXBufferSize.TabIndex = 0;
             this.m_lblRXBufferSize.Text = "Buffer Size:";
             // 
-            // chkCongestionControl
+            // mnuPacketDelay
             // 
-            this.chkCongestionControl.AutoSize = true;
-            this.chkCongestionControl.Location = new System.Drawing.Point(7, 22);
-            this.chkCongestionControl.Name = "chkCongestionControl";
-            this.chkCongestionControl.Size = new System.Drawing.Size(198, 21);
-            this.chkCongestionControl.TabIndex = 0;
-            this.chkCongestionControl.Text = "Enable Congestion Control";
-            this.chkCongestionControl.UseVisualStyleBackColor = true;
+            this.mnuPacketDelay.Name = "mnuPacketDelay";
+            this.mnuPacketDelay.Size = new System.Drawing.Size(221, 24);
+            this.mnuPacketDelay.Text = "Set Packet Delay...";
+            this.mnuPacketDelay.Click += new System.EventHandler(this.mnuPacketDelay_Click);
             // 
-            // lblTXTimeout
+            // mnuAckDelay
             // 
-            this.lblTXTimeout.AutoSize = true;
-            this.lblTXTimeout.Location = new System.Drawing.Point(6, 66);
-            this.lblTXTimeout.Name = "lblTXTimeout";
-            this.lblTXTimeout.Size = new System.Drawing.Size(63, 17);
-            this.lblTXTimeout.TabIndex = 1;
-            this.lblTXTimeout.Text = "Timeout:";
-            // 
-            // lblRXTimeout
-            // 
-            this.lblRXTimeout.AutoSize = true;
-            this.lblRXTimeout.Location = new System.Drawing.Point(7, 66);
-            this.lblRXTimeout.Name = "lblRXTimeout";
-            this.lblRXTimeout.Size = new System.Drawing.Size(63, 17);
-            this.lblRXTimeout.TabIndex = 2;
-            this.lblRXTimeout.Text = "Timeout:";
-            // 
-            // numRXTimeout
-            // 
-            this.numRXTimeout.Location = new System.Drawing.Point(105, 64);
-            this.numRXTimeout.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numRXTimeout.Name = "numRXTimeout";
-            this.numRXTimeout.Size = new System.Drawing.Size(101, 22);
-            this.numRXTimeout.TabIndex = 3;
-            this.numRXTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numRXTimeout.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // numTXTimeout
-            // 
-            this.numTXTimeout.Location = new System.Drawing.Point(105, 64);
-            this.numTXTimeout.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numTXTimeout.Name = "numTXTimeout";
-            this.numTXTimeout.Size = new System.Drawing.Size(101, 22);
-            this.numTXTimeout.TabIndex = 2;
-            this.numTXTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numTXTimeout.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            this.mnuAckDelay.Name = "mnuAckDelay";
+            this.mnuAckDelay.Size = new System.Drawing.Size(221, 24);
+            this.mnuAckDelay.Text = "Set Ack Delay...";
+            this.mnuAckDelay.Click += new System.EventHandler(this.mnuAckDelay_Click);
             // 
             // FlowForm
             // 
@@ -375,11 +400,11 @@
             this.grpNetworkSettings.PerformLayout();
             this.grpSenderSettings.ResumeLayout(false);
             this.grpSenderSettings.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numTXTimeout)).EndInit();
             this.grpReceiverSettings.ResumeLayout(false);
             this.grpReceiverSettings.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numRXBufferSize)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRXTimeout)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numTXTimeout)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numRXBufferSize)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -409,6 +434,9 @@
         private System.Windows.Forms.NumericUpDown numRXTimeout;
         private System.Windows.Forms.Label lblRXTimeout;
         private System.Windows.Forms.NumericUpDown numTXTimeout;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem mnuPacketDelay;
+        private System.Windows.Forms.ToolStripMenuItem mnuAckDelay;
     }
 }
 

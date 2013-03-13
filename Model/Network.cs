@@ -10,11 +10,14 @@ namespace TCPFlow.Model
     {
         public uint Delay { get; set; }
 
-        private Queue<DataPacket> m_packetsUnderway = new Queue<DataPacket>();
-        private Queue<Ack> m_acksUnderway = new Queue<Ack>();
+        private SortedList<uint, DataPacket> m_packetsUnderway = new SortedList<uint, DataPacket>();
+        private SortedList<uint, Ack> m_acksUnderway = new SortedList<uint, Ack>();
 
-        private SortedSet<uint> m_packetsToDrop;
-        private SortedSet<uint> m_acksToDrop;
+        private SortedSet<uint> m_packetsToDrop = new SortedSet<uint>();
+        private SortedSet<uint> m_acksToDrop = new SortedSet<uint>();
+
+        private SortedList<uint, uint> m_customDelayPackets = new SortedList<uint,uint>();
+        private SortedList<uint, uint> m_customDelayAcks = new SortedList<uint,uint>();
 
         private Controller m_controller;
 
@@ -23,8 +26,6 @@ namespace TCPFlow.Model
             m_controller = controller;
 
             Delay = delay;
-            m_packetsToDrop = new SortedSet<uint>();
-            m_acksToDrop = new SortedSet<uint>();
         }
 
         public void AddLostPacket(uint number)
@@ -47,6 +48,48 @@ namespace TCPFlow.Model
             m_acksToDrop.Remove(number);
         }
 
+        public uint GetPacketDelay(uint number)
+        {
+            if (m_customDelayPackets.ContainsKey(number))
+                return m_customDelayPackets[number];
+            else
+                return Delay;
+        }
+
+        public void SetCustomPacketDelay(uint number, uint delay)
+        {
+            if (delay == Delay)
+                m_customDelayPackets.Remove(number);
+            else
+                m_customDelayPackets[number] = delay;
+        }
+
+        public void RemoveCustomPacketDelay(uint number)
+        {
+            m_customDelayPackets.Remove(number);
+        }
+
+        public uint GetAckDelay(uint number)
+        {
+            if (m_customDelayAcks.ContainsKey(number))
+                return m_customDelayAcks[number];
+            else
+                return Delay;
+        }
+
+        public void SetCustomAckDelay(uint number, uint delay)
+        {
+            if (delay == Delay)
+                m_customDelayAcks.Remove(number);
+            else
+                m_customDelayAcks[number] = delay;
+        }
+
+        public void RemoveCustomAckDelay(uint number)
+        {
+            m_customDelayAcks.Remove(number);
+        }
+
         public event Action<DataPacket> PacketArrived;
         private void PacketArrives(DataPacket packet)
         {
@@ -56,10 +99,14 @@ namespace TCPFlow.Model
 
         public void Send(DataPacket packet)
         {
+            uint delay = Delay;
+            if (m_customDelayPackets.ContainsKey(packet.Number))
+                delay = m_customDelayPackets[packet.Number];
+
             if (m_packetsToDrop.Contains(packet.Number))
                 DropPacket(packet);
             else
-                m_packetsUnderway.Enqueue(packet);
+                m_packetsUnderway[m_controller.Time + delay] = packet;
         }
 
         public event Action<DataPacket> PacketLost;
@@ -87,10 +134,14 @@ namespace TCPFlow.Model
         
         public void Send(Ack ack)
         {
+            uint delay = Delay;
+            if (m_customDelayAcks.ContainsKey(ack.Number))
+                delay = m_customDelayAcks[ack.Number];
+
             if (m_acksToDrop.Contains(ack.Number))
                 DropAck(ack);
             else
-                m_acksUnderway.Enqueue(ack);
+                m_acksUnderway[m_controller.Time + delay] = ack;
         }
 
         public void Reset()
@@ -101,13 +152,11 @@ namespace TCPFlow.Model
 
         public void Tick()
         {
-            if (m_packetsUnderway.Count > 0 &&
-                m_packetsUnderway.Peek().Time + Delay == m_controller.Time)
-                PacketArrives(m_packetsUnderway.Dequeue());
+            if (m_packetsUnderway.ContainsKey(m_controller.Time))
+                PacketArrives(m_packetsUnderway[m_controller.Time]);
 
-            if (m_acksUnderway.Count > 0 &&
-                m_acksUnderway.Peek().Time + Delay == m_controller.Time)
-                AckArrives(m_acksUnderway.Dequeue());
+            if (m_acksUnderway.ContainsKey(m_controller.Time))
+                AckArrives(m_acksUnderway[m_controller.Time]);
         }
     }
 }
