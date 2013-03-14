@@ -32,8 +32,10 @@
             this.pbFlow = new System.Windows.Forms.PictureBox();
             this.ctxStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mnuLoseDataPacket = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuPacketDelay = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuLoseAck = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuAckDelay = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuDelayDelivery = new System.Windows.Forms.ToolStripMenuItem();
             this.numDelay = new System.Windows.Forms.NumericUpDown();
             this.lblDelay = new System.Windows.Forms.Label();
@@ -53,8 +55,6 @@
             this.lblRXTimeout = new System.Windows.Forms.Label();
             this.numRXBufferSize = new System.Windows.Forms.NumericUpDown();
             this.m_lblRXBufferSize = new System.Windows.Forms.Label();
-            this.mnuPacketDelay = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuAckDelay = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pbFlow)).BeginInit();
             this.ctxStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDelay)).BeginInit();
@@ -75,7 +75,7 @@
             this.pbFlow.ContextMenuStrip = this.ctxStrip;
             this.pbFlow.Location = new System.Drawing.Point(0, 0);
             this.pbFlow.Name = "pbFlow";
-            this.pbFlow.Size = new System.Drawing.Size(322, 348);
+            this.pbFlow.Size = new System.Drawing.Size(540, 348);
             this.pbFlow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pbFlow.TabIndex = 0;
             this.pbFlow.TabStop = false;
@@ -95,7 +95,7 @@
             this.ctxStrip.Name = "ctxStrip";
             this.ctxStrip.ShowCheckMargin = true;
             this.ctxStrip.ShowImageMargin = false;
-            this.ctxStrip.Size = new System.Drawing.Size(222, 152);
+            this.ctxStrip.Size = new System.Drawing.Size(222, 130);
             this.ctxStrip.Opening += new System.ComponentModel.CancelEventHandler(this.ctxStrip_Opening);
             // 
             // mnuLoseDataPacket
@@ -104,6 +104,13 @@
             this.mnuLoseDataPacket.Size = new System.Drawing.Size(221, 24);
             this.mnuLoseDataPacket.Text = "Lose Data Packet";
             this.mnuLoseDataPacket.Click += new System.EventHandler(this.mnuLoseDataPacket_Click);
+            // 
+            // mnuPacketDelay
+            // 
+            this.mnuPacketDelay.Name = "mnuPacketDelay";
+            this.mnuPacketDelay.Size = new System.Drawing.Size(221, 24);
+            this.mnuPacketDelay.Text = "Set Packet Delay...";
+            this.mnuPacketDelay.Click += new System.EventHandler(this.mnuPacketDelay_Click);
             // 
             // toolStripSeparator1
             // 
@@ -117,6 +124,13 @@
             this.mnuLoseAck.Text = "Lose Ack";
             this.mnuLoseAck.Click += new System.EventHandler(this.mnuLoseAck_Click);
             // 
+            // mnuAckDelay
+            // 
+            this.mnuAckDelay.Name = "mnuAckDelay";
+            this.mnuAckDelay.Size = new System.Drawing.Size(221, 24);
+            this.mnuAckDelay.Text = "Set Ack Delay...";
+            this.mnuAckDelay.Click += new System.EventHandler(this.mnuAckDelay_Click);
+            // 
             // mnuDelayDelivery
             // 
             this.mnuDelayDelivery.Name = "mnuDelayDelivery";
@@ -126,14 +140,14 @@
             // 
             // numDelay
             // 
-            this.numDelay.Location = new System.Drawing.Point(71, 21);
+            this.numDelay.Location = new System.Drawing.Point(105, 21);
             this.numDelay.Maximum = new decimal(new int[] {
             300,
             0,
             0,
             0});
             this.numDelay.Name = "numDelay";
-            this.numDelay.Size = new System.Drawing.Size(68, 22);
+            this.numDelay.Size = new System.Drawing.Size(100, 22);
             this.numDelay.TabIndex = 0;
             this.numDelay.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numDelay.Value = new decimal(new int[] {
@@ -146,7 +160,7 @@
             // lblDelay
             // 
             this.lblDelay.AutoSize = true;
-            this.lblDelay.Location = new System.Drawing.Point(17, 23);
+            this.lblDelay.Location = new System.Drawing.Point(7, 23);
             this.lblDelay.Name = "lblDelay";
             this.lblDelay.Size = new System.Drawing.Size(48, 17);
             this.lblDelay.TabIndex = 2;
@@ -158,16 +172,16 @@
             this.grpRunSettings.Controls.Add(this.btnTick);
             this.grpRunSettings.Controls.Add(this.rdRunManual);
             this.grpRunSettings.Controls.Add(this.rdRunAutomatic);
-            this.grpRunSettings.Location = new System.Drawing.Point(787, 12);
+            this.grpRunSettings.Location = new System.Drawing.Point(851, 12);
             this.grpRunSettings.Name = "grpRunSettings";
-            this.grpRunSettings.Size = new System.Drawing.Size(276, 58);
+            this.grpRunSettings.Size = new System.Drawing.Size(212, 86);
             this.grpRunSettings.TabIndex = 3;
             this.grpRunSettings.TabStop = false;
-            this.grpRunSettings.Text = "Run";
+            this.grpRunSettings.Text = "Simulation";
             // 
             // btnTick
             // 
-            this.btnTick.Location = new System.Drawing.Point(185, 19);
+            this.btnTick.Location = new System.Drawing.Point(101, 48);
             this.btnTick.Name = "btnTick";
             this.btnTick.Size = new System.Drawing.Size(75, 23);
             this.btnTick.TabIndex = 2;
@@ -179,7 +193,7 @@
             // 
             this.rdRunManual.AutoSize = true;
             this.rdRunManual.Checked = true;
-            this.rdRunManual.Location = new System.Drawing.Point(104, 21);
+            this.rdRunManual.Location = new System.Drawing.Point(7, 49);
             this.rdRunManual.Name = "rdRunManual";
             this.rdRunManual.Size = new System.Drawing.Size(75, 21);
             this.rdRunManual.TabIndex = 1;
@@ -204,7 +218,7 @@
             this.chkSkipHandshake.AutoSize = true;
             this.chkSkipHandshake.Checked = true;
             this.chkSkipHandshake.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSkipHandshake.Location = new System.Drawing.Point(188, 22);
+            this.chkSkipHandshake.Location = new System.Drawing.Point(7, 113);
             this.chkSkipHandshake.Name = "chkSkipHandshake";
             this.chkSkipHandshake.Size = new System.Drawing.Size(133, 21);
             this.chkSkipHandshake.TabIndex = 4;
@@ -219,37 +233,37 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlFlow.AutoScroll = true;
             this.pnlFlow.Controls.Add(this.pbFlow);
-            this.pnlFlow.Location = new System.Drawing.Point(231, 82);
+            this.pnlFlow.Location = new System.Drawing.Point(13, 12);
             this.pnlFlow.Name = "pnlFlow";
-            this.pnlFlow.Size = new System.Drawing.Size(614, 422);
+            this.pnlFlow.Size = new System.Drawing.Size(832, 492);
             this.pnlFlow.TabIndex = 5;
             this.pnlFlow.SizeChanged += new System.EventHandler(this.pnlFlow_SizeChanged);
             // 
             // grpNetworkSettings
             // 
             this.grpNetworkSettings.Controls.Add(this.lblDelay);
-            this.grpNetworkSettings.Controls.Add(this.chkSkipHandshake);
             this.grpNetworkSettings.Controls.Add(this.numDelay);
-            this.grpNetworkSettings.Location = new System.Drawing.Point(13, 13);
+            this.grpNetworkSettings.Location = new System.Drawing.Point(851, 286);
             this.grpNetworkSettings.Name = "grpNetworkSettings";
-            this.grpNetworkSettings.Size = new System.Drawing.Size(328, 57);
+            this.grpNetworkSettings.Size = new System.Drawing.Size(212, 61);
             this.grpNetworkSettings.TabIndex = 6;
             this.grpNetworkSettings.TabStop = false;
-            this.grpNetworkSettings.Text = "Network";
+            this.grpNetworkSettings.Text = "Network Options";
             // 
             // grpSenderSettings
             // 
             this.grpSenderSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.grpSenderSettings.Controls.Add(this.numTXTimeout);
+            this.grpSenderSettings.Controls.Add(this.chkSkipHandshake);
             this.grpSenderSettings.Controls.Add(this.lblTXTimeout);
             this.grpSenderSettings.Controls.Add(this.chkCongestionControl);
-            this.grpSenderSettings.Location = new System.Drawing.Point(13, 82);
+            this.grpSenderSettings.Location = new System.Drawing.Point(851, 104);
             this.grpSenderSettings.Name = "grpSenderSettings";
-            this.grpSenderSettings.Size = new System.Drawing.Size(212, 422);
+            this.grpSenderSettings.Size = new System.Drawing.Size(212, 140);
             this.grpSenderSettings.TabIndex = 7;
             this.grpSenderSettings.TabStop = false;
-            this.grpSenderSettings.Text = "Sender";
+            this.grpSenderSettings.Text = "Sender Options";
             // 
             // numTXTimeout
             // 
@@ -296,12 +310,12 @@
             this.grpReceiverSettings.Controls.Add(this.lblRXTimeout);
             this.grpReceiverSettings.Controls.Add(this.numRXBufferSize);
             this.grpReceiverSettings.Controls.Add(this.m_lblRXBufferSize);
-            this.grpReceiverSettings.Location = new System.Drawing.Point(851, 82);
+            this.grpReceiverSettings.Location = new System.Drawing.Point(851, 393);
             this.grpReceiverSettings.Name = "grpReceiverSettings";
-            this.grpReceiverSettings.Size = new System.Drawing.Size(212, 422);
+            this.grpReceiverSettings.Size = new System.Drawing.Size(212, 111);
             this.grpReceiverSettings.TabIndex = 8;
             this.grpReceiverSettings.TabStop = false;
-            this.grpReceiverSettings.Text = "Receiver";
+            this.grpReceiverSettings.Text = "Receiver Options";
             // 
             // numRXTimeout
             // 
@@ -361,20 +375,6 @@
             this.m_lblRXBufferSize.Size = new System.Drawing.Size(81, 17);
             this.m_lblRXBufferSize.TabIndex = 0;
             this.m_lblRXBufferSize.Text = "Buffer Size:";
-            // 
-            // mnuPacketDelay
-            // 
-            this.mnuPacketDelay.Name = "mnuPacketDelay";
-            this.mnuPacketDelay.Size = new System.Drawing.Size(221, 24);
-            this.mnuPacketDelay.Text = "Set Packet Delay...";
-            this.mnuPacketDelay.Click += new System.EventHandler(this.mnuPacketDelay_Click);
-            // 
-            // mnuAckDelay
-            // 
-            this.mnuAckDelay.Name = "mnuAckDelay";
-            this.mnuAckDelay.Size = new System.Drawing.Size(221, 24);
-            this.mnuAckDelay.Text = "Set Ack Delay...";
-            this.mnuAckDelay.Click += new System.EventHandler(this.mnuAckDelay_Click);
             // 
             // FlowForm
             // 

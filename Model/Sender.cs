@@ -54,13 +54,7 @@ namespace TCPFlow.Model
 
         public bool CongestionControlEnabled { get; set; }
 
-        public uint ReceiveWindow
-        {
-            get
-            {
-                return m_previousAcks.Count == 0 ? 1 : m_previousAcks[m_previousAcks.Count - 1].Window;
-            }
-        }
+        public uint ReceiveWindow { get; private set; }
 
         public float CongestionWindow { get; private set; }
 
@@ -111,6 +105,8 @@ namespace TCPFlow.Model
                 if (m_previousAcks.Count > 3)
                     m_previousAcks.RemoveAt(0);
 
+                ReceiveWindow = m_receivedAck.Window;
+
                 //remove everything that was just acked from m_outstanding
                 bool progress = false;
                 uint[] ids = m_outstanding.Keys.ToArray();
@@ -136,6 +132,8 @@ namespace TCPFlow.Model
                     m_previousAcks[0].NextID == m_previousAcks[1].NextID &&
                     m_previousAcks[1].NextID == m_previousAcks[2].NextID)
                 {
+                    m_previousAcks.Clear();
+
                     SendPacket(new DataPacket(m_controller.Time, m_receivedAck.NextID));
                     packetSent = true;
                     CongestionWindow = SlowStartThreshold = CongestionWindow / 2;
@@ -205,6 +203,7 @@ namespace TCPFlow.Model
             m_nextID = START_ID;
             m_previousAcks.Clear();
             m_outstanding.Clear();
+            ReceiveWindow = 1;
             CongestionWindow = 1;
             SlowStartThreshold = INITIAL_SLOW_START_THRESHOLD;
         }

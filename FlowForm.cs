@@ -121,7 +121,7 @@ namespace TCPFlow
 
             m_numberSize = g.MeasureString("00", m_smallFont);
 
-            m_windowStateSize = g.MeasureString("RW: 00 CW: 00", m_smallFont);
+            m_windowStateSize = g.MeasureString(string.Format("RW: {0} CW: {1:f2}", 99, 99), m_smallFont);
 
             m_selectionBrush = new SolidBrush(Color.FromArgb(128, Color.DarkGreen));
         }
@@ -346,7 +346,7 @@ namespace TCPFlow
 
                         Point p = new Point(0, (int)(time * PIXELS_PER_TICK - m_numberSize.Height / 2.0));
 
-                        g.DrawString(String.Format("RW: {0} CW: {1}", state.ReceiveWindow, state.CongestionWindow), m_smallFont, Brushes.Black, p);
+                        g.DrawString(String.Format("RW: {0} CW: {1:f2}", state.ReceiveWindow, state.CongestionWindow), m_smallFont, Brushes.Black, p);
                         p.X += (int)m_windowStateSize.Width;
 
                         int i = 0;
