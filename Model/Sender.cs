@@ -18,9 +18,12 @@ namespace TCPFlow.Model
 
             public readonly uint ReceiveWindow;
 
-            public State(uint time, uint[] outstanding, uint receiveWindow, float congestionWindow)
+            public readonly uint NextID;
+
+            public State(uint time, uint nextID, uint[] outstanding, uint receiveWindow, float congestionWindow)
             {
                 Time = time;
+                NextID = nextID;
                 Outstanding = outstanding;
                 ReceiveWindow = receiveWindow;
                 CongestionWindow = congestionWindow;
@@ -32,7 +35,7 @@ namespace TCPFlow.Model
         {
             if (StateChanged != null)
             {
-                StateChanged(new State(m_controller.Time, m_outstanding.Keys.ToArray(), ReceiveWindow, CongestionWindow));
+                StateChanged(new State(m_controller.Time, m_nextID, m_outstanding.Keys.ToArray(), ReceiveWindow, CongestionWindow));
             }
         }
 

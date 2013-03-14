@@ -36,11 +36,13 @@ namespace TCPFlow
             m_thinPen = new Pen(Brushes.Black, 1);
 
         Font m_bigFont = new Font(FontFamily.GenericSerif, 12),
-            m_smallFont = new Font(FontFamily.GenericSerif, 10, FontStyle.Bold);
+            m_smallFont = new Font(FontFamily.GenericSerif, 10, FontStyle.Bold),
+            m_timelineFont = new Font(FontFamily.GenericSerif, 8);
 
         SizeF m_txSize,
             m_rxSize,
-            m_elementSize;
+            m_numberSize,
+            m_windowStateSize;
 
         float m_txLine,
             m_rxLine;
@@ -117,7 +119,9 @@ namespace TCPFlow
             m_txSize = g.MeasureString("TX", m_bigFont);
             m_rxSize = g.MeasureString("RX", m_bigFont);
 
-            m_elementSize = g.MeasureString("00", m_smallFont);
+            m_numberSize = g.MeasureString("00", m_smallFont);
+
+            m_windowStateSize = g.MeasureString("RW: 00 CW: 00", m_smallFont);
 
             m_selectionBrush = new SolidBrush(Color.FromArgb(128, Color.DarkGreen));
         }
@@ -126,10 +130,10 @@ namespace TCPFlow
         {
             m_flowWidth = pnlFlow.Width - SystemInformation.VerticalScrollBarWidth;
 
-            float txBufferWidth = Convert.ToSingle(m_elementSize.Width * m_controller.receiver.BufferSize);
-            float rxBufferWidth = Convert.ToSingle(m_elementSize.Width * m_controller.receiver.BufferSize);
+            float txBufferWidth = Convert.ToSingle(m_numberSize.Width * m_controller.receiver.BufferSize);
+            float rxBufferWidth = Convert.ToSingle(m_numberSize.Width * m_controller.receiver.BufferSize);
 
-            m_txLine = txBufferWidth + 2 * BORDER + m_txSize.Width / 2;
+            m_txLine = m_windowStateSize.Width + txBufferWidth + 2 * BORDER + m_txSize.Width / 2;
             m_txBrush = new LinearGradientBrush(new PointF(m_txLine, 0), new PointF(m_rxLine, 0), Color.Black, Color.White);
             m_txPen = new Pen(m_txBrush, 3);
 
@@ -199,9 +203,30 @@ namespace TCPFlow
             //time without taking the header into account
             g.TranslateTransform(0, m_headerHeight);
 
+            //render the timelines
+            uint time = 0;
+            while (time * PIXELS_PER_TICK + m_headerHeight < bitmap.Height)
+            {
+                int length = time % 10 == 0 ? 10 : 5;
+
+                SizeF size = g.MeasureString(time.ToString(), m_timelineFont);
+
+                PointF from = new PointF(m_txLine, time * PIXELS_PER_TICK),
+                    to = new PointF(m_txLine - length, time * PIXELS_PER_TICK);
+                g.DrawLine(m_thinPen, from, to);
+                g.DrawString(time.ToString(), m_timelineFont, Brushes.Black, new PointF(from.X - size.Width - 10, from.Y - size.Height / 2));
+
+                from = new PointF(m_rxLine, time * PIXELS_PER_TICK);
+                to = new PointF(m_rxLine + length, time * PIXELS_PER_TICK);
+                g.DrawLine(m_thinPen, from, to);
+                g.DrawString(time.ToString(), m_timelineFont, Brushes.Black, new PointF(from.X + 10, from.Y - size.Height / 2));
+
+                time += 5;
+            }
+
             if (m_controller.Time != uint.MaxValue)
             {
-                for (uint time = 0; time <= m_controller.Time; ++time)
+                for (time = 0; time <= m_controller.Time; ++time)
                 {
                     //render packet
                     if (m_controller.log.packets.ContainsKey(time))
@@ -296,7 +321,7 @@ namespace TCPFlow
                     {
                         Model.Receiver.PacketDeliveryArgs args = m_controller.log.delivered[time];
 
-                        PointF to = new PointF(bitmap.Width - m_elementSize.Width, time * PIXELS_PER_TICK),
+                        PointF to = new PointF(bitmap.Width - m_numberSize.Width, time * PIXELS_PER_TICK),
                             from = new PointF(to.X - DELIVERY_BORDER, to.Y);
                         g.DrawLine(m_bluePen, from, to);
 
@@ -311,7 +336,7 @@ namespace TCPFlow
                             g.DrawLine(m_redPen, new PointF(to.X - 10, to.Y + 10), new PointF(to.X + 10, to.Y - 10));
                         }
 
-                        DrawRotatedString(g, m_smallFont, Brushes.Blue, args.ID.ToString(), to.X, to.Y + m_elementSize.Height/2, 0, false);
+                        DrawRotatedString(g, m_smallFont, Brushes.Blue, args.ID.ToString(), to.X, to.Y + m_numberSize.Height/2, 0, false);
                     }
 
                     //render sender state
@@ -319,30 +344,37 @@ namespace TCPFlow
                     {
                         Model.Sender.State state = m_controller.log.senderStates[time];
 
+                        Point p = new Point(0, (int)(time * PIXELS_PER_TICK - m_numberSize.Height / 2.0));
+
+                        g.DrawString(String.Format("RW: {0} CW: {1}", state.ReceiveWindow, state.CongestionWindow), m_smallFont, Brushes.Black, p);
+                        p.X += (int)m_windowStateSize.Width;
+
                         int i = 0;
                         while (i < state.Outstanding.Length)
                         {
-                            Point p = new Point((int)(i * m_elementSize.Width), (int)(time * PIXELS_PER_TICK - m_elementSize.Height/2.0));
-                            Rectangle rect = new Rectangle(p, new Size((int)m_elementSize.Width, (int)m_elementSize.Height));
+                            Rectangle rect = new Rectangle(p, new Size((int)m_numberSize.Width, (int)m_numberSize.Height));
                             g.FillRectangle(Brushes.Red, rect);
                             g.DrawRectangle(m_thinPen, rect);
                             g.DrawString(state.Outstanding[i].ToString(), m_smallFont, Brushes.White, p);
                             ++i;
+                            p.X += (int)m_numberSize.Width;
                         }
 
-                        uint nextID = Model.Sender.START_ID;
+                        uint nextID = state.NextID;
+                        /*
                         if (state.Outstanding.Length > 0)
                             nextID = state.Outstanding[state.Outstanding.Length - 1] + 1;
+                        */
 
                         while (i < m_controller.receiver.BufferSize)
                         {
-                            Point p = new Point((int)(i * m_elementSize.Width), (int)(time * PIXELS_PER_TICK - m_elementSize.Height / 2.0));
-                            Rectangle rect = new Rectangle(p, new Size((int)m_elementSize.Width, (int)m_elementSize.Height));
+                            Rectangle rect = new Rectangle(p, new Size((int)m_numberSize.Width, (int)m_numberSize.Height));
                             g.FillRectangle(Brushes.White, rect);
                             g.DrawRectangle(m_thinPen, rect);
                             g.DrawString(nextID.ToString(), m_smallFont, Brushes.Black, p);
                             ++nextID;
                             ++i;
+                            p.X += (int)m_numberSize.Width;
                         }
                     }
 
@@ -356,8 +388,8 @@ namespace TCPFlow
 
                         while (i < m_controller.receiver.BufferSize)
                         {
-                            Point p = new Point((int)(m_rxLine + BORDER + i * m_elementSize.Width), (int)(time * PIXELS_PER_TICK - m_elementSize.Height / 2.0));
-                            Rectangle rect = new Rectangle(p, new Size((int)m_elementSize.Width, (int)m_elementSize.Height));
+                            Point p = new Point((int)(m_rxLine + BORDER + i * m_numberSize.Width), (int)(time * PIXELS_PER_TICK - m_numberSize.Height / 2.0));
+                            Rectangle rect = new Rectangle(p, new Size((int)m_numberSize.Width, (int)m_numberSize.Height));
                             Brush brush;
                             string str = nextID.ToString();
 
