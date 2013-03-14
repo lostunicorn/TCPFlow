@@ -93,6 +93,7 @@ namespace TCPFlow.Model
         public event Action<Ack> AckSent;
         private void SendAck(Ack ack)
         {
+            m_ackSendTime = m_controller.Time;
             if (AckSent != null)
                 AckSent(ack);
         }
@@ -196,16 +197,19 @@ namespace TCPFlow.Model
                 m_receivedPacket.Dropped = true;
             }
 
-            bool timedout = m_receivedPacket != null && m_controller.Time >= m_ackSendTime + Timeout;
+            bool timedout = m_receivedPacket == null &&
+                m_ackSendTime != uint.MaxValue &&
+                m_controller.Time >= m_ackSendTime + Timeout;
 
             //send ack?
             if (m_receivedPacket != null || timedout)
             {
+                stateChanged = true;
+
                 uint id = m_nextID;
                 while (m_buffer.Contains(id))
                     ++id;
                 SendAck(new Ack(m_controller.Time, id, (uint)(BufferSize - m_buffer.Count)));
-                m_ackSendTime = m_controller.Time;
             }
 
             m_receivedPacket = null;
