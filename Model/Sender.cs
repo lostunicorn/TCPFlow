@@ -20,22 +20,25 @@ namespace TCPFlow.Model
 
             public readonly uint NextID;
 
-            public State(uint time, uint nextID, uint[] outstanding, uint receiveWindow, float congestionWindow)
+            public readonly bool Timedout;
+
+            public State(uint time, uint nextID, uint[] outstanding, uint receiveWindow, float congestionWindow, bool timedout)
             {
                 Time = time;
                 NextID = nextID;
                 Outstanding = outstanding;
                 ReceiveWindow = receiveWindow;
                 CongestionWindow = congestionWindow;
+                Timedout = timedout;
             }
         }
 
         public event Action<State> StateChanged;
-        protected void ChangeState()
+        protected void ChangeState(bool timedout)
         {
             if (StateChanged != null)
             {
-                StateChanged(new State(m_controller.Time, m_nextID, m_outstanding.Keys.ToArray(), ReceiveWindow, CongestionWindow));
+                StateChanged(new State(m_controller.Time, m_nextID, m_outstanding.Keys.ToArray(), ReceiveWindow, CongestionWindow, timedout));
             }
         }
 
@@ -142,6 +145,7 @@ namespace TCPFlow.Model
 
             uint oldestTime = uint.MaxValue,
                 oldestID = 0;
+            bool timedout = false;
 
             if (!packetSent && m_outstanding.Count > 0)
             {
@@ -163,6 +167,7 @@ namespace TCPFlow.Model
                     SendPacket(new DataPacket(m_controller.Time, oldestID));
                     packetSent = true;
 
+                    timedout = true;
                     stateChanged = true;
 
                     SlowStartThreshold = CongestionWindow / 2;
@@ -194,7 +199,7 @@ namespace TCPFlow.Model
             m_receivedAck = null;
 
             if (stateChanged)
-                ChangeState();
+                ChangeState(timedout);
         }
 
         public void Reset()

@@ -33,7 +33,8 @@ namespace TCPFlow
             m_bluePen = new Pen(Brushes.Blue, 3),
             m_txPen,
             m_rxPen,
-            m_thinPen = new Pen(Brushes.Black, 1);
+            m_thinPen = new Pen(Brushes.Black, 1),
+            m_lightGreenPen = new Pen(Brushes.LightGreen, 3);
 
         Font m_bigFont = new Font(FontFamily.GenericSerif, 12),
             m_smallFont = new Font(FontFamily.GenericSerif, 10, FontStyle.Bold),
@@ -393,6 +394,17 @@ namespace TCPFlow
                             ++i;
                             p.X += (int)m_numberSize.Width;
                         }
+
+                        if (state.Timedout)
+                        {
+                            PointF to = new PointF(m_txLine - m_lightGreenPen.Width, time * PIXELS_PER_TICK),
+                                from = to;
+                            from.Y -= m_controller.sender.Timeout * PIXELS_PER_TICK;
+
+                            g.DrawLine(m_lightGreenPen, from, to);
+                            g.DrawLine(m_lightGreenPen, to, new PointF(to.X - 5, to.Y - 7));
+                            g.DrawLine(m_lightGreenPen, to, new PointF(to.X + 5, to.Y - 7));
+                        }
                     }
 
                     //render receiver state
@@ -432,6 +444,17 @@ namespace TCPFlow
 
                             ++nextID;
                             ++i;
+                        }
+
+                        if (state.Timedout)
+                        {
+                            PointF to = new PointF(m_rxLine + m_lightGreenPen.Width, time * PIXELS_PER_TICK),
+                                from = to;
+                            from.Y -= m_controller.receiver.Timeout * PIXELS_PER_TICK;
+
+                            g.DrawLine(m_lightGreenPen, from, to);
+                            g.DrawLine(m_lightGreenPen, to, new PointF(to.X - 5, to.Y - 7));
+                            g.DrawLine(m_lightGreenPen, to, new PointF(to.X + 5, to.Y - 7));
                         }
                     }
                 }

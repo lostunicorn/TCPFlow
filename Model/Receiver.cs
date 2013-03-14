@@ -16,18 +16,21 @@ namespace TCPFlow.Model
 
             public readonly uint NextID;
 
-            public State(uint time, uint nextID, uint[] buffer)
+            public readonly bool Timedout;
+
+            public State(uint time, uint nextID, uint[] buffer, bool timedout)
             {
                 Time = time;
                 NextID = nextID;
                 Buffer = buffer;
+                Timedout = timedout;
             }
         }
         public event Action<State> StateChanged;
-        protected void ChangeState()
+        protected void ChangeState(bool timedout)
         {
             if (StateChanged != null)
-                StateChanged(new State(m_controller.Time, m_nextID, m_buffer.ToArray()));
+                StateChanged(new State(m_controller.Time, m_nextID, m_buffer.ToArray(), timedout));
         }
 
         private SortedList<uint, uint> m_sequenceNumbersToHold;
@@ -151,7 +154,7 @@ namespace TCPFlow.Model
                 ++m_nextID;
                 m_receivedPacket = null;
 
-                ChangeState();
+                ChangeState(false);
 
                 return;
             }
@@ -193,8 +196,10 @@ namespace TCPFlow.Model
                 m_receivedPacket.Dropped = true;
             }
 
+            bool timedout = m_receivedPacket != null && m_controller.Time >= m_ackSendTime + Timeout;
+
             //send ack?
-            if (m_receivedPacket != null || m_controller.Time >= m_ackSendTime + Timeout)
+            if (m_receivedPacket != null || timedout)
             {
                 uint id = m_nextID;
                 while (m_buffer.Contains(id))
@@ -206,7 +211,7 @@ namespace TCPFlow.Model
             m_receivedPacket = null;
 
             if (stateChanged)
-                ChangeState();
+                ChangeState(timedout);
         }
     }
 }
