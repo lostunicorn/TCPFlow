@@ -241,6 +241,7 @@
             // 
             // grpNetworkSettings
             // 
+            this.grpNetworkSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.grpNetworkSettings.Controls.Add(this.lblDelay);
             this.grpNetworkSettings.Controls.Add(this.numDelay);
             this.grpNetworkSettings.Location = new System.Drawing.Point(851, 286);
@@ -252,8 +253,7 @@
             // 
             // grpSenderSettings
             // 
-            this.grpSenderSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this.grpSenderSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.grpSenderSettings.Controls.Add(this.numTXTimeout);
             this.grpSenderSettings.Controls.Add(this.chkSkipHandshake);
             this.grpSenderSettings.Controls.Add(this.lblTXTimeout);
@@ -304,8 +304,7 @@
             // 
             // grpReceiverSettings
             // 
-            this.grpReceiverSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpReceiverSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.grpReceiverSettings.Controls.Add(this.numRXTimeout);
             this.grpReceiverSettings.Controls.Add(this.lblRXTimeout);
             this.grpReceiverSettings.Controls.Add(this.numRXBufferSize);

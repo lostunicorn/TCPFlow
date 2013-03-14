@@ -89,6 +89,7 @@ namespace TCPFlow
         void chkCongestionControl_CheckedChanged(object sender, EventArgs e)
         {
             m_controller.sender.CongestionControlEnabled = chkCongestionControl.Checked;
+            InitDynamicGraphics();
             Replay();
         }
 
@@ -121,17 +122,25 @@ namespace TCPFlow
 
             m_numberSize = g.MeasureString("00", m_smallFont);
 
-            m_windowStateSize = g.MeasureString(string.Format("RW: {0} CW: {1:f2}", 99, 99), m_smallFont);
-
             m_selectionBrush = new SolidBrush(Color.FromArgb(128, Color.DarkGreen));
+
+            g.Dispose();
         }
 
         private void InitDynamicGraphics()
         {
+            Bitmap bitmap = new Bitmap(100, 100);
+            Graphics g = Graphics.FromImage(bitmap);
+
             m_flowWidth = pnlFlow.Width - SystemInformation.VerticalScrollBarWidth;
 
             float txBufferWidth = Convert.ToSingle(m_numberSize.Width * m_controller.receiver.BufferSize);
             float rxBufferWidth = Convert.ToSingle(m_numberSize.Width * m_controller.receiver.BufferSize);
+
+            if (m_controller.sender.CongestionControlEnabled)
+                m_windowStateSize = g.MeasureString(string.Format("RW: {0} CW: {1:f2}", 99, 99), m_smallFont);
+            else
+                m_windowStateSize = g.MeasureString(string.Format("RW: {0}", 99), m_smallFont);
 
             m_txLine = m_windowStateSize.Width + txBufferWidth + 2 * BORDER + m_txSize.Width / 2;
             m_txBrush = new LinearGradientBrush(new PointF(m_txLine, 0), new PointF(m_rxLine, 0), Color.Black, Color.White);
@@ -140,6 +149,8 @@ namespace TCPFlow
             m_rxLine = m_flowWidth - (rxBufferWidth + 2 * BORDER + DELIVERY_BORDER + m_rxSize.Width / 2);
             m_rxBrush = new LinearGradientBrush(new PointF(m_txLine, 0), new PointF(m_rxLine, 0), Color.White, Color.Black);
             m_rxPen = new Pen(m_rxBrush, 3);
+
+            g.Dispose();
         }
 
         void DrawRotatedString(Graphics g, Font font, Brush brush, string s, float x, float y, float angle, bool fromTheRight)
@@ -346,7 +357,13 @@ namespace TCPFlow
 
                         Point p = new Point(0, (int)(time * PIXELS_PER_TICK - m_numberSize.Height / 2.0));
 
-                        g.DrawString(String.Format("RW: {0} CW: {1:f2}", state.ReceiveWindow, state.CongestionWindow), m_smallFont, Brushes.Black, p);
+                        string str;
+                        if (m_controller.sender.CongestionControlEnabled)
+                            str = String.Format("RW: {0} CW: {1:f2}", state.ReceiveWindow, state.CongestionWindow);
+                        else
+                            str = String.Format("RW: {0}", state.ReceiveWindow);
+
+                        g.DrawString(str, m_smallFont, Brushes.Black, p);
                         p.X += (int)m_windowStateSize.Width;
 
                         int i = 0;
