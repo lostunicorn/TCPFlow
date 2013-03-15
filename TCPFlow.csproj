@@ -64,7 +64,6 @@
     <Compile Include="Model\Packet.cs" />
     <Compile Include="Model\Receiver.cs" />
     <Compile Include="Model\Sender.cs" />
-    <Compile Include="Model\Timing.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FlowForm.resx">
