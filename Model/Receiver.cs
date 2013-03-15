@@ -28,7 +28,7 @@ namespace TCPFlow.Model
         }
 
         public event Action<State> StateChanged;
-        protected void ChangeState(bool timedout)
+        protected void OnStateChanged(bool timedout)
         {
             if (StateChanged != null)
                 StateChanged(new State(m_controller.Time, m_nextID, m_buffer.ToArray(), timedout));
@@ -89,7 +89,7 @@ namespace TCPFlow.Model
             }
         }
 
-        public void OnPacketReceived(DataPacket packet)
+        public void network_PacketArrived(DataPacket packet)
         {
             m_receivedPacket = packet;
         }
@@ -119,6 +119,7 @@ namespace TCPFlow.Model
         {
             if (delivered)
                 m_lastDeliveryTime = m_controller.Time;
+
             if (PacketDelivered != null)
                 PacketDelivered(new PacketDeliveryArgs(ID, delivered));
         }
@@ -162,7 +163,7 @@ namespace TCPFlow.Model
                 ++m_nextID;
                 m_receivedPacket = null;
 
-                ChangeState(false);
+                OnStateChanged(false);
 
                 return;
             }
@@ -223,7 +224,7 @@ namespace TCPFlow.Model
             m_receivedPacket = null;
 
             if (stateChanged)
-                ChangeState(timedout);
+                OnStateChanged(timedout);
         }
     }
 }

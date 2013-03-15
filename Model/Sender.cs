@@ -34,7 +34,7 @@ namespace TCPFlow.Model
         }
 
         public event Action<State> StateChanged;
-        protected void ChangeState(bool timedout)
+        protected void OnStateChanged(bool timedout)
         {
             if (StateChanged != null)
             {
@@ -86,7 +86,7 @@ namespace TCPFlow.Model
                 PacketSent(packet);
         }
 
-        public void OnAckReceived(Ack ack)
+        public void receiver_AckArrived(Ack ack)
         {
             m_receivedAck = ack;
         }
@@ -195,7 +195,7 @@ namespace TCPFlow.Model
             m_receivedAck = null;
 
             if (stateChanged)
-                ChangeState(timedout);
+                OnStateChanged(timedout);
         }
 
         public void Reset()

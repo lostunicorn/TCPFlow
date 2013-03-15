@@ -40,25 +40,25 @@ namespace TCPFlow
             sender = new Sender(this, true, timeout); //sender relies on receiver, so needs to be created after receiver!
             network = new Network(this, delay);
 
-            sender.PacketSent += log.OnPacketSent;
+            sender.PacketSent += log.sender_PacketSent;
             sender.PacketSent += network.Send;
-            sender.StateChanged += log.OnSenderStateChanged;
+            sender.StateChanged += log.sender_StateChanged;
 
-            receiver.AckSent += log.OnAckSent;
+            receiver.AckSent += log.receiver_AckSent;
             receiver.AckSent += network.Send;
-            receiver.PacketDelivered += log.OnPacketDelivered;
-            receiver.StateChanged += log.OnReceiverStateChanged;
+            receiver.PacketDelivered += log.receiver_PacketDelivered;
+            receiver.StateChanged += log.receiver_StateChanged;
 
-            network.PacketArrived += receiver.OnPacketReceived;
-            network.PacketLost += log.OnPacketLost;
-            network.AckArrived += sender.OnAckReceived;
-            network.AckLost += log.OnAckLost;
+            network.PacketArrived += receiver.network_PacketArrived;
+            network.PacketLost += log.network_PacketLost;
+            network.AckArrived += sender.receiver_AckArrived;
+            network.AckLost += log.network_AckLost;
 
             Reset();
         }
 
         public event Action Ticked;
-        protected void OnTick()
+        protected void OnTicked()
         {
             if (Ticked != null)
                 Ticked();
@@ -88,7 +88,7 @@ namespace TCPFlow
             receiver.Tick();
             sender.Tick();
 
-            OnTick();
+            OnTicked();
         }
     }
 }

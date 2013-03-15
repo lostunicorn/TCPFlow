@@ -143,38 +143,38 @@ namespace TCPFlow.Model
             receiverStates.Clear();
         }
 
-        public void OnPacketSent(DataPacket packet)
+        public void sender_PacketSent(DataPacket packet)
         {
             packets[m_controller.Time] = packet;
 
             AddToHistory("P");
         }
 
-        public void OnPacketLost(DataPacket packet)
+        public void network_PacketLost(DataPacket packet)
         {
             ClearHistory();
         }
 
-        public void OnAckSent(Ack ack)
+        public void receiver_AckSent(Ack ack)
         {
             acks[m_controller.Time] = ack;
 
             AddToHistory("A");
         }
 
-        public void OnAckLost(Ack ack)
+        public void network_AckLost(Ack ack)
         {
             ClearHistory();
         }
 
-        public void OnPacketDelivered(Receiver.PacketDeliveryArgs args)
+        public void receiver_PacketDelivered(Receiver.PacketDeliveryArgs args)
         {
             delivered[m_controller.Time] = args;
 
             AddToHistory("D");
         }
 
-        public void OnSenderStateChanged(Sender.State state)
+        public void sender_StateChanged(Sender.State state)
         {
             senderStates[m_controller.Time] = state;
 
@@ -190,7 +190,7 @@ namespace TCPFlow.Model
             AddToHistory(str);
         }
 
-        public void OnReceiverStateChanged(Receiver.State state)
+        public void receiver_StateChanged(Receiver.State state)
         {
             receiverStates[m_controller.Time] = state;
 
