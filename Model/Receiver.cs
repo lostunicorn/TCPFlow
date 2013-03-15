@@ -50,8 +50,6 @@ namespace TCPFlow.Model
 
         public uint Timeout { get; set; }
 
-        public const int START_ID = 0;
-
         public Receiver(Controller controller, uint bufferSize, uint timeout)
         {
             m_sequenceNumbersToHold = new SortedList<uint, uint>();
@@ -124,7 +122,7 @@ namespace TCPFlow.Model
             m_buffer.Clear();
             m_ackSendTime = uint.MaxValue;
             m_receivedPacket = null;
-            m_nextID = START_ID;
+            m_nextID = m_controller.SkipHandshake ? (uint)1 : 0;
         }
 
         public bool HoldPacket(uint id)

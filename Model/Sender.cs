@@ -53,8 +53,6 @@ namespace TCPFlow.Model
 
         public uint Timeout { get; set; }
 
-        public bool SkipHandshake { get; set; }
-
         public bool CongestionControlEnabled { get; set; }
 
         public uint ReceiveWindow { get; private set; }
@@ -63,10 +61,9 @@ namespace TCPFlow.Model
 
         public float SlowStartThreshold { get; private set; }
 
-        public const uint START_ID = 0;
         public const uint INITIAL_SLOW_START_THRESHOLD = 64;
 
-        public Sender(Controller controller, bool skipHandshake, bool congestionControlEnabled, uint timeout)
+        public Sender(Controller controller, bool congestionControlEnabled, uint timeout)
         {
             m_controller = controller;
 
@@ -75,7 +72,6 @@ namespace TCPFlow.Model
             m_previousAcks = new List<Ack>();
 
             Timeout = timeout;
-            SkipHandshake = skipHandshake;
             CongestionControlEnabled = congestionControlEnabled;
 
             Reset();
@@ -186,7 +182,7 @@ namespace TCPFlow.Model
                 {
                     uint flags = 0;
                     //handle the handshake
-                    if (!SkipHandshake && m_nextID == START_ID)
+                    if (!m_controller.SkipHandshake && m_nextID == 0)
                         flags = (uint)Packet.FLAGS.SYN;
                     
                     SendPacket(new DataPacket(m_controller.Time, m_nextID++, flags));
@@ -205,10 +201,10 @@ namespace TCPFlow.Model
         public void Reset()
         {
             m_receivedAck = null;
-            m_nextID = START_ID;
+            m_nextID = m_controller.SkipHandshake ? (uint)1 : 0;
             m_previousAcks.Clear();
             m_outstanding.Clear();
-            ReceiveWindow = SkipHandshake ? m_controller.receiver.BufferSize : 1;
+            ReceiveWindow = m_controller.SkipHandshake ? m_controller.receiver.BufferSize : 1;
             CongestionWindow = 1;
             SlowStartThreshold = INITIAL_SLOW_START_THRESHOLD;
         }

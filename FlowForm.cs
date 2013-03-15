@@ -539,7 +539,7 @@ namespace TCPFlow
 
         private void chkSkipHandshake_CheckedChanged(object sender, EventArgs e)
         {
-            m_controller.sender.SkipHandshake = chkSkipHandshake.Checked;
+            m_controller.SkipHandshake = chkSkipHandshake.Checked;
             Replay();
         }
 
