@@ -58,6 +58,8 @@
             this.numRXBufferSize = new System.Windows.Forms.NumericUpDown();
             this.m_lblRXBufferSize = new System.Windows.Forms.Label();
             this.rdRunAutomaticUntilSteady = new System.Windows.Forms.RadioButton();
+            this.btnReset = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbFlow)).BeginInit();
             this.ctxStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDelay)).BeginInit();
@@ -179,7 +181,7 @@
             this.grpRunSettings.Controls.Add(this.rdRunAutomatic);
             this.grpRunSettings.Location = new System.Drawing.Point(851, 12);
             this.grpRunSettings.Name = "grpRunSettings";
-            this.grpRunSettings.Size = new System.Drawing.Size(212, 122);
+            this.grpRunSettings.Size = new System.Drawing.Size(212, 109);
             this.grpRunSettings.TabIndex = 3;
             this.grpRunSettings.TabStop = false;
             this.grpRunSettings.Text = "Simulation";
@@ -198,7 +200,7 @@
             // 
             this.rdRunManual.AutoSize = true;
             this.rdRunManual.Checked = true;
-            this.rdRunManual.Location = new System.Drawing.Point(6, 77);
+            this.rdRunManual.Location = new System.Drawing.Point(7, 75);
             this.rdRunManual.Name = "rdRunManual";
             this.rdRunManual.Size = new System.Drawing.Size(75, 21);
             this.rdRunManual.TabIndex = 1;
@@ -209,7 +211,7 @@
             // rdRunAutomatic
             // 
             this.rdRunAutomatic.AutoSize = true;
-            this.rdRunAutomatic.Location = new System.Drawing.Point(7, 22);
+            this.rdRunAutomatic.Location = new System.Drawing.Point(6, 21);
             this.rdRunAutomatic.Name = "rdRunAutomatic";
             this.rdRunAutomatic.Size = new System.Drawing.Size(91, 21);
             this.rdRunAutomatic.TabIndex = 1;
@@ -223,7 +225,7 @@
             this.chkSkipHandshake.AutoSize = true;
             this.chkSkipHandshake.Checked = true;
             this.chkSkipHandshake.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSkipHandshake.Location = new System.Drawing.Point(7, 113);
+            this.chkSkipHandshake.Location = new System.Drawing.Point(6, 49);
             this.chkSkipHandshake.Name = "chkSkipHandshake";
             this.chkSkipHandshake.Size = new System.Drawing.Size(133, 21);
             this.chkSkipHandshake.TabIndex = 4;
@@ -240,7 +242,7 @@
             this.pnlFlow.Controls.Add(this.pbFlow);
             this.pnlFlow.Location = new System.Drawing.Point(13, 12);
             this.pnlFlow.Name = "pnlFlow";
-            this.pnlFlow.Size = new System.Drawing.Size(832, 492);
+            this.pnlFlow.Size = new System.Drawing.Size(832, 503);
             this.pnlFlow.TabIndex = 5;
             this.pnlFlow.SizeChanged += new System.EventHandler(this.pnlFlow_SizeChanged);
             // 
@@ -249,7 +251,7 @@
             this.grpNetworkSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.grpNetworkSettings.Controls.Add(this.lblDelay);
             this.grpNetworkSettings.Controls.Add(this.numDelay);
-            this.grpNetworkSettings.Location = new System.Drawing.Point(851, 286);
+            this.grpNetworkSettings.Location = new System.Drawing.Point(851, 242);
             this.grpNetworkSettings.Name = "grpNetworkSettings";
             this.grpNetworkSettings.Size = new System.Drawing.Size(212, 61);
             this.grpNetworkSettings.TabIndex = 6;
@@ -263,16 +265,16 @@
             this.grpSenderSettings.Controls.Add(this.chkSkipHandshake);
             this.grpSenderSettings.Controls.Add(this.lblTXTimeout);
             this.grpSenderSettings.Controls.Add(this.chkCongestionControl);
-            this.grpSenderSettings.Location = new System.Drawing.Point(851, 140);
+            this.grpSenderSettings.Location = new System.Drawing.Point(851, 127);
             this.grpSenderSettings.Name = "grpSenderSettings";
-            this.grpSenderSettings.Size = new System.Drawing.Size(212, 140);
+            this.grpSenderSettings.Size = new System.Drawing.Size(212, 109);
             this.grpSenderSettings.TabIndex = 7;
             this.grpSenderSettings.TabStop = false;
             this.grpSenderSettings.Text = "Sender Options";
             // 
             // numTXTimeout
             // 
-            this.numTXTimeout.Location = new System.Drawing.Point(130, 64);
+            this.numTXTimeout.Location = new System.Drawing.Point(129, 76);
             this.numTXTimeout.Minimum = new decimal(new int[] {
             1,
             0,
@@ -291,7 +293,7 @@
             // lblTXTimeout
             // 
             this.lblTXTimeout.AutoSize = true;
-            this.lblTXTimeout.Location = new System.Drawing.Point(6, 66);
+            this.lblTXTimeout.Location = new System.Drawing.Point(5, 78);
             this.lblTXTimeout.Name = "lblTXTimeout";
             this.lblTXTimeout.Size = new System.Drawing.Size(63, 17);
             this.lblTXTimeout.TabIndex = 1;
@@ -316,7 +318,7 @@
             this.grpReceiverSettings.Controls.Add(this.lblRXTimeout);
             this.grpReceiverSettings.Controls.Add(this.numRXBufferSize);
             this.grpReceiverSettings.Controls.Add(this.m_lblRXBufferSize);
-            this.grpReceiverSettings.Location = new System.Drawing.Point(851, 353);
+            this.grpReceiverSettings.Location = new System.Drawing.Point(851, 309);
             this.grpReceiverSettings.Name = "grpReceiverSettings";
             this.grpReceiverSettings.Size = new System.Drawing.Size(212, 151);
             this.grpReceiverSettings.TabIndex = 8;
@@ -417,7 +419,7 @@
             // rdRunAutomaticUntilSteady
             // 
             this.rdRunAutomaticUntilSteady.AutoSize = true;
-            this.rdRunAutomaticUntilSteady.Location = new System.Drawing.Point(7, 50);
+            this.rdRunAutomaticUntilSteady.Location = new System.Drawing.Point(7, 48);
             this.rdRunAutomaticUntilSteady.Name = "rdRunAutomaticUntilSteady";
             this.rdRunAutomaticUntilSteady.Size = new System.Drawing.Size(202, 21);
             this.rdRunAutomaticUntilSteady.TabIndex = 3;
@@ -426,11 +428,35 @@
             this.rdRunAutomaticUntilSteady.UseVisualStyleBackColor = true;
             this.rdRunAutomaticUntilSteady.CheckedChanged += new System.EventHandler(this.rdRunAutomaticUntilSteady_CheckedChanged);
             // 
+            // btnReset
+            // 
+            this.btnReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnReset.Location = new System.Drawing.Point(851, 475);
+            this.btnReset.Name = "btnReset";
+            this.btnReset.Size = new System.Drawing.Size(75, 23);
+            this.btnReset.TabIndex = 4;
+            this.btnReset.Text = "Reset";
+            this.btnReset.UseVisualStyleBackColor = true;
+            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.Location = new System.Drawing.Point(988, 475);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 5;
+            this.btnSave.Text = "Save...";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
             // FlowForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1075, 516);
+            this.ClientSize = new System.Drawing.Size(1075, 527);
+            this.Controls.Add(this.btnReset);
+            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.grpReceiverSettings);
             this.Controls.Add(this.grpSenderSettings);
             this.Controls.Add(this.grpNetworkSettings);
@@ -491,6 +517,8 @@
         private System.Windows.Forms.NumericUpDown numDeliveryInterval;
         private System.Windows.Forms.Label lblDeliveryInterval;
         private System.Windows.Forms.RadioButton rdRunAutomaticUntilSteady;
+        private System.Windows.Forms.Button btnReset;
+        private System.Windows.Forms.Button btnSave;
     }
 }
 

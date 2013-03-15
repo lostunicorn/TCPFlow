@@ -60,6 +60,10 @@ namespace TCPFlow
 
         int m_flowWidth;
 
+        Bitmap m_bitmap;
+
+        SaveFileDialog m_saveDialog;
+
         public FlowForm(Controller controller)
         {
             InitializeComponent();
@@ -88,6 +92,11 @@ namespace TCPFlow
             numTXTimeout.ValueChanged += numTXTimeout_ValueChanged;
 
             m_controller.log.SteadyStateChanged += log_SteadyStateChanged;
+
+            m_bitmap = new Bitmap(100, 100);
+
+            m_saveDialog = new SaveFileDialog();
+            m_saveDialog.Filter = "PNG Files (*.png)|*.png";
 
             InitStaticGraphics();
             InitDynamicGraphics();
@@ -150,10 +159,9 @@ namespace TCPFlow
 
         private void InitDynamicGraphics()
         {
-            Bitmap bitmap = new Bitmap(100, 100);
-            Graphics g = Graphics.FromImage(bitmap);
-
             m_flowWidth = pnlFlow.Width - SystemInformation.VerticalScrollBarWidth;
+
+            Graphics g = Graphics.FromImage(m_bitmap);
 
             float txBufferWidth = Convert.ToSingle(m_numberSize.Width * m_controller.receiver.BufferSize);
             float rxBufferWidth = Convert.ToSingle(m_numberSize.Width * m_controller.receiver.BufferSize);
@@ -217,21 +225,21 @@ namespace TCPFlow
         void DrawFlow()
         {
             uint endTime = m_controller.Time + 2 * m_controller.network.Delay;
+            m_bitmap = new Bitmap(m_flowWidth, Convert.ToInt32(endTime * PIXELS_PER_TICK + m_headerHeight));
 
-            Bitmap bitmap = new Bitmap(m_flowWidth, Convert.ToInt32(endTime * PIXELS_PER_TICK + m_headerHeight));
-            Graphics g = Graphics.FromImage(bitmap);
+            Graphics g = Graphics.FromImage(m_bitmap);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-            g.FillRectangle(Brushes.White, 0, 0, bitmap.Width, bitmap.Height);
+            g.FillRectangle(Brushes.White, 0, 0, m_bitmap.Width, m_bitmap.Height);
 
             //Render the header
             g.DrawRectangle(m_blackPen, m_txLine - (m_txSize.Width / 2 + BORDER), BORDER, m_txSize.Width + 2 * BORDER, m_txSize.Height + 2 * BORDER);
             g.DrawString("TX", m_bigFont, Brushes.Black, m_txLine - m_txSize.Width / 2, 2 * BORDER);
-            g.DrawLine(m_blackPen, m_txLine, 3 * BORDER + m_txSize.Height, m_txLine, bitmap.Height);
+            g.DrawLine(m_blackPen, m_txLine, 3 * BORDER + m_txSize.Height, m_txLine, m_bitmap.Height);
 
             g.DrawRectangle(m_blackPen, m_rxLine - (m_rxSize.Width / 2 + BORDER), BORDER, m_rxSize.Width + 2 * BORDER, m_rxSize.Height + 2 * BORDER);
             g.DrawString("RX", m_bigFont, Brushes.Black, m_rxLine - m_rxSize.Width / 2, 2 * BORDER);
-            g.DrawLine(m_blackPen, m_rxLine, 3 * BORDER + m_rxSize.Height, m_rxLine, bitmap.Height);
+            g.DrawLine(m_blackPen, m_rxLine, 3 * BORDER + m_rxSize.Height, m_rxLine, m_bitmap.Height);
 
             //translate the graphics object so all future coördinates can be calculated in terms of simulated
             //time without taking the header into account
@@ -239,7 +247,7 @@ namespace TCPFlow
 
             //render the timelines
             uint time = 0;
-            while (time * PIXELS_PER_TICK + m_headerHeight < bitmap.Height)
+            while (time * PIXELS_PER_TICK + m_headerHeight < m_bitmap.Height)
             {
                 int length = time % 10 == 0 ? 10 : 5;
 
@@ -355,7 +363,7 @@ namespace TCPFlow
                     {
                         Model.Receiver.PacketDeliveryArgs args = m_controller.log.delivered[time];
 
-                        PointF to = new PointF(bitmap.Width - m_numberSize.Width, time * PIXELS_PER_TICK),
+                        PointF to = new PointF(m_bitmap.Width - m_numberSize.Width, time * PIXELS_PER_TICK),
                             from = new PointF(to.X - DELIVERY_BORDER, to.Y);
                         g.DrawLine(m_bluePen, from, to);
 
@@ -485,17 +493,17 @@ namespace TCPFlow
                 if (m_controller.Time > m_controller.log.SteadyState.Item2)
                 {
                     Tuple<uint, uint> steadyState = m_controller.log.SteadyState;
-                    g.FillRectangle(m_steadyBrush, 0, steadyState.Item1 * PIXELS_PER_TICK, bitmap.Width, (steadyState.Item2 - steadyState.Item1) * PIXELS_PER_TICK);
+                    g.FillRectangle(m_steadyBrush, 0, steadyState.Item1 * PIXELS_PER_TICK, m_bitmap.Width, (steadyState.Item2 - steadyState.Item1) * PIXELS_PER_TICK);
 
                     PointF p = new PointF();
-                    p.X = ( bitmap.Width - m_steadySize.Width ) / 2;
+                    p.X = ( m_bitmap.Width - m_steadySize.Width ) / 2;
                     p.Y = (steadyState.Item1 + (steadyState.Item2 - steadyState.Item1) / 2) * PIXELS_PER_TICK - m_steadySize.Height / 2;
                     g.DrawString("STEADY", m_hugeFont, Brushes.Orange, p);
                 }
             }
 
             g.Dispose();
-            pbFlow.Image = bitmap;
+            pbFlow.Image = m_bitmap;
         }
 
         private void numDelay_ValueChanged(object sender, EventArgs e)
@@ -686,6 +694,18 @@ namespace TCPFlow
                 m_controller.network.SetCustomAckDelay(ack.Number, m_delayDialog.Delay);
                 Replay();
             }
+        }
+
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            m_controller.Reset();
+            DrawFlow();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            if (m_saveDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+                m_bitmap.Save(m_saveDialog.FileName, System.Drawing.Imaging.ImageFormat.Png);
         }
     }
 }
