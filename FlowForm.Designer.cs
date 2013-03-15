@@ -55,6 +55,8 @@
             this.lblRXTimeout = new System.Windows.Forms.Label();
             this.numRXBufferSize = new System.Windows.Forms.NumericUpDown();
             this.m_lblRXBufferSize = new System.Windows.Forms.Label();
+            this.lblDeliveryInterval = new System.Windows.Forms.Label();
+            this.numDeliveryInterval = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.pbFlow)).BeginInit();
             this.ctxStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDelay)).BeginInit();
@@ -66,6 +68,7 @@
             this.grpReceiverSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numRXTimeout)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRXBufferSize)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numDeliveryInterval)).BeginInit();
             this.SuspendLayout();
             // 
             // pbFlow
@@ -140,14 +143,14 @@
             // 
             // numDelay
             // 
-            this.numDelay.Location = new System.Drawing.Point(105, 21);
+            this.numDelay.Location = new System.Drawing.Point(130, 21);
             this.numDelay.Maximum = new decimal(new int[] {
             300,
             0,
             0,
             0});
             this.numDelay.Name = "numDelay";
-            this.numDelay.Size = new System.Drawing.Size(100, 22);
+            this.numDelay.Size = new System.Drawing.Size(75, 22);
             this.numDelay.TabIndex = 0;
             this.numDelay.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numDelay.Value = new decimal(new int[] {
@@ -244,7 +247,7 @@
             this.grpNetworkSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.grpNetworkSettings.Controls.Add(this.lblDelay);
             this.grpNetworkSettings.Controls.Add(this.numDelay);
-            this.grpNetworkSettings.Location = new System.Drawing.Point(851, 286);
+            this.grpNetworkSettings.Location = new System.Drawing.Point(851, 267);
             this.grpNetworkSettings.Name = "grpNetworkSettings";
             this.grpNetworkSettings.Size = new System.Drawing.Size(212, 61);
             this.grpNetworkSettings.TabIndex = 6;
@@ -267,14 +270,14 @@
             // 
             // numTXTimeout
             // 
-            this.numTXTimeout.Location = new System.Drawing.Point(105, 64);
+            this.numTXTimeout.Location = new System.Drawing.Point(130, 64);
             this.numTXTimeout.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
             this.numTXTimeout.Name = "numTXTimeout";
-            this.numTXTimeout.Size = new System.Drawing.Size(101, 22);
+            this.numTXTimeout.Size = new System.Drawing.Size(76, 22);
             this.numTXTimeout.TabIndex = 2;
             this.numTXTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numTXTimeout.Value = new decimal(new int[] {
@@ -305,27 +308,29 @@
             // grpReceiverSettings
             // 
             this.grpReceiverSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpReceiverSettings.Controls.Add(this.numDeliveryInterval);
+            this.grpReceiverSettings.Controls.Add(this.lblDeliveryInterval);
             this.grpReceiverSettings.Controls.Add(this.numRXTimeout);
             this.grpReceiverSettings.Controls.Add(this.lblRXTimeout);
             this.grpReceiverSettings.Controls.Add(this.numRXBufferSize);
             this.grpReceiverSettings.Controls.Add(this.m_lblRXBufferSize);
-            this.grpReceiverSettings.Location = new System.Drawing.Point(851, 393);
+            this.grpReceiverSettings.Location = new System.Drawing.Point(851, 353);
             this.grpReceiverSettings.Name = "grpReceiverSettings";
-            this.grpReceiverSettings.Size = new System.Drawing.Size(212, 111);
+            this.grpReceiverSettings.Size = new System.Drawing.Size(212, 151);
             this.grpReceiverSettings.TabIndex = 8;
             this.grpReceiverSettings.TabStop = false;
             this.grpReceiverSettings.Text = "Receiver Options";
             // 
             // numRXTimeout
             // 
-            this.numRXTimeout.Location = new System.Drawing.Point(105, 64);
+            this.numRXTimeout.Location = new System.Drawing.Point(130, 64);
             this.numRXTimeout.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
             this.numRXTimeout.Name = "numRXTimeout";
-            this.numRXTimeout.Size = new System.Drawing.Size(101, 22);
+            this.numRXTimeout.Size = new System.Drawing.Size(76, 22);
             this.numRXTimeout.TabIndex = 3;
             this.numRXTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numRXTimeout.Value = new decimal(new int[] {
@@ -345,7 +350,7 @@
             // 
             // numRXBufferSize
             // 
-            this.numRXBufferSize.Location = new System.Drawing.Point(105, 22);
+            this.numRXBufferSize.Location = new System.Drawing.Point(130, 22);
             this.numRXBufferSize.Maximum = new decimal(new int[] {
             15,
             0,
@@ -357,7 +362,7 @@
             0,
             0});
             this.numRXBufferSize.Name = "numRXBufferSize";
-            this.numRXBufferSize.Size = new System.Drawing.Size(101, 22);
+            this.numRXBufferSize.Size = new System.Drawing.Size(76, 22);
             this.numRXBufferSize.TabIndex = 1;
             this.numRXBufferSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numRXBufferSize.Value = new decimal(new int[] {
@@ -374,6 +379,38 @@
             this.m_lblRXBufferSize.Size = new System.Drawing.Size(81, 17);
             this.m_lblRXBufferSize.TabIndex = 0;
             this.m_lblRXBufferSize.Text = "Buffer Size:";
+            // 
+            // lblDeliveryInterval
+            // 
+            this.lblDeliveryInterval.AutoSize = true;
+            this.lblDeliveryInterval.Location = new System.Drawing.Point(10, 103);
+            this.lblDeliveryInterval.Name = "lblDeliveryInterval";
+            this.lblDeliveryInterval.Size = new System.Drawing.Size(113, 17);
+            this.lblDeliveryInterval.TabIndex = 4;
+            this.lblDeliveryInterval.Text = "Delivery Interval:";
+            // 
+            // numDeliveryInterval
+            // 
+            this.numDeliveryInterval.Location = new System.Drawing.Point(130, 103);
+            this.numDeliveryInterval.Maximum = new decimal(new int[] {
+            25,
+            0,
+            0,
+            0});
+            this.numDeliveryInterval.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numDeliveryInterval.Name = "numDeliveryInterval";
+            this.numDeliveryInterval.Size = new System.Drawing.Size(76, 22);
+            this.numDeliveryInterval.TabIndex = 5;
+            this.numDeliveryInterval.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numDeliveryInterval.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // FlowForm
             // 
@@ -404,6 +441,7 @@
             this.grpReceiverSettings.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numRXTimeout)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRXBufferSize)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numDeliveryInterval)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -436,6 +474,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem mnuPacketDelay;
         private System.Windows.Forms.ToolStripMenuItem mnuAckDelay;
+        private System.Windows.Forms.NumericUpDown numDeliveryInterval;
+        private System.Windows.Forms.Label lblDeliveryInterval;
     }
 }
 

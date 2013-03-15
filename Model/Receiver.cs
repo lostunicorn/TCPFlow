@@ -44,13 +44,17 @@ namespace TCPFlow.Model
         private DataPacket m_receivedPacket;
 
         private uint m_nextID;
-        private uint m_ackSendTime;
+        private uint m_lastAckSendTime;
+
+        private uint m_lastDeliveryTime;
 
         public uint BufferSize { get; set; }
 
         public uint Timeout { get; set; }
 
-        public Receiver(Controller controller, uint bufferSize, uint timeout)
+        public uint DeliveryInterval { get; set; }
+
+        public Receiver(Controller controller, uint bufferSize, uint deliveryInterval, uint timeout)
         {
             m_sequenceNumbersToHold = new SortedList<uint, uint>();
             m_sequenceNumbersHeld = new SortedList<uint, uint>();
@@ -61,6 +65,7 @@ namespace TCPFlow.Model
 
             BufferSize = bufferSize;
             Timeout = timeout;
+            DeliveryInterval = deliveryInterval;
 
             Reset();
         }
@@ -92,7 +97,7 @@ namespace TCPFlow.Model
         public event Action<Ack> AckSent;
         private void SendAck(Ack ack)
         {
-            m_ackSendTime = m_controller.Time;
+            m_lastAckSendTime = m_controller.Time;
             if (AckSent != null)
                 AckSent(ack);
         }
@@ -112,6 +117,8 @@ namespace TCPFlow.Model
         public event Action<PacketDeliveryArgs> PacketDelivered;
         private void DeliverPacket(uint ID, bool delivered)
         {
+            if (delivered)
+                m_lastDeliveryTime = m_controller.Time;
             if (PacketDelivered != null)
                 PacketDelivered(new PacketDeliveryArgs(ID, delivered));
         }
@@ -120,7 +127,7 @@ namespace TCPFlow.Model
         {
             m_sequenceNumbersHeld.Clear();
             m_buffer.Clear();
-            m_ackSendTime = uint.MaxValue;
+            m_lastAckSendTime = m_lastDeliveryTime = uint.MaxValue;
             m_receivedPacket = null;
             m_nextID = m_controller.SkipHandshake ? (uint)1 : 0;
         }
@@ -170,7 +177,8 @@ namespace TCPFlow.Model
                 stateChanged = true;
             }
 
-            if (m_buffer.Contains(m_nextID))
+            if (m_buffer.Contains(m_nextID) &&
+                (m_lastDeliveryTime == uint.MaxValue || m_controller.Time >= m_lastDeliveryTime + DeliveryInterval))
             {
                 if (!HoldPacket(m_nextID))
                 {
@@ -198,8 +206,8 @@ namespace TCPFlow.Model
             }
 
             bool timedout = m_receivedPacket == null &&
-                m_ackSendTime != uint.MaxValue &&
-                m_controller.Time >= m_ackSendTime + Timeout;
+                m_lastAckSendTime != uint.MaxValue &&
+                m_controller.Time >= m_lastAckSendTime + Timeout;
 
             //send ack?
             if (m_receivedPacket != null || timedout)

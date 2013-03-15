@@ -75,6 +75,9 @@ namespace TCPFlow
             numRXTimeout.Value = m_controller.receiver.Timeout;
             numRXTimeout.ValueChanged += numRXTimeout_ValueChanged;
 
+            numDeliveryInterval.Value = m_controller.receiver.DeliveryInterval;
+            numDeliveryInterval.ValueChanged += numDeliveryInterval_ValueChanged;
+
             chkCongestionControl.Checked = m_controller.sender.CongestionControlEnabled;
             chkCongestionControl.CheckedChanged += chkCongestionControl_CheckedChanged;
 
@@ -85,6 +88,12 @@ namespace TCPFlow
             InitDynamicGraphics();
 
             DrawFlow();
+        }
+
+        void numDeliveryInterval_ValueChanged(object sender, EventArgs e)
+        {
+            m_controller.receiver.DeliveryInterval = (uint)numDeliveryInterval.Value;
+            Replay();
         }
 
         void chkCongestionControl_CheckedChanged(object sender, EventArgs e)
