@@ -63,10 +63,14 @@ namespace TCPFlow.Model
             m_historyTiming.Clear();
             m_history.Clear();
             m_lastEventTime = uint.MaxValue;
+            m_steadyState = new Tuple<uint, uint>(uint.MaxValue, uint.MaxValue);
         }
 
         private void AddToHistory(string element)
         {
+            if (SteadyState.Item1 != uint.MaxValue) //steady state already detected?
+                return;
+
             m_historyTiming.Add(m_history.Length, m_controller.Time);
 
             if (m_lastEventTime != uint.MaxValue &&
@@ -140,8 +144,6 @@ namespace TCPFlow.Model
 
             senderStates.Clear();
             receiverStates.Clear();
-
-            m_steadyState = new Tuple<uint, uint>(uint.MaxValue, uint.MaxValue);
         }
 
         public void OnPacketSent(DataPacket packet)
