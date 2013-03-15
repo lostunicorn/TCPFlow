@@ -51,12 +51,13 @@
             this.lblTXTimeout = new System.Windows.Forms.Label();
             this.chkCongestionControl = new System.Windows.Forms.CheckBox();
             this.grpReceiverSettings = new System.Windows.Forms.GroupBox();
+            this.numDeliveryInterval = new System.Windows.Forms.NumericUpDown();
+            this.lblDeliveryInterval = new System.Windows.Forms.Label();
             this.numRXTimeout = new System.Windows.Forms.NumericUpDown();
             this.lblRXTimeout = new System.Windows.Forms.Label();
             this.numRXBufferSize = new System.Windows.Forms.NumericUpDown();
             this.m_lblRXBufferSize = new System.Windows.Forms.Label();
-            this.lblDeliveryInterval = new System.Windows.Forms.Label();
-            this.numDeliveryInterval = new System.Windows.Forms.NumericUpDown();
+            this.rdRunAutomaticUntilSteady = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.pbFlow)).BeginInit();
             this.ctxStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numDelay)).BeginInit();
@@ -66,9 +67,9 @@
             this.grpSenderSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numTXTimeout)).BeginInit();
             this.grpReceiverSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numDeliveryInterval)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRXTimeout)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRXBufferSize)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numDeliveryInterval)).BeginInit();
             this.SuspendLayout();
             // 
             // pbFlow
@@ -172,19 +173,20 @@
             // grpRunSettings
             // 
             this.grpRunSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpRunSettings.Controls.Add(this.rdRunAutomaticUntilSteady);
             this.grpRunSettings.Controls.Add(this.btnTick);
             this.grpRunSettings.Controls.Add(this.rdRunManual);
             this.grpRunSettings.Controls.Add(this.rdRunAutomatic);
             this.grpRunSettings.Location = new System.Drawing.Point(851, 12);
             this.grpRunSettings.Name = "grpRunSettings";
-            this.grpRunSettings.Size = new System.Drawing.Size(212, 86);
+            this.grpRunSettings.Size = new System.Drawing.Size(212, 122);
             this.grpRunSettings.TabIndex = 3;
             this.grpRunSettings.TabStop = false;
             this.grpRunSettings.Text = "Simulation";
             // 
             // btnTick
             // 
-            this.btnTick.Location = new System.Drawing.Point(101, 48);
+            this.btnTick.Location = new System.Drawing.Point(100, 76);
             this.btnTick.Name = "btnTick";
             this.btnTick.Size = new System.Drawing.Size(75, 23);
             this.btnTick.TabIndex = 2;
@@ -196,7 +198,7 @@
             // 
             this.rdRunManual.AutoSize = true;
             this.rdRunManual.Checked = true;
-            this.rdRunManual.Location = new System.Drawing.Point(7, 49);
+            this.rdRunManual.Location = new System.Drawing.Point(6, 77);
             this.rdRunManual.Name = "rdRunManual";
             this.rdRunManual.Size = new System.Drawing.Size(75, 21);
             this.rdRunManual.TabIndex = 1;
@@ -247,7 +249,7 @@
             this.grpNetworkSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.grpNetworkSettings.Controls.Add(this.lblDelay);
             this.grpNetworkSettings.Controls.Add(this.numDelay);
-            this.grpNetworkSettings.Location = new System.Drawing.Point(851, 267);
+            this.grpNetworkSettings.Location = new System.Drawing.Point(851, 286);
             this.grpNetworkSettings.Name = "grpNetworkSettings";
             this.grpNetworkSettings.Size = new System.Drawing.Size(212, 61);
             this.grpNetworkSettings.TabIndex = 6;
@@ -261,7 +263,7 @@
             this.grpSenderSettings.Controls.Add(this.chkSkipHandshake);
             this.grpSenderSettings.Controls.Add(this.lblTXTimeout);
             this.grpSenderSettings.Controls.Add(this.chkCongestionControl);
-            this.grpSenderSettings.Location = new System.Drawing.Point(851, 104);
+            this.grpSenderSettings.Location = new System.Drawing.Point(851, 140);
             this.grpSenderSettings.Name = "grpSenderSettings";
             this.grpSenderSettings.Size = new System.Drawing.Size(212, 140);
             this.grpSenderSettings.TabIndex = 7;
@@ -320,6 +322,38 @@
             this.grpReceiverSettings.TabIndex = 8;
             this.grpReceiverSettings.TabStop = false;
             this.grpReceiverSettings.Text = "Receiver Options";
+            // 
+            // numDeliveryInterval
+            // 
+            this.numDeliveryInterval.Location = new System.Drawing.Point(130, 103);
+            this.numDeliveryInterval.Maximum = new decimal(new int[] {
+            25,
+            0,
+            0,
+            0});
+            this.numDeliveryInterval.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numDeliveryInterval.Name = "numDeliveryInterval";
+            this.numDeliveryInterval.Size = new System.Drawing.Size(76, 22);
+            this.numDeliveryInterval.TabIndex = 5;
+            this.numDeliveryInterval.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numDeliveryInterval.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // lblDeliveryInterval
+            // 
+            this.lblDeliveryInterval.AutoSize = true;
+            this.lblDeliveryInterval.Location = new System.Drawing.Point(10, 103);
+            this.lblDeliveryInterval.Name = "lblDeliveryInterval";
+            this.lblDeliveryInterval.Size = new System.Drawing.Size(113, 17);
+            this.lblDeliveryInterval.TabIndex = 4;
+            this.lblDeliveryInterval.Text = "Delivery Interval:";
             // 
             // numRXTimeout
             // 
@@ -380,37 +414,17 @@
             this.m_lblRXBufferSize.TabIndex = 0;
             this.m_lblRXBufferSize.Text = "Buffer Size:";
             // 
-            // lblDeliveryInterval
+            // rdRunAutomaticUntilSteady
             // 
-            this.lblDeliveryInterval.AutoSize = true;
-            this.lblDeliveryInterval.Location = new System.Drawing.Point(10, 103);
-            this.lblDeliveryInterval.Name = "lblDeliveryInterval";
-            this.lblDeliveryInterval.Size = new System.Drawing.Size(113, 17);
-            this.lblDeliveryInterval.TabIndex = 4;
-            this.lblDeliveryInterval.Text = "Delivery Interval:";
-            // 
-            // numDeliveryInterval
-            // 
-            this.numDeliveryInterval.Location = new System.Drawing.Point(130, 103);
-            this.numDeliveryInterval.Maximum = new decimal(new int[] {
-            25,
-            0,
-            0,
-            0});
-            this.numDeliveryInterval.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numDeliveryInterval.Name = "numDeliveryInterval";
-            this.numDeliveryInterval.Size = new System.Drawing.Size(76, 22);
-            this.numDeliveryInterval.TabIndex = 5;
-            this.numDeliveryInterval.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numDeliveryInterval.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            this.rdRunAutomaticUntilSteady.AutoSize = true;
+            this.rdRunAutomaticUntilSteady.Location = new System.Drawing.Point(7, 50);
+            this.rdRunAutomaticUntilSteady.Name = "rdRunAutomaticUntilSteady";
+            this.rdRunAutomaticUntilSteady.Size = new System.Drawing.Size(202, 21);
+            this.rdRunAutomaticUntilSteady.TabIndex = 3;
+            this.rdRunAutomaticUntilSteady.TabStop = true;
+            this.rdRunAutomaticUntilSteady.Text = "Automatic until steady state";
+            this.rdRunAutomaticUntilSteady.UseVisualStyleBackColor = true;
+            this.rdRunAutomaticUntilSteady.CheckedChanged += new System.EventHandler(this.rdRunAutomaticUntilSteady_CheckedChanged);
             // 
             // FlowForm
             // 
@@ -439,9 +453,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.numTXTimeout)).EndInit();
             this.grpReceiverSettings.ResumeLayout(false);
             this.grpReceiverSettings.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numDeliveryInterval)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRXTimeout)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRXBufferSize)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numDeliveryInterval)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -476,6 +490,7 @@
         private System.Windows.Forms.ToolStripMenuItem mnuAckDelay;
         private System.Windows.Forms.NumericUpDown numDeliveryInterval;
         private System.Windows.Forms.Label lblDeliveryInterval;
+        private System.Windows.Forms.RadioButton rdRunAutomaticUntilSteady;
     }
 }
 

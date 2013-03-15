@@ -38,12 +38,14 @@ namespace TCPFlow
 
         Font m_bigFont = new Font(FontFamily.GenericSerif, 12),
             m_smallFont = new Font(FontFamily.GenericSerif, 10, FontStyle.Bold),
-            m_timelineFont = new Font(FontFamily.GenericSerif, 8);
+            m_timelineFont = new Font(FontFamily.GenericSerif, 8),
+            m_hugeFont = new Font(FontFamily.GenericSerif, 18, FontStyle.Bold);
 
         SizeF m_txSize,
             m_rxSize,
             m_numberSize,
-            m_windowStateSize;
+            m_windowStateSize,
+            m_steadySize;
 
         float m_txLine,
             m_rxLine;
@@ -51,7 +53,8 @@ namespace TCPFlow
         LinearGradientBrush m_txBrush,
             m_rxBrush;
 
-        SolidBrush m_selectionBrush;
+        SolidBrush m_selectionBrush,
+            m_steadyBrush;
 
         DelayDialog m_delayDialog = new DelayDialog();
 
@@ -84,10 +87,17 @@ namespace TCPFlow
             numTXTimeout.Value = m_controller.sender.Timeout;
             numTXTimeout.ValueChanged += numTXTimeout_ValueChanged;
 
+            m_controller.log.SteadyStateChanged += log_SteadyStateChanged;
+
             InitStaticGraphics();
             InitDynamicGraphics();
 
             DrawFlow();
+        }
+
+        void log_SteadyStateChanged(Tuple<uint, uint> steadyState)
+        {
+            rdRunManual.Checked = true;
         }
 
         void numDeliveryInterval_ValueChanged(object sender, EventArgs e)
@@ -133,6 +143,7 @@ namespace TCPFlow
             m_numberSize = g.MeasureString("00", m_smallFont);
 
             m_selectionBrush = new SolidBrush(Color.FromArgb(128, Color.DarkGreen));
+            m_steadyBrush = new SolidBrush(Color.FromArgb(96, Color.Orange));
 
             g.Dispose();
         }
@@ -151,6 +162,8 @@ namespace TCPFlow
                 m_windowStateSize = g.MeasureString(string.Format("RW: {0} CW: {1:f2}", 99, 99), m_smallFont);
             else
                 m_windowStateSize = g.MeasureString(string.Format("RW: {0}", 99), m_smallFont);
+
+            m_steadySize = g.MeasureString("STEADY", m_bigFont);
 
             m_txLine = m_windowStateSize.Width + txBufferWidth + 2 * BORDER + m_txSize.Width / 2;
             m_txBrush = new LinearGradientBrush(new PointF(m_txLine, 0), new PointF(m_rxLine, 0), Color.Black, Color.White);
@@ -467,6 +480,18 @@ namespace TCPFlow
                         }
                     }
                 }
+
+                //render steady state
+                if (m_controller.Time > m_controller.log.SteadyState.Item2)
+                {
+                    Tuple<uint, uint> steadyState = m_controller.log.SteadyState;
+                    g.FillRectangle(m_steadyBrush, 0, steadyState.Item1 * PIXELS_PER_TICK, bitmap.Width, (steadyState.Item2 - steadyState.Item1) * PIXELS_PER_TICK);
+
+                    PointF p = new PointF();
+                    p.X = ( bitmap.Width - m_steadySize.Width ) / 2;
+                    p.Y = (steadyState.Item1 + (steadyState.Item2 - steadyState.Item1) / 2) * PIXELS_PER_TICK - m_steadySize.Height / 2;
+                    g.DrawString("STEADY", m_hugeFont, Brushes.Orange, p);
+                }
             }
 
             g.Dispose();
@@ -557,14 +582,24 @@ namespace TCPFlow
             InitDynamicGraphics();
         }
 
-        private void rdRunAutomatic_CheckedChanged(object sender, EventArgs e)
+        private void StartStopTimer()
         {
             btnTick.Enabled = rdRunManual.Checked;
 
-            if (rdRunAutomatic.Checked)
+            if (rdRunAutomatic.Checked || rdRunAutomaticUntilSteady.Checked)
                 m_tickTimer.Start();
             else
                 m_tickTimer.Stop();
+        }
+
+        private void rdRunAutomatic_CheckedChanged(object sender, EventArgs e)
+        {
+            StartStopTimer();
+        }
+
+        private void rdRunAutomaticUntilSteady_CheckedChanged(object sender, EventArgs e)
+        {
+            StartStopTimer();
         }
 
         private void pbFlow_MouseLeave(object sender, EventArgs e)

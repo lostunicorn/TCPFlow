@@ -24,8 +24,29 @@ namespace TCPFlow.Model
 
         private Controller m_controller;
 
-        public uint SteadyStateStart { get; private set; }
-        public uint SteadyStateStop { get; private set; }
+        private Tuple<uint, uint> m_steadyState;
+        public Tuple<uint, uint> SteadyState
+        {
+            get
+            {
+                return m_steadyState;
+            }
+            set
+            {
+                if (m_steadyState != value)
+                {
+                    m_steadyState = value;
+                    OnSteadyStateChanged();
+                }
+            }
+        }
+
+        public event Action<Tuple<uint, uint>> SteadyStateChanged;
+        protected virtual void OnSteadyStateChanged()
+        {
+            if (SteadyStateChanged != null)
+                SteadyStateChanged(SteadyState);
+        }
 
         public Log(Controller controller)
         {
@@ -44,44 +65,68 @@ namespace TCPFlow.Model
             m_lastEventTime = uint.MaxValue;
         }
 
-        private void AddToHistory(string str)
+        private void AddToHistory(string element)
         {
             m_historyTiming.Add(m_history.Length, m_controller.Time);
 
-            if (m_lastEventTime != uint.MaxValue)
+            if (m_lastEventTime != uint.MaxValue &&
+                m_controller.Time != m_lastEventTime)
+            {
                 m_history.Append(m_controller.Time - m_lastEventTime);
 
-            //TODO: add steady state detection
-            string history = m_history.ToString();
-            int posFirst, posSecond;
-            posSecond = history.LastIndexOf(str);
-            if (posSecond != -1)
-            {
-                posFirst = history.LastIndexOf(str, posSecond);
-
-                if (posFirst != -1)
+                string history = m_history.ToString();
+                List<int> matches = new List<int>();
+                int pos = history.Length;
+                while (pos > 0)
                 {
-                    string firstSection = history.Substring(posFirst, posSecond - posFirst);
-                    string secondSection = history.Substring(posSecond);
+                    pos = history.LastIndexOf(element, pos - 1);
+                    if (pos != -1)
+                        matches.Add(pos);
+                }
 
-                    if (firstSection.Equals(secondSection))
+                bool found = false;
+
+                List<int>.Enumerator secondEn = matches.GetEnumerator();
+                while (!found &&
+                    secondEn.MoveNext())
+                {
+                    int secondPos = secondEn.Current;
+
+                    //TODO: see if we can limit firstEn's range through Linq (filter matches)
+                    List<int>.Enumerator firstEn = matches.GetEnumerator();
+                    while (!found &&
+                        firstEn.MoveNext())
                     {
-                        uint firstTime, secondTime;
-                        while (!m_historyTiming.ContainsKey(posFirst))
-                            --posFirst;
-                        firstTime = m_historyTiming[posFirst];
+                        int firstPos = firstEn.Current;
+                        if (firstPos < secondPos)
+                        {
+                            string firstSection = history.Substring(firstPos, secondPos - firstPos);
+                            string secondSection = history.Substring(secondPos);
 
-                        while (!m_historyTiming.ContainsKey(posSecond))
-                            --posSecond;
-                        secondTime = m_historyTiming[posSecond];
+                            if (firstSection.Equals(secondSection) &&
+                                firstSection.Contains('P') &&
+                                firstSection.Contains('A') &&
+                                firstSection.Contains('D'))
+                            {
+                                uint firstTime, secondTime;
+                                while (!m_historyTiming.ContainsKey(firstPos))
+                                    --firstPos;
+                                firstTime = m_historyTiming[firstPos];
 
-                        //rejoice! steady state!
-                        System.Diagnostics.Debug.Print("Steady state detected from {0} to {1}", firstTime, secondTime);
+                                while (!m_historyTiming.ContainsKey(secondPos))
+                                    --secondPos;
+                                secondTime = m_historyTiming[secondPos];
+
+                                //rejoice! steady state!
+                                found = true;
+                                SteadyState = new Tuple<uint, uint>(firstTime, secondTime);
+                            }
+                        }
                     }
                 }
             }
 
-            m_history.Append(str);
+            m_history.Append(element);
             m_lastEventTime = m_controller.Time;
         }
 
@@ -95,6 +140,8 @@ namespace TCPFlow.Model
 
             senderStates.Clear();
             receiverStates.Clear();
+
+            m_steadyState = new Tuple<uint, uint>(uint.MaxValue, uint.MaxValue);
         }
 
         public void OnPacketSent(DataPacket packet)
@@ -138,7 +185,7 @@ namespace TCPFlow.Model
                 outstanding.Append(state.NextID - id);
                 outstanding.Append('|');
             }
-            string str = string.Format("CW{0}RW{1}O{2}{3}", state.CongestionWindow, state.ReceiveWindow, outstanding.ToString(), state.Timedout);
+            string str = string.Format(m_controller.sender.CongestionControlEnabled ? "CW{0}RW{1}O{2}{3}" : "RW{1}O{2}{3}", state.CongestionWindow, state.ReceiveWindow, outstanding.ToString(), state.Timedout);
             AddToHistory(str);
         }
 

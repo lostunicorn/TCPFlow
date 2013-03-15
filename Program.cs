@@ -26,7 +26,7 @@ namespace TCPFlow
             */
             Controller controller = new Controller(5, 4, 15);
 
-            controller.network.AddLostPacket(1);
+            //controller.network.AddLostPacket(1);
             //controller.network.AddLostAck(1);
 
             /*
