@@ -51,27 +51,38 @@ namespace TCPFlow.Model
             if (m_lastEventTime != uint.MaxValue)
                 m_history.Append(m_controller.Time - m_lastEventTime);
 
-            m_history.Append(str);
-            m_lastEventTime = m_controller.Time;
-
             //TODO: add steady state detection
             string history = m_history.ToString();
-            int l = 1, len = history.Length, middle = len/2;
-            bool found = false;
-            while (!found && l < middle)
+            int posFirst, posSecond;
+            posSecond = history.LastIndexOf(str);
+            if (posSecond != -1)
             {
-                string substr = history.Substring(len - l);
-                if (substr.Contains('P') &&
-                    substr.Contains('A') &&
-                    substr.Contains('D') &&
-                    history.Substring(len-2*l, l).Equals(substr))
+                posFirst = history.LastIndexOf(str, posSecond);
+
+                if (posFirst != -1)
                 {
-                    SteadyStateStart = m_historyTiming[len - 2 * l];
-                    SteadyStateStop = m_historyTiming[len - l];
-                    //steady state detected!
+                    string firstSection = history.Substring(posFirst, posSecond - posFirst);
+                    string secondSection = history.Substring(posSecond);
+
+                    if (firstSection.Equals(secondSection))
+                    {
+                        uint firstTime, secondTime;
+                        while (!m_historyTiming.ContainsKey(posFirst))
+                            --posFirst;
+                        firstTime = m_historyTiming[posFirst];
+
+                        while (!m_historyTiming.ContainsKey(posSecond))
+                            --posSecond;
+                        secondTime = m_historyTiming[posSecond];
+
+                        //rejoice! steady state!
+                        System.Diagnostics.Debug.Print("Steady state detected from {0} to {1}", firstTime, secondTime);
+                    }
                 }
-                ++l;
             }
+
+            m_history.Append(str);
+            m_lastEventTime = m_controller.Time;
         }
 
         public void Reset()
@@ -120,11 +131,30 @@ namespace TCPFlow.Model
         public void OnSenderStateChanged(Sender.State state)
         {
             senderStates[m_controller.Time] = state;
+
+            StringBuilder outstanding = new StringBuilder();
+            foreach (uint id in state.Outstanding)
+            {
+                outstanding.Append(state.NextID - id);
+                outstanding.Append('|');
+            }
+            string str = string.Format("CW{0}RW{1}O{2}{3}", state.CongestionWindow, state.ReceiveWindow, outstanding.ToString(), state.Timedout);
+            AddToHistory(str);
         }
 
         public void OnReceiverStateChanged(Receiver.State state)
         {
             receiverStates[m_controller.Time] = state;
+
+            StringBuilder buffer = new StringBuilder();
+            foreach (uint id in state.Buffer)
+            {
+                buffer.Append(id - state.NextID);
+                buffer.Append('|');
+            }
+
+            string str = String.Format("B{0}{1}", buffer.ToString(), state.Timedout);
+            AddToHistory(str);
         }
     }
 }

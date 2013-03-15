@@ -31,9 +31,9 @@ namespace TCPFlow
 
         public Controller(uint delay, uint rxBufferSize, uint timeout)
         {
-            log = new Log(this);
-            sender = new Sender(this, true, true, timeout);
             receiver = new Receiver(this, rxBufferSize, timeout);
+            log = new Log(this);
+            sender = new Sender(this, true, true, timeout); //sender relies on receiver, so needs to be created after receiver!
             network = new Network(this, delay);
 
             sender.PacketSent += log.OnPacketSent;

@@ -26,6 +26,7 @@ namespace TCPFlow.Model
                 Timedout = timedout;
             }
         }
+
         public event Action<State> StateChanged;
         protected void ChangeState(bool timedout)
         {
@@ -109,6 +110,7 @@ namespace TCPFlow.Model
                 Delivered = delivered;
             }
         }
+
         public event Action<PacketDeliveryArgs> PacketDelivered;
         private void DeliverPacket(uint ID, bool delivered)
         {

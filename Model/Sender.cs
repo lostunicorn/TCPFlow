@@ -208,7 +208,7 @@ namespace TCPFlow.Model
             m_nextID = START_ID;
             m_previousAcks.Clear();
             m_outstanding.Clear();
-            ReceiveWindow = 1;
+            ReceiveWindow = SkipHandshake ? m_controller.receiver.BufferSize : 1;
             CongestionWindow = 1;
             SlowStartThreshold = INITIAL_SLOW_START_THRESHOLD;
         }
