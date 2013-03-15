@@ -79,54 +79,51 @@ namespace TCPFlow.Model
                 m_history.Append(m_controller.Time - m_lastEventTime);
 
                 string history = m_history.ToString();
-                List<int> matches = new List<int>();
-                int pos = history.Length;
-                while (pos > 0)
+                List<int> matchList = new List<int>();
+                int pos = 0;
+                while (pos != -1 && pos < history.Length - 1)
                 {
-                    pos = history.LastIndexOf(element, pos - 1);
+                    pos = history.IndexOf(element, pos + 1);
                     if (pos != -1)
-                        matches.Add(pos);
+                        matchList.Add(pos);
                 }
+
+                int[] matchArr = matchList.ToArray();
 
                 bool found = false;
 
-                List<int>.Enumerator secondEn = matches.GetEnumerator();
-                while (!found &&
-                    secondEn.MoveNext())
+                int j = matchArr.Length - 1;
+                while (!found && j > 0)
                 {
-                    int secondPos = secondEn.Current;
+                    string secondSection = history.Substring(matchArr[j]);
 
-                    //TODO: see if we can limit firstEn's range through Linq (filter matches)
-                    List<int>.Enumerator firstEn = matches.GetEnumerator();
-                    while (!found &&
-                        firstEn.MoveNext())
+                    int i = j - 1;
+                    while (!found && i >= 0)
                     {
-                        int firstPos = firstEn.Current;
-                        if (firstPos < secondPos)
+                        string firstSection = history.Substring(matchArr[i], matchArr[j] - matchArr[i]);
+
+                        if (firstSection.Equals(secondSection) &&
+                            firstSection.Contains('P') &&
+                            firstSection.Contains('A') &&
+                            firstSection.Contains('D'))
                         {
-                            string firstSection = history.Substring(firstPos, secondPos - firstPos);
-                            string secondSection = history.Substring(secondPos);
+                            int firstPos = matchArr[i], secondPos = matchArr[j];
+                            uint firstTime, secondTime;
+                            while (!m_historyTiming.ContainsKey(firstPos))
+                                --firstPos;
+                            firstTime = m_historyTiming[firstPos];
 
-                            if (firstSection.Equals(secondSection) &&
-                                firstSection.Contains('P') &&
-                                firstSection.Contains('A') &&
-                                firstSection.Contains('D'))
-                            {
-                                uint firstTime, secondTime;
-                                while (!m_historyTiming.ContainsKey(firstPos))
-                                    --firstPos;
-                                firstTime = m_historyTiming[firstPos];
+                            while (!m_historyTiming.ContainsKey(secondPos))
+                                --secondPos;
+                            secondTime = m_historyTiming[secondPos];
 
-                                while (!m_historyTiming.ContainsKey(secondPos))
-                                    --secondPos;
-                                secondTime = m_historyTiming[secondPos];
-
-                                //rejoice! steady state!
-                                found = true;
-                                SteadyState = new Tuple<uint, uint>(firstTime, secondTime);
-                            }
+                            //rejoice! steady state!
+                            found = true;
+                            SteadyState = new Tuple<uint, uint>(firstTime, secondTime);
                         }
+                        --i;
                     }
+                    --j;
                 }
             }
 
@@ -187,7 +184,9 @@ namespace TCPFlow.Model
                 outstanding.Append(state.NextID - id);
                 outstanding.Append('|');
             }
-            string str = string.Format(m_controller.sender.CongestionControlEnabled ? "CW{0}RW{1}O{2}{3}" : "RW{1}O{2}{3}", state.CongestionWindow, state.ReceiveWindow, outstanding.ToString(), state.Timedout);
+
+            //string str = string.Format(m_controller.sender.CongestionControlEnabled ? "CW{0}RW{1}O{2}{3}" : "RW{1}O{2}{3}", state.CongestionWindow, state.ReceiveWindow, outstanding.ToString(), state.Timedout);
+            string str = string.Format("RW{0}O{1}{2}", state.ReceiveWindow, outstanding.ToString(), state.Timedout);
             AddToHistory(str);
         }
 
