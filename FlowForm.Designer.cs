@@ -40,6 +40,7 @@
             this.numDelay = new System.Windows.Forms.NumericUpDown();
             this.lblDelay = new System.Windows.Forms.Label();
             this.grpRunSettings = new System.Windows.Forms.GroupBox();
+            this.rdRunAutomaticUntilSteady = new System.Windows.Forms.RadioButton();
             this.btnTick = new System.Windows.Forms.Button();
             this.rdRunManual = new System.Windows.Forms.RadioButton();
             this.rdRunAutomatic = new System.Windows.Forms.RadioButton();
@@ -57,7 +58,6 @@
             this.lblRXTimeout = new System.Windows.Forms.Label();
             this.numRXBufferSize = new System.Windows.Forms.NumericUpDown();
             this.m_lblRXBufferSize = new System.Windows.Forms.Label();
-            this.rdRunAutomaticUntilSteady = new System.Windows.Forms.RadioButton();
             this.btnReset = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbFlow)).BeginInit();
@@ -186,6 +186,18 @@
             this.grpRunSettings.TabStop = false;
             this.grpRunSettings.Text = "Simulation";
             // 
+            // rdRunAutomaticUntilSteady
+            // 
+            this.rdRunAutomaticUntilSteady.AutoSize = true;
+            this.rdRunAutomaticUntilSteady.Location = new System.Drawing.Point(7, 48);
+            this.rdRunAutomaticUntilSteady.Name = "rdRunAutomaticUntilSteady";
+            this.rdRunAutomaticUntilSteady.Size = new System.Drawing.Size(202, 21);
+            this.rdRunAutomaticUntilSteady.TabIndex = 3;
+            this.rdRunAutomaticUntilSteady.TabStop = true;
+            this.rdRunAutomaticUntilSteady.Text = "Automatic until steady state";
+            this.rdRunAutomaticUntilSteady.UseVisualStyleBackColor = true;
+            this.rdRunAutomaticUntilSteady.CheckedChanged += new System.EventHandler(this.rdRunAutomaticUntilSteady_CheckedChanged);
+            // 
             // btnTick
             // 
             this.btnTick.Location = new System.Drawing.Point(100, 76);
@@ -244,7 +256,6 @@
             this.pnlFlow.Name = "pnlFlow";
             this.pnlFlow.Size = new System.Drawing.Size(832, 503);
             this.pnlFlow.TabIndex = 5;
-            this.pnlFlow.SizeChanged += new System.EventHandler(this.pnlFlow_SizeChanged);
             // 
             // grpNetworkSettings
             // 
@@ -416,18 +427,6 @@
             this.m_lblRXBufferSize.TabIndex = 0;
             this.m_lblRXBufferSize.Text = "Buffer Size:";
             // 
-            // rdRunAutomaticUntilSteady
-            // 
-            this.rdRunAutomaticUntilSteady.AutoSize = true;
-            this.rdRunAutomaticUntilSteady.Location = new System.Drawing.Point(7, 48);
-            this.rdRunAutomaticUntilSteady.Name = "rdRunAutomaticUntilSteady";
-            this.rdRunAutomaticUntilSteady.Size = new System.Drawing.Size(202, 21);
-            this.rdRunAutomaticUntilSteady.TabIndex = 3;
-            this.rdRunAutomaticUntilSteady.TabStop = true;
-            this.rdRunAutomaticUntilSteady.Text = "Automatic until steady state";
-            this.rdRunAutomaticUntilSteady.UseVisualStyleBackColor = true;
-            this.rdRunAutomaticUntilSteady.CheckedChanged += new System.EventHandler(this.rdRunAutomaticUntilSteady_CheckedChanged);
-            // 
             // btnReset
             // 
             this.btnReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -465,6 +464,7 @@
             this.Name = "FlowForm";
             this.Text = "TCP Flow Visualizer";
             this.Shown += new System.EventHandler(this.FlowForm_Shown);
+            this.ClientSizeChanged += new System.EventHandler(this.FlowForm_ClientSizeChanged);
             ((System.ComponentModel.ISupportInitialize)(this.pbFlow)).EndInit();
             this.ctxStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numDelay)).EndInit();

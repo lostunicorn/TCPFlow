@@ -174,10 +174,11 @@ namespace TCPFlow
             m_steadySize = g.MeasureString("STEADY", m_bigFont);
 
             m_txLine = m_windowStateSize.Width + txBufferWidth + 2 * BORDER + m_txSize.Width / 2;
+            m_rxLine = m_flowWidth - (rxBufferWidth + 2 * BORDER + DELIVERY_BORDER + m_rxSize.Width / 2);
+
             m_txBrush = new LinearGradientBrush(new PointF(m_txLine, 0), new PointF(m_rxLine, 0), Color.Black, Color.White);
             m_txPen = new Pen(m_txBrush, 3);
 
-            m_rxLine = m_flowWidth - (rxBufferWidth + 2 * BORDER + DELIVERY_BORDER + m_rxSize.Width / 2);
             m_rxBrush = new LinearGradientBrush(new PointF(m_txLine, 0), new PointF(m_rxLine, 0), Color.White, Color.Black);
             m_rxPen = new Pen(m_rxBrush, 3);
 
@@ -519,12 +520,6 @@ namespace TCPFlow
             m_controller.Tick();
         }
 
-        private void pnlFlow_SizeChanged(object sender, EventArgs e)
-        {
-            InitDynamicGraphics();
-            DrawFlow();
-        }
-
         private void pbFlow_MouseMove(object sender, MouseEventArgs e)
         {
             uint m_oldSelectedTime = m_selectedTime;
@@ -707,6 +702,12 @@ namespace TCPFlow
         {
             if (m_saveDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
                 m_bitmap.Save(m_saveDialog.FileName, System.Drawing.Imaging.ImageFormat.Png);
+        }
+
+        private void FlowForm_ClientSizeChanged(object sender, EventArgs e)
+        {
+            InitDynamicGraphics();
+            DrawFlow();
         }
     }
 }
