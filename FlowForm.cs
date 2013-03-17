@@ -504,6 +504,7 @@ namespace TCPFlow
 
             g.Dispose();
             pbFlow.Image = m_bitmap;
+            pnlFlow.VerticalScroll.Value = pnlFlow.VerticalScroll.Maximum;
         }
 
         private void numDelay_ValueChanged(object sender, EventArgs e)
