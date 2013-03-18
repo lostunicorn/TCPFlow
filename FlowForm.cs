@@ -450,28 +450,31 @@ namespace TCPFlow
                         {
                             Point p = new Point((int)(m_rxLine + BORDER + i * m_numberSize.Width), (int)(time * PIXELS_PER_TICK - m_numberSize.Height / 2.0));
                             Rectangle rect = new Rectangle(p, new Size((int)m_numberSize.Width, (int)m_numberSize.Height));
-                            Brush brush;
+                            Brush bufBrush;
+                            Brush textBrush;
                             string str = nextID.ToString();
 
                             if (state.Buffer.Length == 0 || //buffer is empty
                                 nextID > state.Buffer[state.Buffer.Length - 1]) //nextID is larger than the largest element in buffer
                             {
-                                brush = Brushes.White;
-                                str = "";
+                                bufBrush = Brushes.White;
+                                textBrush = Brushes.Black;
                             }
                             else if (state.Buffer.Length > bufIndex && state.Buffer[bufIndex] == nextID) //is nextID in buffer?
                             {
-                                brush = Brushes.Green;
+                                bufBrush = Brushes.Green;
+                                textBrush = Brushes.White;
                                 ++bufIndex;
                             }
                             else
                             {
-                                brush = Brushes.Red;
+                                bufBrush = Brushes.Red;
+                                textBrush = Brushes.White;
                             }
 
-                            g.FillRectangle(brush, rect);
+                            g.FillRectangle(bufBrush, rect);
                             g.DrawRectangle(m_thinPen, rect);
-                            g.DrawString(nextID.ToString(), m_smallFont, Brushes.White, p);
+                            g.DrawString(nextID.ToString(), m_smallFont, textBrush, p);
 
                             ++nextID;
                             ++i;
