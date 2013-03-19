@@ -703,8 +703,8 @@ namespace TCPFlow
             uint oldDelay = m_controller.network.GetPacketDelay(packet.Number);
             m_inputDialog.Minimum = 1;
             m_inputDialog.Maximum = 100;
-            m_inputDialog.Text = "Delay?";
-            m_inputDialog.ValueText = "Delay?";
+            m_inputDialog.Text = "Packet Delay?";
+            m_inputDialog.ValueText = "Packet Delay?";
             m_inputDialog.Value = oldDelay;
 
             if (m_inputDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK &&
@@ -719,7 +719,12 @@ namespace TCPFlow
         {
             Model.Ack ack = m_controller.log.acks[m_contextTime];
             uint oldDelay = m_controller.network.GetAckDelay(ack.Number);
+            m_inputDialog.Minimum = 1;
+            m_inputDialog.Maximum = 100;
+            m_inputDialog.Text = "Ack Delay?";
+            m_inputDialog.ValueText = "Ack Delay?";
             m_inputDialog.Value = oldDelay;
+
             if (m_inputDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK &&
                 m_inputDialog.Value != oldDelay)
             {
