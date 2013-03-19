@@ -101,47 +101,47 @@
             this.ctxStrip.Name = "ctxStrip";
             this.ctxStrip.ShowCheckMargin = true;
             this.ctxStrip.ShowImageMargin = false;
-            this.ctxStrip.Size = new System.Drawing.Size(222, 130);
+            this.ctxStrip.Size = new System.Drawing.Size(231, 152);
             this.ctxStrip.Opening += new System.ComponentModel.CancelEventHandler(this.ctxStrip_Opening);
             // 
             // mnuLoseDataPacket
             // 
             this.mnuLoseDataPacket.Name = "mnuLoseDataPacket";
-            this.mnuLoseDataPacket.Size = new System.Drawing.Size(221, 24);
+            this.mnuLoseDataPacket.Size = new System.Drawing.Size(230, 24);
             this.mnuLoseDataPacket.Text = "Lose Data Packet";
             this.mnuLoseDataPacket.Click += new System.EventHandler(this.mnuLoseDataPacket_Click);
             // 
             // mnuPacketDelay
             // 
             this.mnuPacketDelay.Name = "mnuPacketDelay";
-            this.mnuPacketDelay.Size = new System.Drawing.Size(221, 24);
+            this.mnuPacketDelay.Size = new System.Drawing.Size(230, 24);
             this.mnuPacketDelay.Text = "Set Packet Delay...";
             this.mnuPacketDelay.Click += new System.EventHandler(this.mnuPacketDelay_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(218, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(227, 6);
             // 
             // mnuLoseAck
             // 
             this.mnuLoseAck.Name = "mnuLoseAck";
-            this.mnuLoseAck.Size = new System.Drawing.Size(221, 24);
+            this.mnuLoseAck.Size = new System.Drawing.Size(230, 24);
             this.mnuLoseAck.Text = "Lose Ack";
             this.mnuLoseAck.Click += new System.EventHandler(this.mnuLoseAck_Click);
             // 
             // mnuAckDelay
             // 
             this.mnuAckDelay.Name = "mnuAckDelay";
-            this.mnuAckDelay.Size = new System.Drawing.Size(221, 24);
+            this.mnuAckDelay.Size = new System.Drawing.Size(230, 24);
             this.mnuAckDelay.Text = "Set Ack Delay...";
             this.mnuAckDelay.Click += new System.EventHandler(this.mnuAckDelay_Click);
             // 
             // mnuDelayDelivery
             // 
             this.mnuDelayDelivery.Name = "mnuDelayDelivery";
-            this.mnuDelayDelivery.Size = new System.Drawing.Size(221, 24);
-            this.mnuDelayDelivery.Text = "Delay Packet Delivery";
+            this.mnuDelayDelivery.Size = new System.Drawing.Size(230, 24);
+            this.mnuDelayDelivery.Text = "Delay Packet Delivery...";
             this.mnuDelayDelivery.Click += new System.EventHandler(this.mnuDelayDelivery_Click);
             // 
             // numDelay

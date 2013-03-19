@@ -89,23 +89,20 @@ namespace TCPFlow.Model
             Reset();
         }
 
-        public void AddSequenceNumberToHold(uint number)
+        public uint GetTicksToHold(uint id)
         {
-            if (m_sequenceNumbersToHold.ContainsKey(number))
-                ++m_sequenceNumbersToHold[number];
+            if (m_sequenceNumbersToHold.ContainsKey(id))
+                return m_sequenceNumbersToHold[id];
             else
-                m_sequenceNumbersToHold.Add(number, 1);
+                return 0;
         }
 
-        public void RemoveSequenceNumberToHold(uint number)
+        public void SetTicksToHold(uint id, uint ticks)
         {
-            if (m_sequenceNumbersToHold.ContainsKey(number))
-            {
-                if (m_sequenceNumbersToHold[number] > 1)
-                    --m_sequenceNumbersToHold[number];
-                else
-                    m_sequenceNumbersToHold.Remove(number);
-            }
+            if (ticks == 0)
+                m_sequenceNumbersToHold.Remove(id);
+            else
+                m_sequenceNumbersToHold[id] = ticks;
         }
 
         public void network_PacketArrived(DataPacket packet)

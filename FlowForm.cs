@@ -75,7 +75,7 @@ namespace TCPFlow
         SolidBrush m_selectionBrush,
             m_steadyBrush;
 
-        DelayDialog m_delayDialog = new DelayDialog();
+        InputDialog m_inputDialog = new InputDialog();
 
         int m_flowWidth;
 
@@ -665,12 +665,21 @@ namespace TCPFlow
 
         private void mnuDelayDelivery_Click(object sender, EventArgs e)
         {
-            if (mnuDelayDelivery.Checked) //--> going to unchecked
-                m_controller.receiver.RemoveSequenceNumberToHold(m_controller.log.delivered[m_contextTime].ID);
-            else
-                m_controller.receiver.AddSequenceNumberToHold(m_controller.log.delivered[m_contextTime].ID);
+            uint id = m_controller.log.delivered[m_contextTime].ID;
+            uint oldTicks = m_controller.receiver.GetTicksToHold(id);
 
-            Replay();
+            m_inputDialog.Minimum = 0;
+            m_inputDialog.Maximum = 100;
+            m_inputDialog.Text = "Ticks?";
+            m_inputDialog.ValueText = string.Format("Ticks to hold packet {0} ?", id);
+            m_inputDialog.Value = oldTicks;
+
+            if (m_inputDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK &&
+                oldTicks != m_inputDialog.Value)
+            {
+                m_controller.receiver.SetTicksToHold(id, m_inputDialog.Value);
+                Replay();
+            }
         }
 
         private void Replay()
@@ -692,11 +701,16 @@ namespace TCPFlow
         {
             Model.DataPacket packet = m_controller.log.packets[m_contextTime];
             uint oldDelay = m_controller.network.GetPacketDelay(packet.Number);
-            m_delayDialog.Delay = oldDelay;
-            if (m_delayDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK &&
-                m_delayDialog.Delay != oldDelay)
+            m_inputDialog.Minimum = 1;
+            m_inputDialog.Maximum = 100;
+            m_inputDialog.Text = "Delay?";
+            m_inputDialog.ValueText = "Delay?";
+            m_inputDialog.Value = oldDelay;
+
+            if (m_inputDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK &&
+                m_inputDialog.Value != oldDelay)
             {
-                m_controller.network.SetCustomPacketDelay(packet.Number, m_delayDialog.Delay);
+                m_controller.network.SetCustomPacketDelay(packet.Number, m_inputDialog.Value);
                 Replay();
             }
         }
@@ -705,11 +719,11 @@ namespace TCPFlow
         {
             Model.Ack ack = m_controller.log.acks[m_contextTime];
             uint oldDelay = m_controller.network.GetAckDelay(ack.Number);
-            m_delayDialog.Delay = oldDelay;
-            if (m_delayDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK &&
-                m_delayDialog.Delay != oldDelay)
+            m_inputDialog.Value = oldDelay;
+            if (m_inputDialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK &&
+                m_inputDialog.Value != oldDelay)
             {
-                m_controller.network.SetCustomAckDelay(ack.Number, m_delayDialog.Delay);
+                m_controller.network.SetCustomAckDelay(ack.Number, m_inputDialog.Value);
                 Replay();
             }
         }
