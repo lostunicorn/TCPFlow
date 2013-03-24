@@ -80,6 +80,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pbFlow.ContextMenuStrip = this.ctxStrip;
             this.pbFlow.Location = new System.Drawing.Point(0, 0);
+            this.pbFlow.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.pbFlow.Name = "pbFlow";
             this.pbFlow.Size = new System.Drawing.Size(540, 348);
             this.pbFlow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -101,59 +102,60 @@
             this.ctxStrip.Name = "ctxStrip";
             this.ctxStrip.ShowCheckMargin = true;
             this.ctxStrip.ShowImageMargin = false;
-            this.ctxStrip.Size = new System.Drawing.Size(231, 152);
+            this.ctxStrip.Size = new System.Drawing.Size(196, 120);
             this.ctxStrip.Opening += new System.ComponentModel.CancelEventHandler(this.ctxStrip_Opening);
             // 
             // mnuLoseDataPacket
             // 
             this.mnuLoseDataPacket.Name = "mnuLoseDataPacket";
-            this.mnuLoseDataPacket.Size = new System.Drawing.Size(230, 24);
+            this.mnuLoseDataPacket.Size = new System.Drawing.Size(195, 22);
             this.mnuLoseDataPacket.Text = "Lose Data Packet";
             this.mnuLoseDataPacket.Click += new System.EventHandler(this.mnuLoseDataPacket_Click);
             // 
             // mnuPacketDelay
             // 
             this.mnuPacketDelay.Name = "mnuPacketDelay";
-            this.mnuPacketDelay.Size = new System.Drawing.Size(230, 24);
+            this.mnuPacketDelay.Size = new System.Drawing.Size(195, 22);
             this.mnuPacketDelay.Text = "Set Packet Delay...";
             this.mnuPacketDelay.Click += new System.EventHandler(this.mnuPacketDelay_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(227, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(192, 6);
             // 
             // mnuLoseAck
             // 
             this.mnuLoseAck.Name = "mnuLoseAck";
-            this.mnuLoseAck.Size = new System.Drawing.Size(230, 24);
+            this.mnuLoseAck.Size = new System.Drawing.Size(195, 22);
             this.mnuLoseAck.Text = "Lose Ack";
             this.mnuLoseAck.Click += new System.EventHandler(this.mnuLoseAck_Click);
             // 
             // mnuAckDelay
             // 
             this.mnuAckDelay.Name = "mnuAckDelay";
-            this.mnuAckDelay.Size = new System.Drawing.Size(230, 24);
+            this.mnuAckDelay.Size = new System.Drawing.Size(195, 22);
             this.mnuAckDelay.Text = "Set Ack Delay...";
             this.mnuAckDelay.Click += new System.EventHandler(this.mnuAckDelay_Click);
             // 
             // mnuDelayDelivery
             // 
             this.mnuDelayDelivery.Name = "mnuDelayDelivery";
-            this.mnuDelayDelivery.Size = new System.Drawing.Size(230, 24);
+            this.mnuDelayDelivery.Size = new System.Drawing.Size(195, 22);
             this.mnuDelayDelivery.Text = "Delay Packet Delivery...";
             this.mnuDelayDelivery.Click += new System.EventHandler(this.mnuDelayDelivery_Click);
             // 
             // numDelay
             // 
-            this.numDelay.Location = new System.Drawing.Point(130, 21);
+            this.numDelay.Location = new System.Drawing.Point(98, 17);
+            this.numDelay.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.numDelay.Maximum = new decimal(new int[] {
             300,
             0,
             0,
             0});
             this.numDelay.Name = "numDelay";
-            this.numDelay.Size = new System.Drawing.Size(75, 22);
+            this.numDelay.Size = new System.Drawing.Size(56, 20);
             this.numDelay.TabIndex = 0;
             this.numDelay.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numDelay.Value = new decimal(new int[] {
@@ -166,9 +168,10 @@
             // lblDelay
             // 
             this.lblDelay.AutoSize = true;
-            this.lblDelay.Location = new System.Drawing.Point(7, 23);
+            this.lblDelay.Location = new System.Drawing.Point(5, 19);
+            this.lblDelay.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblDelay.Name = "lblDelay";
-            this.lblDelay.Size = new System.Drawing.Size(48, 17);
+            this.lblDelay.Size = new System.Drawing.Size(37, 13);
             this.lblDelay.TabIndex = 2;
             this.lblDelay.Text = "Delay:";
             // 
@@ -179,9 +182,11 @@
             this.grpRunSettings.Controls.Add(this.btnTick);
             this.grpRunSettings.Controls.Add(this.rdRunManual);
             this.grpRunSettings.Controls.Add(this.rdRunAutomatic);
-            this.grpRunSettings.Location = new System.Drawing.Point(851, 12);
+            this.grpRunSettings.Location = new System.Drawing.Point(638, 10);
+            this.grpRunSettings.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.grpRunSettings.Name = "grpRunSettings";
-            this.grpRunSettings.Size = new System.Drawing.Size(212, 109);
+            this.grpRunSettings.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.grpRunSettings.Size = new System.Drawing.Size(159, 89);
             this.grpRunSettings.TabIndex = 3;
             this.grpRunSettings.TabStop = false;
             this.grpRunSettings.Text = "Simulation";
@@ -189,9 +194,10 @@
             // rdRunAutomaticUntilSteady
             // 
             this.rdRunAutomaticUntilSteady.AutoSize = true;
-            this.rdRunAutomaticUntilSteady.Location = new System.Drawing.Point(7, 48);
+            this.rdRunAutomaticUntilSteady.Location = new System.Drawing.Point(5, 39);
+            this.rdRunAutomaticUntilSteady.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.rdRunAutomaticUntilSteady.Name = "rdRunAutomaticUntilSteady";
-            this.rdRunAutomaticUntilSteady.Size = new System.Drawing.Size(202, 21);
+            this.rdRunAutomaticUntilSteady.Size = new System.Drawing.Size(154, 17);
             this.rdRunAutomaticUntilSteady.TabIndex = 3;
             this.rdRunAutomaticUntilSteady.TabStop = true;
             this.rdRunAutomaticUntilSteady.Text = "Automatic until steady state";
@@ -200,9 +206,10 @@
             // 
             // btnTick
             // 
-            this.btnTick.Location = new System.Drawing.Point(100, 76);
+            this.btnTick.Location = new System.Drawing.Point(75, 62);
+            this.btnTick.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnTick.Name = "btnTick";
-            this.btnTick.Size = new System.Drawing.Size(75, 23);
+            this.btnTick.Size = new System.Drawing.Size(56, 19);
             this.btnTick.TabIndex = 2;
             this.btnTick.Text = "Tick";
             this.btnTick.UseVisualStyleBackColor = true;
@@ -212,9 +219,10 @@
             // 
             this.rdRunManual.AutoSize = true;
             this.rdRunManual.Checked = true;
-            this.rdRunManual.Location = new System.Drawing.Point(7, 75);
+            this.rdRunManual.Location = new System.Drawing.Point(5, 61);
+            this.rdRunManual.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.rdRunManual.Name = "rdRunManual";
-            this.rdRunManual.Size = new System.Drawing.Size(75, 21);
+            this.rdRunManual.Size = new System.Drawing.Size(60, 17);
             this.rdRunManual.TabIndex = 1;
             this.rdRunManual.TabStop = true;
             this.rdRunManual.Text = "Manual";
@@ -223,9 +231,10 @@
             // rdRunAutomatic
             // 
             this.rdRunAutomatic.AutoSize = true;
-            this.rdRunAutomatic.Location = new System.Drawing.Point(6, 21);
+            this.rdRunAutomatic.Location = new System.Drawing.Point(4, 17);
+            this.rdRunAutomatic.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.rdRunAutomatic.Name = "rdRunAutomatic";
-            this.rdRunAutomatic.Size = new System.Drawing.Size(91, 21);
+            this.rdRunAutomatic.Size = new System.Drawing.Size(72, 17);
             this.rdRunAutomatic.TabIndex = 1;
             this.rdRunAutomatic.TabStop = true;
             this.rdRunAutomatic.Text = "Automatic";
@@ -237,9 +246,10 @@
             this.chkSkipHandshake.AutoSize = true;
             this.chkSkipHandshake.Checked = true;
             this.chkSkipHandshake.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSkipHandshake.Location = new System.Drawing.Point(6, 49);
+            this.chkSkipHandshake.Location = new System.Drawing.Point(4, 40);
+            this.chkSkipHandshake.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.chkSkipHandshake.Name = "chkSkipHandshake";
-            this.chkSkipHandshake.Size = new System.Drawing.Size(133, 21);
+            this.chkSkipHandshake.Size = new System.Drawing.Size(105, 17);
             this.chkSkipHandshake.TabIndex = 4;
             this.chkSkipHandshake.Text = "Skip Handshake";
             this.chkSkipHandshake.UseVisualStyleBackColor = true;
@@ -252,9 +262,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlFlow.AutoScroll = true;
             this.pnlFlow.Controls.Add(this.pbFlow);
-            this.pnlFlow.Location = new System.Drawing.Point(13, 12);
+            this.pnlFlow.Location = new System.Drawing.Point(10, 10);
+            this.pnlFlow.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.pnlFlow.Name = "pnlFlow";
-            this.pnlFlow.Size = new System.Drawing.Size(832, 503);
+            this.pnlFlow.Size = new System.Drawing.Size(624, 409);
             this.pnlFlow.TabIndex = 5;
             // 
             // grpNetworkSettings
@@ -262,9 +273,11 @@
             this.grpNetworkSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.grpNetworkSettings.Controls.Add(this.lblDelay);
             this.grpNetworkSettings.Controls.Add(this.numDelay);
-            this.grpNetworkSettings.Location = new System.Drawing.Point(851, 242);
+            this.grpNetworkSettings.Location = new System.Drawing.Point(638, 197);
+            this.grpNetworkSettings.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.grpNetworkSettings.Name = "grpNetworkSettings";
-            this.grpNetworkSettings.Size = new System.Drawing.Size(212, 61);
+            this.grpNetworkSettings.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.grpNetworkSettings.Size = new System.Drawing.Size(159, 50);
             this.grpNetworkSettings.TabIndex = 6;
             this.grpNetworkSettings.TabStop = false;
             this.grpNetworkSettings.Text = "Network Options";
@@ -276,23 +289,26 @@
             this.grpSenderSettings.Controls.Add(this.chkSkipHandshake);
             this.grpSenderSettings.Controls.Add(this.lblTXTimeout);
             this.grpSenderSettings.Controls.Add(this.chkCongestionControl);
-            this.grpSenderSettings.Location = new System.Drawing.Point(851, 127);
+            this.grpSenderSettings.Location = new System.Drawing.Point(638, 103);
+            this.grpSenderSettings.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.grpSenderSettings.Name = "grpSenderSettings";
-            this.grpSenderSettings.Size = new System.Drawing.Size(212, 109);
+            this.grpSenderSettings.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.grpSenderSettings.Size = new System.Drawing.Size(159, 89);
             this.grpSenderSettings.TabIndex = 7;
             this.grpSenderSettings.TabStop = false;
             this.grpSenderSettings.Text = "Sender Options";
             // 
             // numTXTimeout
             // 
-            this.numTXTimeout.Location = new System.Drawing.Point(129, 76);
+            this.numTXTimeout.Location = new System.Drawing.Point(97, 62);
+            this.numTXTimeout.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.numTXTimeout.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
             this.numTXTimeout.Name = "numTXTimeout";
-            this.numTXTimeout.Size = new System.Drawing.Size(76, 22);
+            this.numTXTimeout.Size = new System.Drawing.Size(57, 20);
             this.numTXTimeout.TabIndex = 2;
             this.numTXTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numTXTimeout.Value = new decimal(new int[] {
@@ -304,18 +320,20 @@
             // lblTXTimeout
             // 
             this.lblTXTimeout.AutoSize = true;
-            this.lblTXTimeout.Location = new System.Drawing.Point(5, 78);
+            this.lblTXTimeout.Location = new System.Drawing.Point(4, 63);
+            this.lblTXTimeout.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblTXTimeout.Name = "lblTXTimeout";
-            this.lblTXTimeout.Size = new System.Drawing.Size(63, 17);
+            this.lblTXTimeout.Size = new System.Drawing.Size(48, 13);
             this.lblTXTimeout.TabIndex = 1;
             this.lblTXTimeout.Text = "Timeout:";
             // 
             // chkCongestionControl
             // 
             this.chkCongestionControl.AutoSize = true;
-            this.chkCongestionControl.Location = new System.Drawing.Point(7, 22);
+            this.chkCongestionControl.Location = new System.Drawing.Point(5, 18);
+            this.chkCongestionControl.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.chkCongestionControl.Name = "chkCongestionControl";
-            this.chkCongestionControl.Size = new System.Drawing.Size(198, 21);
+            this.chkCongestionControl.Size = new System.Drawing.Size(151, 17);
             this.chkCongestionControl.TabIndex = 0;
             this.chkCongestionControl.Text = "Enable Congestion Control";
             this.chkCongestionControl.UseVisualStyleBackColor = true;
@@ -329,16 +347,19 @@
             this.grpReceiverSettings.Controls.Add(this.lblRXTimeout);
             this.grpReceiverSettings.Controls.Add(this.numRXBufferSize);
             this.grpReceiverSettings.Controls.Add(this.m_lblRXBufferSize);
-            this.grpReceiverSettings.Location = new System.Drawing.Point(851, 309);
+            this.grpReceiverSettings.Location = new System.Drawing.Point(638, 251);
+            this.grpReceiverSettings.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.grpReceiverSettings.Name = "grpReceiverSettings";
-            this.grpReceiverSettings.Size = new System.Drawing.Size(212, 151);
+            this.grpReceiverSettings.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.grpReceiverSettings.Size = new System.Drawing.Size(159, 123);
             this.grpReceiverSettings.TabIndex = 8;
             this.grpReceiverSettings.TabStop = false;
             this.grpReceiverSettings.Text = "Receiver Options";
             // 
             // numDeliveryInterval
             // 
-            this.numDeliveryInterval.Location = new System.Drawing.Point(130, 103);
+            this.numDeliveryInterval.Location = new System.Drawing.Point(98, 84);
+            this.numDeliveryInterval.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.numDeliveryInterval.Maximum = new decimal(new int[] {
             25,
             0,
@@ -350,7 +371,7 @@
             0,
             0});
             this.numDeliveryInterval.Name = "numDeliveryInterval";
-            this.numDeliveryInterval.Size = new System.Drawing.Size(76, 22);
+            this.numDeliveryInterval.Size = new System.Drawing.Size(57, 20);
             this.numDeliveryInterval.TabIndex = 5;
             this.numDeliveryInterval.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numDeliveryInterval.Value = new decimal(new int[] {
@@ -362,22 +383,24 @@
             // lblDeliveryInterval
             // 
             this.lblDeliveryInterval.AutoSize = true;
-            this.lblDeliveryInterval.Location = new System.Drawing.Point(10, 103);
+            this.lblDeliveryInterval.Location = new System.Drawing.Point(8, 84);
+            this.lblDeliveryInterval.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblDeliveryInterval.Name = "lblDeliveryInterval";
-            this.lblDeliveryInterval.Size = new System.Drawing.Size(113, 17);
+            this.lblDeliveryInterval.Size = new System.Drawing.Size(86, 13);
             this.lblDeliveryInterval.TabIndex = 4;
             this.lblDeliveryInterval.Text = "Delivery Interval:";
             // 
             // numRXTimeout
             // 
-            this.numRXTimeout.Location = new System.Drawing.Point(130, 64);
+            this.numRXTimeout.Location = new System.Drawing.Point(98, 52);
+            this.numRXTimeout.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.numRXTimeout.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
             this.numRXTimeout.Name = "numRXTimeout";
-            this.numRXTimeout.Size = new System.Drawing.Size(76, 22);
+            this.numRXTimeout.Size = new System.Drawing.Size(57, 20);
             this.numRXTimeout.TabIndex = 3;
             this.numRXTimeout.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numRXTimeout.Value = new decimal(new int[] {
@@ -389,15 +412,17 @@
             // lblRXTimeout
             // 
             this.lblRXTimeout.AutoSize = true;
-            this.lblRXTimeout.Location = new System.Drawing.Point(7, 66);
+            this.lblRXTimeout.Location = new System.Drawing.Point(5, 54);
+            this.lblRXTimeout.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblRXTimeout.Name = "lblRXTimeout";
-            this.lblRXTimeout.Size = new System.Drawing.Size(63, 17);
+            this.lblRXTimeout.Size = new System.Drawing.Size(48, 13);
             this.lblRXTimeout.TabIndex = 2;
             this.lblRXTimeout.Text = "Timeout:";
             // 
             // numRXBufferSize
             // 
-            this.numRXBufferSize.Location = new System.Drawing.Point(130, 22);
+            this.numRXBufferSize.Location = new System.Drawing.Point(98, 18);
+            this.numRXBufferSize.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.numRXBufferSize.Maximum = new decimal(new int[] {
             15,
             0,
@@ -409,7 +434,7 @@
             0,
             0});
             this.numRXBufferSize.Name = "numRXBufferSize";
-            this.numRXBufferSize.Size = new System.Drawing.Size(76, 22);
+            this.numRXBufferSize.Size = new System.Drawing.Size(57, 20);
             this.numRXBufferSize.TabIndex = 1;
             this.numRXBufferSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numRXBufferSize.Value = new decimal(new int[] {
@@ -421,18 +446,20 @@
             // m_lblRXBufferSize
             // 
             this.m_lblRXBufferSize.AutoSize = true;
-            this.m_lblRXBufferSize.Location = new System.Drawing.Point(7, 22);
+            this.m_lblRXBufferSize.Location = new System.Drawing.Point(5, 18);
+            this.m_lblRXBufferSize.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.m_lblRXBufferSize.Name = "m_lblRXBufferSize";
-            this.m_lblRXBufferSize.Size = new System.Drawing.Size(81, 17);
+            this.m_lblRXBufferSize.Size = new System.Drawing.Size(61, 13);
             this.m_lblRXBufferSize.TabIndex = 0;
             this.m_lblRXBufferSize.Text = "Buffer Size:";
             // 
             // btnReset
             // 
             this.btnReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnReset.Location = new System.Drawing.Point(851, 475);
+            this.btnReset.Location = new System.Drawing.Point(638, 386);
+            this.btnReset.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnReset.Name = "btnReset";
-            this.btnReset.Size = new System.Drawing.Size(75, 23);
+            this.btnReset.Size = new System.Drawing.Size(56, 19);
             this.btnReset.TabIndex = 4;
             this.btnReset.Text = "Reset";
             this.btnReset.UseVisualStyleBackColor = true;
@@ -441,9 +468,10 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(988, 475);
+            this.btnSave.Location = new System.Drawing.Point(741, 386);
+            this.btnSave.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.Size = new System.Drawing.Size(56, 19);
             this.btnSave.TabIndex = 5;
             this.btnSave.Text = "Save...";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -451,9 +479,9 @@
             // 
             // FlowForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1075, 527);
+            this.ClientSize = new System.Drawing.Size(806, 428);
             this.Controls.Add(this.btnReset);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.grpReceiverSettings);
@@ -461,10 +489,10 @@
             this.Controls.Add(this.grpNetworkSettings);
             this.Controls.Add(this.grpRunSettings);
             this.Controls.Add(this.pnlFlow);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "FlowForm";
             this.Text = "TCP Flow Visualizer";
             this.Shown += new System.EventHandler(this.FlowForm_Shown);
-            this.ClientSizeChanged += new System.EventHandler(this.FlowForm_ClientSizeChanged);
             ((System.ComponentModel.ISupportInitialize)(this.pbFlow)).EndInit();
             this.ctxStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numDelay)).EndInit();

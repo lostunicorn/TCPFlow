@@ -121,6 +121,8 @@ namespace TCPFlow
             InitDynamicGraphics();
 
             DrawFlow();
+
+            ClientSizeChanged += FlowForm_ClientSizeChanged;
         }
 
         void log_SteadyStateChanged(Tuple<uint, uint> steadyState)
