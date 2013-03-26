@@ -136,9 +136,12 @@ namespace TCPFlow.Model
                                 --secondPos;
                             secondTime = m_historyTiming[secondPos];
 
-                            //rejoice! steady state!
-                            found = true;
-                            SteadyState = new Tuple<uint, uint>(firstTime, secondTime);
+                            if (secondTime >= firstTime + m_controller.network.Delay)
+                            {
+                                //rejoice! steady state!
+                                found = true;
+                                SteadyState = new Tuple<uint, uint>(firstTime, secondTime);
+                            }
                         }
                         --i;
                     }
