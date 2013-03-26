@@ -197,16 +197,29 @@ namespace TCPFlow.Model
         {
             senderStates[m_controller.Time] = state;
 
-            StringBuilder outstanding = new StringBuilder();
-            foreach (uint id in state.Outstanding)
+            /*
+             * NOTE: if, during recording history, the congestion window is ever smaller
+             * than the receive window, that means the sender might need to hold off on
+             * sending a packet. Assuming there is no further packet loss, the congestion
+             * window should grow beyond the receive window in the future. Therefor, as
+             * long as the receive window is smaller anytime during recorded history,
+             * there can be no steady state.
+             */
+            if (m_controller.sender.CongestionControlEnabled && state.CongestionWindow < state.ReceiveWindow)
+                ClearHistory();
+            else
             {
-                outstanding.Append(state.NextID - id);
-                outstanding.Append('|');
-            }
+                StringBuilder outstanding = new StringBuilder();
+                foreach (uint id in state.Outstanding)
+                {
+                    outstanding.Append(state.NextID - id);
+                    outstanding.Append('|');
+                }
 
-            //string str = string.Format(m_controller.sender.CongestionControlEnabled ? "CW{0}RW{1}O{2}{3}" : "RW{1}O{2}{3}", state.CongestionWindow, state.ReceiveWindow, outstanding.ToString(), state.Timedout);
-            string str = string.Format("RW{0}O{1}{2}", state.ReceiveWindow, outstanding.ToString(), state.Timedout);
-            AddToHistory(str);
+                //string str = string.Format(m_controller.sender.CongestionControlEnabled ? "CW{0}RW{1}O{2}{3}" : "RW{1}O{2}{3}", state.CongestionWindow, state.ReceiveWindow, outstanding.ToString(), state.Timedout);
+                string str = string.Format("RW{0}O{1}{2}", state.ReceiveWindow, outstanding.ToString(), state.Timedout);
+                AddToHistory(str);
+            }
         }
 
         public void receiver_StateChanged(Receiver.State state)
