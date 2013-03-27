@@ -120,7 +120,7 @@ namespace TCPFlow.Model
                 stateChanged = true; //show state whenever we receive an ack (even when nothing actually changes)
 
                 m_previousAcks.Add(m_receivedAck);
-                if (m_previousAcks.Count > 3)
+                if (m_previousAcks.Count > 4)
                     m_previousAcks.RemoveAt(0);
 
                 ReceiveWindow = m_receivedAck.Window;
@@ -146,9 +146,10 @@ namespace TCPFlow.Model
                 }
 
                 //handle fast retransmit
-                if (m_previousAcks.Count == 3 &&
+                if (m_previousAcks.Count == 4 &&
                     m_previousAcks[0].NextID == m_previousAcks[1].NextID &&
-                    m_previousAcks[1].NextID == m_previousAcks[2].NextID)
+                    m_previousAcks[1].NextID == m_previousAcks[2].NextID &&
+                    m_previousAcks[2].NextID == m_previousAcks[3].NextID)
                 {
                     m_previousAcks.Clear();
 
