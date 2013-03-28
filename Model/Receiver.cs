@@ -188,8 +188,12 @@ namespace TCPFlow.Model
                 return;
             }
 
+            uint nextToReceive = m_nextID;
+            while (m_buffer.Contains(nextToReceive))
+                ++nextToReceive;
+
             bool outoforder = m_receivedPacket != null &&
-                m_receivedPacket.ID != (m_buffer.Count > 0 ? m_buffer.Max + 1 : m_nextID);
+                m_receivedPacket.ID != nextToReceive;
 
             bool stateChanged = false;
 
