@@ -63,6 +63,7 @@ namespace TCPFlow.Model
         private DataPacket m_receivedPacket;
 
         private uint m_nextID;
+        private uint m_lastPacketReceiveTime;
         private uint m_lastAckSendTime;
 
         private uint m_lastDeliveryTime;
@@ -73,7 +74,9 @@ namespace TCPFlow.Model
 
         public uint DeliveryInterval { get; set; }
 
-        public Receiver(Controller controller, uint bufferSize, uint deliveryInterval, uint timeout)
+        public uint MaxAckDelay { get; set; }
+
+        public Receiver(Controller controller, uint bufferSize, uint deliveryInterval, uint maxAckDelay, uint timeout)
         {
             m_sequenceNumbersToHold = new SortedList<uint, uint>();
             m_sequenceNumbersHeld = new SortedList<uint, uint>();
@@ -85,6 +88,7 @@ namespace TCPFlow.Model
             BufferSize = bufferSize;
             Timeout = timeout;
             DeliveryInterval = deliveryInterval;
+            MaxAckDelay = maxAckDelay;
 
             Reset();
         }
@@ -144,7 +148,7 @@ namespace TCPFlow.Model
         {
             m_sequenceNumbersHeld.Clear();
             m_buffer.Clear();
-            m_lastAckSendTime = m_lastDeliveryTime = uint.MaxValue;
+            m_lastAckSendTime = m_lastPacketReceiveTime = m_lastDeliveryTime = uint.MaxValue;
             m_receivedPacket = null;
             m_nextID = m_controller.SkipHandshake ? (uint)1 : 0;
         }
@@ -184,6 +188,9 @@ namespace TCPFlow.Model
                 return;
             }
 
+            bool outoforder = m_receivedPacket != null &&
+                m_receivedPacket.ID != (m_buffer.Count > 0 ? m_buffer.Max + 1 : m_nextID);
+
             bool stateChanged = false;
 
             if (m_receivedPacket != null)
@@ -222,25 +229,45 @@ namespace TCPFlow.Model
                 m_receivedPacket.Dropped = true;
             }
 
-            bool timedout = m_receivedPacket == null &&
+            bool timeout = m_receivedPacket == null &&
                 m_lastAckSendTime != uint.MaxValue &&
-                m_controller.Time >= m_lastAckSendTime + Timeout;
+                m_controller.Time == m_lastAckSendTime + Timeout;
+
+            bool delayedAckTimeout = m_lastPacketReceiveTime != uint.MaxValue &&
+                m_controller.Time == m_lastPacketReceiveTime + MaxAckDelay &&
+                (m_lastPacketReceiveTime > m_lastAckSendTime || m_lastAckSendTime == uint.MaxValue);
+
+            bool ackWaiting = m_receivedPacket != null &&                                                   //received a packet
+                m_lastPacketReceiveTime != uint.MaxValue &&                                                 //that was not the first packet (ever)
+                (m_lastPacketReceiveTime > m_lastAckSendTime || m_lastAckSendTime == uint.MaxValue);        //we did not send an ack for the previous packet
+
+            bool immediateAck = m_receivedPacket != null &&
+                MaxAckDelay == 0;
 
             //send ack?
-            if (m_receivedPacket != null || timedout)
+            if ( ackWaiting || outoforder || delayedAckTimeout || timeout || immediateAck)
             {
                 stateChanged = true;
 
                 uint id = m_nextID;
+                uint windowSize = BufferSize;
                 while (m_buffer.Contains(id))
+                {
                     ++id;
-                SendAck(new Ack(m_controller.Time, id, (uint)(BufferSize - m_buffer.Count)));
+                    --windowSize;
+                }
+
+                SendAck(new Ack(m_controller.Time, id, windowSize));
             }
 
-            m_receivedPacket = null;
+            if (m_receivedPacket != null)
+            {
+                m_lastPacketReceiveTime = m_controller.Time;
+                m_receivedPacket = null;
+            }
 
             if (stateChanged)
-                OnStateChanged(timedout);
+                OnStateChanged(timeout);
         }
     }
 }

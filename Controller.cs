@@ -54,7 +54,7 @@ namespace TCPFlow
         {
             SkipHandshake = true;
 
-            receiver = new Receiver(this, rxBufferSize, 3, timeout);
+            receiver = new Receiver(this, rxBufferSize, 3, 2, timeout);
             log = new Log(this);
             sender = new Sender(this, true, timeout); //sender relies on receiver, so needs to be created after receiver!
             network = new Network(this, delay);

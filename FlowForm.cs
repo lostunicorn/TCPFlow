@@ -104,6 +104,9 @@ namespace TCPFlow
             numDeliveryInterval.Value = m_controller.receiver.DeliveryInterval;
             numDeliveryInterval.ValueChanged += numDeliveryInterval_ValueChanged;
 
+            numAckDelay.Value = m_controller.receiver.MaxAckDelay;
+            numAckDelay.ValueChanged += numAckDelay_ValueChanged;
+
             chkCongestionControl.Checked = m_controller.sender.CongestionControlEnabled;
             chkCongestionControl.CheckedChanged += chkCongestionControl_CheckedChanged;
 
@@ -123,6 +126,12 @@ namespace TCPFlow
             DrawFlow();
 
             ClientSizeChanged += FlowForm_ClientSizeChanged;
+        }
+
+        void numAckDelay_ValueChanged(object sender, EventArgs e)
+        {
+            m_controller.receiver.MaxAckDelay = (uint)numAckDelay.Value;
+            Replay();
         }
 
         void log_SteadyStateChanged(Tuple<uint, uint> steadyState)
