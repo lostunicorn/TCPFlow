@@ -233,13 +233,13 @@ namespace TCPFlow.Model
                 m_receivedPacket.Dropped = true;
             }
 
-            bool timeout = m_receivedPacket == null &&
-                m_lastAckSendTime != uint.MaxValue &&
-                m_controller.Time == m_lastAckSendTime + Timeout;
+            bool timeout = m_receivedPacket == null &&                                                      //did not receive a packet
+                m_lastAckSendTime != uint.MaxValue &&                                                       //have already sent out an ACK (ever)
+                m_controller.Time == m_lastPacketReceiveTime + Timeout;                                     //Timeout has been reached
 
-            bool delayedAckTimeout = m_lastPacketReceiveTime != uint.MaxValue &&
-                m_controller.Time == m_lastPacketReceiveTime + MaxAckDelay &&
-                (m_lastPacketReceiveTime > m_lastAckSendTime || m_lastAckSendTime == uint.MaxValue);
+            bool delayedAckTimeout = m_lastPacketReceiveTime != uint.MaxValue &&                            //received a packet before
+                m_controller.Time == m_lastPacketReceiveTime + MaxAckDelay &&                               //MaxAckDelay has been reached
+                (m_lastPacketReceiveTime > m_lastAckSendTime || m_lastAckSendTime == uint.MaxValue);        //did not send an ack for the previous packet
 
             bool ackWaiting = m_receivedPacket != null &&                                                   //received a packet
                 m_lastPacketReceiveTime != uint.MaxValue &&                                                 //that was not the first packet (ever)
