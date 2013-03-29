@@ -518,7 +518,7 @@ namespace TCPFlow
 
                             if (state.DelayedAckTimeout)
                                 from.Y -= m_controller.receiver.MaxAckDelay * PIXELS_PER_TICK;
-                            else if (state.Timedout)
+                            else
                                 from.Y -= m_controller.receiver.Timeout * PIXELS_PER_TICK;
 
                             g.DrawLine(m_lightGreenPen, from, to);
