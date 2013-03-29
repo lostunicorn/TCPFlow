@@ -238,7 +238,7 @@ namespace TCPFlow.Model
 
             bool timeout = m_receivedPacket == null &&                                                      //did not receive a packet
                 m_lastAckSendTime != uint.MaxValue &&                                                       //have already sent out an ACK (ever)
-                m_controller.Time == m_lastPacketReceiveTime + Timeout;                                     //Timeout has been reached
+                m_controller.Time == m_lastAckSendTime + Timeout;                                           //Timeout has been reached
 
             bool delayedAckTimeout = m_lastPacketReceiveTime != uint.MaxValue &&                            //received a packet before
                 m_controller.Time == m_lastPacketReceiveTime + MaxAckDelay &&                               //MaxAckDelay has been reached
