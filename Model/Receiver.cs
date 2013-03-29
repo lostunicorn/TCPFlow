@@ -37,20 +37,23 @@ namespace TCPFlow.Model
 
             public readonly bool Timedout;
 
-            public State(uint time, uint nextID, uint[] buffer, bool timedout)
+            public readonly bool DelayedAckTimeout;
+
+            public State(uint time, uint nextID, uint[] buffer, bool timedout, bool delayedAckTimeout)
             {
                 Time = time;
                 NextID = nextID;
                 Buffer = buffer;
                 Timedout = timedout;
+                DelayedAckTimeout = delayedAckTimeout;
             }
         }
 
         public event Action<State> StateChanged;
-        protected void OnStateChanged(bool timedout)
+        protected void OnStateChanged(bool timedout, bool delayedAckTimeout)
         {
             if (StateChanged != null)
-                StateChanged(new State(m_controller.Time, m_nextID, m_buffer.ToArray(), timedout));
+                StateChanged(new State(m_controller.Time, m_nextID, m_buffer.ToArray(), timedout, delayedAckTimeout));
         }
 
         private SortedList<uint, uint> m_sequenceNumbersToHold;
@@ -183,7 +186,7 @@ namespace TCPFlow.Model
                 ++m_nextID;
                 m_receivedPacket = null;
 
-                OnStateChanged(false);
+                OnStateChanged(false, false);
 
                 return;
             }
@@ -271,7 +274,7 @@ namespace TCPFlow.Model
             }
 
             if (stateChanged)
-                OnStateChanged(timeout);
+                OnStateChanged(timeout, delayedAckTimeout && !ackWaiting && !immediateAck);
         }
     }
 }

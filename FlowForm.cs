@@ -510,11 +510,16 @@ namespace TCPFlow
                             ++i;
                         }
 
-                        if (state.Timedout)
+                        if (state.DelayedAckTimeout || state.Timedout)
                         {
-                            PointF to = new PointF(m_rxLine + m_lightGreenPen.Width, time * PIXELS_PER_TICK),
-                                from = to;
-                            from.Y -= m_controller.receiver.Timeout * PIXELS_PER_TICK;
+                            PointF from, to;
+                            to = new PointF(m_rxLine + m_lightGreenPen.Width, time * PIXELS_PER_TICK);
+                            from = to;
+
+                            if (state.DelayedAckTimeout)
+                                from.Y -= m_controller.receiver.MaxAckDelay * PIXELS_PER_TICK;
+                            else if (state.Timedout)
+                                from.Y -= m_controller.receiver.Timeout * PIXELS_PER_TICK;
 
                             g.DrawLine(m_lightGreenPen, from, to);
                             g.DrawLine(m_lightGreenPen, to, new PointF(to.X - 5, to.Y - 7));
